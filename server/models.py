@@ -42,6 +42,7 @@ class Chats(db.Model):
     __tablename__ = 'chats'
     id = db.Column(db.Integer, primary_key=True)
     user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    flag = db.Column(db.Boolean, nullable=False)
 
 class Messages(db.Model):
     """
