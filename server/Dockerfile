@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD python -m flask run --host=0.0.0.0
+CMD flask run -p 8080

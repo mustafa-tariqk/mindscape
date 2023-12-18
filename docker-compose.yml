@@ -1,12 +1,12 @@
 services:
-  # mindscape-client:
-  #   container_name: client
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #   env_file: ./.venv
-  #   ports:
-  #     - $CLIENT_PORT:$CLIENT_PORT
+  mindscape-client:
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    env_file: ./.env
+    ports:
+      - $CLIENT_PORT:$CLIENT_PORT
 
   mindscape-server:
     container_name: server
