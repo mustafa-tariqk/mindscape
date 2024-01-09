@@ -1,3 +1,3 @@
-def ai_response(chat):
+def ai_message(chat):
     output = "I am a robot"
     return output
