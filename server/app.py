@@ -32,9 +32,9 @@ def converse(chat_id, message):
     @message is the message sent by the user
     @return the AI's response
     """
-    ai_text = ai_message(chat_id, message)
-
     human = models.Messages(chat=chat_id, chat_type='Human', text=message, time=datetime.now())
+    
+    ai_text = ai_message(chat_id, message)
     ai = models.Messages(chat=chat_id, chat_type='AI', text=ai_text, time=datetime.now())
 
     models.db.session.add(human)
@@ -42,6 +42,15 @@ def converse(chat_id, message):
     models.db.session.commit()
     return ai_text
 
+@app.route('/delete_chat/<chat_id>', methods=['POST'])
+def delete_chat(chat_id):
+    """
+    Deletes a chat from the database
+    @chat_id is the id of the chat to be deleted
+    """
+    chat = models.Chats.query.get(chat_id)
+    models.db.session.delete(chat)
+    models.db.session.commit()
 
 
 @app.route('/flag/<chat_id>', methods=['POST'])
@@ -53,7 +62,6 @@ def flag_chat(chat_id):
     chat = models.Chats.query.get(chat_id)
     chat.flag = True
     models.db.session.commit()
-
 
 
 @app.route('/get_all_chats', methods=['GET'])
