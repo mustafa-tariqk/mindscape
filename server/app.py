@@ -10,17 +10,23 @@ app = models.create_app()
 def index():
     return "Hello world"
 
-def human_response(id, chat, text):
-    message = models.Messages(chat=id, chat_type='Human', text=text, time=datetime.now())
-    models.db.session.add(message)
-    models.db.session.commit()
 
-def ai_response(id, chat):
-    response = ai_message(chat)
-    message = models.Messages(chat=id, chat_type='AI', text=response, time=datetime.now())
-    models.db.session.add(message)
+"""
+@id is the chat id
+@message is the message sent by the user
+"""
+@app.route('/converse/<id>/<message>')
+def converse(id, message):
+    ai_text = ai_message(id, message)
+
+    human = models.Messages(chat=id, chat_type='Human', text=message, time=datetime.now())
+    ai = models.Messages(chat=id, chat_type='AI', text=ai_text, time=datetime.now())
+
+    models.db.session.add(human)
+    models.db.session.add(ai)
     models.db.session.commit()
-    return response
+    return ai_text
+
 
 
 if __name__ == '__main__':
