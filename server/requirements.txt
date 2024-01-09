@@ -1,2 +1,6 @@
 Flask
 Flask-SQLAlchemy
+transformers
+langchain
+torch
+einops

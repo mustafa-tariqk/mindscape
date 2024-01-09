@@ -1,6 +1,6 @@
+from datetime import datetime
 import models
 from ai import ai_message
-from datetime import datetime
 
 # Initialize the Flask app
 app = models.create_app()
@@ -8,20 +8,27 @@ app = models.create_app()
 # Define your routes here
 @app.route('/')
 def index():
-    return "Hello world"
+    return "Server is running!"
 
 
+@app.route('/start_chat/<user_id>')
 def start_chat(user_id):
-    chat = models.Chats(user=user_id, flag=True)
+    """
+    Creats a new chat in the database
+    @user_id is the id of the user starting the chat
+    """
+    chat = models.Chats(user=user_id, flag=False)
     models.db.session.add(chat)
     models.db.session.commit()
 
-"""
-@id is the chat id
-@message is the message sent by the user
-"""
-@app.route('/converse/<id>/<message>')
+
+@app.route('/converse/<id>/<message>', methods=['POST'])
 def converse(chat_id, message):
+    """
+    Adds a message to the database and returns the AI's response
+    @id is the chat id
+    @message is the message sent by the user
+    """
     ai_text = ai_message(chat_id, message)
 
     human = models.Messages(chat=chat_id, chat_type='Human', text=message, time=datetime.now())
@@ -33,22 +40,31 @@ def converse(chat_id, message):
     return ai_text
 
 
-"""
-Flags a chat for review
-"""
-@app.route('/flag/<chat_id>')
+
+@app.route('/flag/<chat_id>', methods=['POST'])
 def flag_chat(chat_id):
+    """
+    Flags a chat for review
+    @chat_id is the id of the chat to be flagged
+    """
     chat = models.Chats.query.get(chat_id)
     chat.flag = True
     models.db.session.commit()
 
 
 
+@app.route('/get_all_chats', methods=['GET'])
 def get_all_chats():
-    chats = models.Chats.query.all()
+    """
+    Returns all chats in the database
+    """
+    chat_dict = {}
+    for chat in models.Chats.query.all():
+        messages = models.Messages.query.filter_by(chat=chat.id).order_by(
+                                                models.Messages.time).all()
+        chat_dict[chat.id] = [message.text for message in messages]
     
-    return chats
-
+    return chat_dict
 
 
 if __name__ == '__main__':
