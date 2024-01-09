@@ -1,3 +1,6 @@
 Flask
 Flask-SQLAlchemy
-pylint
+transformers
+langchain
+torch
+einops

@@ -43,6 +43,7 @@ class Chats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     flag = db.Column(db.Boolean, nullable=False)
+    db.ForeignKeyConstraint(['user'], ['users.id'], ondelete='CASCADE')
 
 class Messages(db.Model):
     """
@@ -55,3 +56,4 @@ class Messages(db.Model):
     chat_type = db.Column(db.Enum('Human', 'AI'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
+    db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
