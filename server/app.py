@@ -11,15 +11,17 @@ def index():
     return "Server is running!"
 
 
-@app.route('/start_chat/<user_id>')
+@app.route('/start_chat/<user_id>', methods=['POST'])
 def start_chat(user_id):
     """
     Creats a new chat in the database
     @user_id is the id of the user starting the chat
+    @return the id of the new chat
     """
     chat = models.Chats(user=user_id, flag=False)
     models.db.session.add(chat)
     models.db.session.commit()
+    return str(chat.id)
 
 
 @app.route('/converse/<id>/<message>', methods=['POST'])
@@ -28,6 +30,7 @@ def converse(chat_id, message):
     Adds a message to the database and returns the AI's response
     @id is the chat id
     @message is the message sent by the user
+    @return the AI's response
     """
     ai_text = ai_message(chat_id, message)
 
@@ -56,7 +59,7 @@ def flag_chat(chat_id):
 @app.route('/get_all_chats', methods=['GET'])
 def get_all_chats():
     """
-    Returns all chats in the database
+    @return a dictionary of all chats and their messages
     """
     chat_dict = {}
     for chat in models.Chats.query.all():
