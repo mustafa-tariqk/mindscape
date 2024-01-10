@@ -1,6 +1,7 @@
 Flask
 Flask-SQLAlchemy
-Flask-Dance
+Flask-Dance[sqla] 
+flask-dance[google]
 transformers
 langchain
 torch
