@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from ai import ai_message
 import models
+from flask_login import login_manager
 
 blueprint = make_google_blueprint(
     client_id="your-google-client-id",
@@ -16,7 +17,6 @@ blueprint = make_google_blueprint(
 # Initialize the Flask app
 app = models.create_app()
 app.register_blueprint(blueprint, url_prefix="/login")
-
 
 # Define the login manager
 def require_user_type(*user_types):
