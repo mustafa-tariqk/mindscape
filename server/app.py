@@ -1,6 +1,6 @@
 from os import environ
 from flask import Flask, redirect, url_for, jsonify, request, session
-from flask_login import login_manager, current_user
+from flask_login import LoginManager, current_user
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from flask_sqlalchemy import SQLAlchemy
@@ -20,6 +20,11 @@ blueprint = make_google_blueprint(
 # Initialize the Flask app
 app = models.create_app()
 app.register_blueprint(blueprint, url_prefix="/login")
+
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 
 # Define the login manager
 def require_user_type(*user_types):
@@ -66,7 +71,7 @@ def google_authorized():
     return jsonify({"data": me.data})
 
 
-@google.tokengetter
+#@google.tokengetter
 def get_google_oauth_token():
     return session.get('google_token')
 
@@ -127,18 +132,6 @@ def change_permission(user_id, role):
         return 'Invalid role'
     user = models.Users.query.get(user_id)
     user.user_type = role
-    models.db.session.commit()
-
-
-@app.route('/delete_user/<user_id>', methods=['POST'])
-@require_user_type('Administrator')
-def delete_user(user_id):
-    """
-    Deletes a user from the database
-    @user_id is the id of the user to be deleted
-    """
-    user = models.Users.query.get(user_id)
-    models.db.session.delete(user)
     models.db.session.commit()
 
 
