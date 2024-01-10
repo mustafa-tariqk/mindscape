@@ -17,9 +17,26 @@ blueprint = make_google_blueprint(
 app = models.create_app()
 app.register_blueprint(blueprint, url_prefix="/login")
 
+
+# Define the login manager
+def require_user_type(*user_types):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not google.authorized:
+                return jsonify({"error": "Authorization required"}), 403
+            resp = google.get("/oauth2/v1/userinfo")
+            if resp.ok:
+                user_info = resp.json()
+                if user_info["user_type"] not in user_types:
+                    return jsonify({"error": "Forbidden"}), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+
 # Define your routes here
 @app.route('/')
-@app.route("/")
 def index():
     if not google.authorized:
         return redirect(url_for("google.login"))
@@ -81,6 +98,7 @@ def converse(chat_id, message):
 
 
 @app.route('/delete_user/<user_id>', methods=['POST'])
+@require_user_type('Administrator')
 def delete_user(user_id):
     """
     Deletes a user from the database
@@ -92,6 +110,7 @@ def delete_user(user_id):
 
 
 @app.route('/delete_chat/<chat_id>', methods=['POST'])
+@require_user_type('Administrator')
 def delete_chat(chat_id):
     """
     Deletes a chat from the database
@@ -103,6 +122,7 @@ def delete_chat(chat_id):
 
 
 @app.route('/flag/<chat_id>', methods=['POST'])
+@require_user_type('Administrator', 'Researcher')
 def flag_chat(chat_id):
     """
     Flags a chat for review
@@ -114,6 +134,7 @@ def flag_chat(chat_id):
 
 
 @app.route('/get_all_chats', methods=['GET'])
+@require_user_type('Administrator', 'Researcher')
 def get_all_chats():
     """
     @return a dictionary of all chats and their messages
