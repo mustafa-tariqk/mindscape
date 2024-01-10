@@ -60,7 +60,8 @@ def create_app():
         db.create_all()  # Create database and tables if they don't exist
 
         if User.query.count() == 0:
-            admin = User(email='neuma.mindscape@gmail.com', user_type='Administrator', token='')
+            token = ""
+            admin = User(email='neuma.mindscape@gmail.com', user_type='Administrator', token=token)
             db.session.add(admin)
             db.session.commit()
 

@@ -19,5 +19,8 @@ def test_server_is_running(client: FlaskClient):
     response = client.get('/status')
     assert response.status_code == 200, "Server is not running"
 
-def test_fun():
-    assert True
+
+def test_login(client: FlaskClient):
+    response = client.get('/')
+    assert response.status_code == 302, "User is not logged in"
+
