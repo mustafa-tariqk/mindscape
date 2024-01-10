@@ -3,6 +3,9 @@ Models to be held in the database
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
+
+
 
 db = SQLAlchemy() # Database object
 
@@ -21,6 +24,9 @@ def create_app():
 
     return app
 
+class OAuth(OAuthConsumerMixin, db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User)
 
 class User(db.Model):
     """
@@ -32,6 +38,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Text, unique=True, nullable=False)
     user_type = db.Column(db.Enum('Administrator', 'Researcher', 'Contributor'), nullable=False)
+    oauth = db.relationship('OAuth')
 
 
 class Chats(db.Model):

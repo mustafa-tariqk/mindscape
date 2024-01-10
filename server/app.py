@@ -1,14 +1,51 @@
+from flask import Flask, redirect, url_for
+from flask_dance.contrib.google import make_google_blueprint, google
+from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from ai import ai_message
 import models
 
+blueprint = make_google_blueprint(
+    client_id="your-google-client-id",
+    client_secret="your-google-client-secret",
+    scope=["profile", "email"],
+    storage=SQLAlchemyStorage(models.OAuth, models.db.session, user=current_user),
+)
+
 # Initialize the Flask app
 app = models.create_app()
+app.register_blueprint(blueprint, url_prefix="/login")
 
 # Define your routes here
 @app.route('/')
+@app.route("/")
 def index():
-    return "Server is running!"
+    if not google.authorized:
+        return redirect(url_for("google.login"))
+    resp = google.get("/oauth2/v1/userinfo")
+    assert resp.ok, resp.text
+    return "You are {email} on Google".format(email=resp.json()["email"])
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+@app.route('/login/google/authorized')
+def google_authorized():
+    resp = google.authorized_response()
+    if resp is None:
+        return 'Access denied: reason=%s error=%s' % (
+            request.args['error_reason'],
+            request.args['error_description']
+        )
+    session['google_token'] = (resp['access_token'], '')
+    me = google.get('userinfo')
+    return jsonify({"data": me.data})
+
+@google.tokengetter
+def get_google_oauth_token():
+    return session.get('google_token')
 
 
 @app.route('/start_chat/<user_id>', methods=['POST'])
