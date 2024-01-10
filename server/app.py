@@ -1,6 +1,6 @@
 from datetime import datetime
-import models
 from ai import ai_message
+import models
 
 # Initialize the Flask app
 app = models.create_app()

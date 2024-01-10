@@ -1,5 +1,6 @@
 Flask
 Flask-SQLAlchemy
+Flask-Dance
 transformers
 langchain
 torch
