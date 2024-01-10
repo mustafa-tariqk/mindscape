@@ -42,6 +42,16 @@ def converse(chat_id, message):
     models.db.session.commit()
     return ai_text
 
+@app.route('/delete_user/<user_id>', methods=['POST'])
+def delete_user(user_id):
+    """
+    Deletes a user from the database
+    @user_id is the id of the user to be deleted
+    """
+    user = models.Users.query.get(user_id)
+    models.db.session.delete(user)
+    models.db.session.commit()
+
 @app.route('/delete_chat/<chat_id>', methods=['POST'])
 def delete_chat(chat_id):
     """
