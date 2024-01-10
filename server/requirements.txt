@@ -10,3 +10,4 @@ einops
 pytest
 pylint
 autopep8
+isort
