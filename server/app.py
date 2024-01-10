@@ -43,6 +43,10 @@ def require_user_type(*user_types):
     return decorator
 
 
+@app.route('/status')
+def status():
+    return 'Server is running'
+
 # Define your routes here
 @app.route('/')
 def index():
