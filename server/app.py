@@ -14,7 +14,7 @@ blueprint = make_google_blueprint(
     client_id=environ.get("GOOGLE_CLIENT_ID"),
     client_secret=environ.get("GOOGLE_CLIENT_SECRET"),
     scope=["profile", "email"],
-    storage=SQLAlchemyStorage(models.OAuth, models.db.session, user=current_user),
+    storage=SQLAlchemyStorage(models.User, models.db.session, user=current_user),
 )
 
 # Initialize the Flask app

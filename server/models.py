@@ -7,21 +7,6 @@ from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 
 db = SQLAlchemy() # Database object
 
-def create_app():
-    """
-    Initializes the Flask app and database
-    """
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    db.init_app(app)
-
-    with app.app_context():
-        db.create_all()  # Create database and tables if they don't exist
-
-    return app
-
 
 class User(db.Model):
     """
@@ -33,18 +18,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Text, unique=True, nullable=False)
     user_type = db.Column(db.Enum('Administrator', 'Researcher', 'Contributor'), nullable=False)
-    oauth = db.relationship('OAuth')
-
-
-class OAuth(OAuthConsumerMixin, db.Model):
-    """
-    OAuth Model
-    Represents an OAuth token in the database. Each OAuth token is associated
-    with a user.
-    """
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    user = db.relationship(User)
-    db.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE')
+    token = db.Column(db.PickleType, nullable=False, unique=True, index=True)
 
 
 class Chats(db.Model):
@@ -70,3 +44,24 @@ class Messages(db.Model):
     text = db.Column(db.Text, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
     db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
+
+
+def create_app():
+    """
+    Initializes the Flask app and database
+    """
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    db.init_app(app)
+
+    with app.app_context():
+        db.create_all()  # Create database and tables if they don't exist
+
+        if User.query.count() == 0:
+            admin = User(email='neuma.mindscape@gmail.com', user_type='Administrator', token='')
+            db.session.add(admin)
+            db.session.commit()
+
+    return app
