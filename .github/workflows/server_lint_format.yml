@@ -23,9 +23,3 @@ jobs:
 
     - name: Lint Python files
       run: pylint server/**/*.py
-
-    - name: Format Python files
-      run: autopep8 --in-place --recursive server
-    
-    - name: Sort imports
-      run: isort server/**/*.py
