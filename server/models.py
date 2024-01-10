@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()  # Database object
 
 
-class User(db.Model):
+class User(OAuthConsumerMixin, db.Model):  # pylint: disable=too-few-public-methods
     """
     User Model
     Represents a user in the database. Users are either Administrators, 
@@ -22,7 +22,7 @@ class User(db.Model):
     token = db.Column(db.PickleType, nullable=False, unique=True, index=True)
 
 
-class Chats(db.Model):
+class Chats(db.Model):  # pylint: disable=too-few-public-methods
     """
     Chat Model
     Represents a chat in the database. Each chat is associated with a user.
@@ -34,7 +34,7 @@ class Chats(db.Model):
     db.ForeignKeyConstraint(['user'], ['users.id'], ondelete='CASCADE')
 
 
-class Messages(db.Model):
+class Messages(db.Model):  # pylint: disable=too-few-public-methods
     """
     Messages Model
     Represents a message in the database. Each message is associated with a chat.
