@@ -2,8 +2,8 @@
 Models to be held in the database
 """
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()  # Database object
 

@@ -1,8 +1,8 @@
 import models
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms import HuggingFacePipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 tokenizer = AutoTokenizer.from_pretrained(
     "microsoft/phi-2", trust_remote_code=True)

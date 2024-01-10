@@ -1,14 +1,14 @@
-from os import environ
-from flask import Flask, redirect, url_for, jsonify, request, session
-from flask_login import LoginManager, current_user
-from flask_dance.contrib.google import make_google_blueprint, google
-from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
-from flask_sqlalchemy import SQLAlchemy
-from functools import wraps
 from datetime import datetime
-from ai import ai_message
-import models
+from functools import wraps
+from os import environ
 
+import models
+from ai import ai_message
+from flask import Flask, jsonify, redirect, request, session, url_for
+from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
+from flask_dance.contrib.google import google, make_google_blueprint
+from flask_login import LoginManager, current_user
+from flask_sqlalchemy import SQLAlchemy
 
 blueprint = make_google_blueprint(
     client_id=environ.get("GOOGLE_CLIENT_ID"),
