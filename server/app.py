@@ -53,6 +53,7 @@ def delete_user(user_id):
     models.db.session.delete(user)
     models.db.session.commit()
 
+
 @app.route('/delete_chat/<chat_id>', methods=['POST'])
 def delete_chat(chat_id):
     """
