@@ -4,9 +4,12 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms import HuggingFacePipeline
 
-tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-2", trust_remote_code=True)
-base_model = AutoModelForCausalLM.from_pretrained("microsoft/phi-2", trust_remote_code=True)
-pipe = pipeline("text-generation", model=base_model, tokenizer=tokenizer, max_new_tokens=100)
+tokenizer = AutoTokenizer.from_pretrained(
+    "microsoft/phi-2", trust_remote_code=True)
+base_model = AutoModelForCausalLM.from_pretrained(
+    "microsoft/phi-2", trust_remote_code=True)
+pipe = pipeline("text-generation", model=base_model,
+                tokenizer=tokenizer, max_new_tokens=100)
 llm = HuggingFacePipeline(pipeline=pipe)
 
 
@@ -21,9 +24,11 @@ llm_chain = LLMChain(prompt=prompt,
                      llm=llm,
                      )
 
+
 def ai_message(id, message):
     conversation = models.Chats.query.get(id)
     return llm_chain.invoke(message)['text']
+
 
 if __name__ == "__main__":
     print(llm_chain.invoke("hello")['text'])

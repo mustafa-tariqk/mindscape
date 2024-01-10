@@ -14,7 +14,8 @@ blueprint = make_google_blueprint(
     client_id=environ.get("GOOGLE_CLIENT_ID"),
     client_secret=environ.get("GOOGLE_CLIENT_SECRET"),
     scope=["profile", "email"],
-    storage=SQLAlchemyStorage(models.User, models.db.session, user=current_user),
+    storage=SQLAlchemyStorage(
+        models.User, models.db.session, user=current_user),
 )
 
 # Initialize the Flask app
@@ -48,6 +49,8 @@ def status():
     return 'Server is running'
 
 # Define your routes here
+
+
 @app.route('/')
 def index():
     if not google.authorized:
@@ -75,7 +78,7 @@ def google_authorized():
     return jsonify({"data": me.data})
 
 
-#@google.tokengetter
+# @google.tokengetter
 def get_google_oauth_token():
     return session.get('google_token')
 
@@ -101,10 +104,12 @@ def converse(chat_id, message):
     @message is the message sent by the user
     @return the AI's response
     """
-    human = models.Messages(chat=chat_id, chat_type='Human', text=message, time=datetime.now())
-    
+    human = models.Messages(chat=chat_id, chat_type='Human',
+                            text=message, time=datetime.now())
+
     ai_text = ai_message(chat_id, message)
-    ai = models.Messages(chat=chat_id, chat_type='AI', text=ai_text, time=datetime.now())
+    ai = models.Messages(chat=chat_id, chat_type='AI',
+                         text=ai_text, time=datetime.now())
 
     models.db.session.add(human)
     models.db.session.add(ai)
@@ -172,7 +177,7 @@ def get_all_chats():
     chat_dict = {}
     for chat in models.Chats.query.all():
         messages = models.Messages.query.filter_by(chat=chat.id).order_by(
-                                                models.Messages.time).all()
+            models.Messages.time).all()
         chat_dict[chat.id] = [message.text for message in messages]
     return chat_dict
 

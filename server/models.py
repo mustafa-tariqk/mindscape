@@ -5,7 +5,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 
-db = SQLAlchemy() # Database object
+db = SQLAlchemy()  # Database object
 
 
 class User(db.Model):
@@ -17,7 +17,8 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Text, unique=True, nullable=False)
-    user_type = db.Column(db.Enum('Administrator', 'Researcher', 'Contributor'), nullable=False)
+    user_type = db.Column(
+        db.Enum('Administrator', 'Researcher', 'Contributor'), nullable=False)
     token = db.Column(db.PickleType, nullable=False, unique=True, index=True)
 
 
@@ -31,6 +32,7 @@ class Chats(db.Model):
     user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     flag = db.Column(db.Boolean, nullable=False)
     db.ForeignKeyConstraint(['user'], ['users.id'], ondelete='CASCADE')
+
 
 class Messages(db.Model):
     """
@@ -61,7 +63,8 @@ def create_app():
 
         if User.query.count() == 0:
             token = ""
-            admin = User(email='neuma.mindscape@gmail.com', user_type='Administrator', token=token)
+            admin = User(email='neuma.mindscape@gmail.com',
+                         user_type='Administrator', token=token)
             db.session.add(admin)
             db.session.commit()
 
