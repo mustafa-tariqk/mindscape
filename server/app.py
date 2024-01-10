@@ -111,6 +111,34 @@ def delete_user(user_id):
     models.db.session.commit()
 
 
+@app.route('/change_permission/<user_id>/<role>', methods=['POST'])
+@require_user_type('Administrator')
+def change_permission(user_id, role):
+    """
+    Changes the permission of a user
+    @user_id is the id of the user to be changed
+    @role is the new role of the user
+    """
+    if role not in ['Administrator', 'Researcher', 'Contributor']:
+        return 'Invalid role'
+    user = models.Users.query.get(user_id)
+    user.user_type = role
+    models.db.session.commit()
+
+
+
+@app.route('/delete_user/<user_id>', methods=['POST'])
+@require_user_type('Administrator')
+def delete_user(user_id):
+    """
+    Deletes a user from the database
+    @user_id is the id of the user to be deleted
+    """
+    user = models.Users.query.get(user_id)
+    models.db.session.delete(user)
+    models.db.session.commit()
+
+
 @app.route('/delete_chat/<chat_id>', methods=['POST'])
 @require_user_type('Administrator')
 def delete_chat(chat_id):

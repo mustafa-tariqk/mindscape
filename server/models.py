@@ -45,6 +45,7 @@ class OAuth(OAuthConsumerMixin, db.Model):
     """
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User)
+    db.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE')
 
 
 class Chats(db.Model):
