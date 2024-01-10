@@ -1,3 +1,4 @@
+from os import environ
 from flask import Flask, redirect, url_for, jsonify, request, session
 from flask_login import login_manager, current_user
 from flask_dance.contrib.google import make_google_blueprint, google
@@ -10,8 +11,8 @@ import models
 
 
 blueprint = make_google_blueprint(
-    client_id="your-google-client-id",
-    client_secret="your-google-client-secret",
+    client_id=environ.get("GOOGLE_CLIENT_ID"),
+    client_secret=environ.get("GOOGLE_CLIENT_SECRET"),
     scope=["profile", "email"],
     storage=SQLAlchemyStorage(models.OAuth, models.db.session, user=current_user),
 )
