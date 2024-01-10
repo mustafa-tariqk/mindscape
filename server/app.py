@@ -1,11 +1,13 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, jsonify, request, session
+from flask_login import login_manager, current_user
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from flask_sqlalchemy import SQLAlchemy
+from functools import wraps
 from datetime import datetime
 from ai import ai_message
 import models
-from flask_login import login_manager
+
 
 blueprint = make_google_blueprint(
     client_id="your-google-client-id",
@@ -46,7 +48,7 @@ def index():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return models.User.query.get(int(user_id))
 
 @app.route('/login/google/authorized')
 def google_authorized():
