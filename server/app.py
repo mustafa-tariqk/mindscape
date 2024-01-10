@@ -46,9 +46,11 @@ def index():
     assert resp.ok, resp.text
     return "You are {email} on Google".format(email=resp.json()["email"])
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return models.User.query.get(int(user_id))
+
 
 @app.route('/login/google/authorized')
 def google_authorized():
@@ -61,6 +63,7 @@ def google_authorized():
     session['google_token'] = (resp['access_token'], '')
     me = google.get('userinfo')
     return jsonify({"data": me.data})
+
 
 @google.tokengetter
 def get_google_oauth_token():
@@ -126,7 +129,6 @@ def change_permission(user_id, role):
     models.db.session.commit()
 
 
-
 @app.route('/delete_user/<user_id>', methods=['POST'])
 @require_user_type('Administrator')
 def delete_user(user_id):
@@ -174,7 +176,6 @@ def get_all_chats():
         messages = models.Messages.query.filter_by(chat=chat.id).order_by(
                                                 models.Messages.time).all()
         chat_dict[chat.id] = [message.text for message in messages]
-    
     return chat_dict
 
 
