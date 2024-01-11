@@ -19,6 +19,7 @@ class User(OAuthConsumerMixin, db.Model):  # pylint: disable=too-few-public-meth
     email = db.Column(db.Text, unique=True, nullable=False)
     user_type = db.Column(
         db.Enum('Administrator', 'Researcher', 'Contributor'), nullable=False)
+    provider = db.Column(db.Text, nullable=False)
     token = db.Column(db.PickleType, nullable=False, unique=True, index=True)
 
 
@@ -60,12 +61,5 @@ def create_app():
 
     with app.app_context():
         db.create_all()  # Create database and tables if they don't exist
-
-        if User.query.count() == 0:
-            token = ""
-            admin = User(email='neuma.mindscape@gmail.com',
-                         user_type='Administrator', token=token)
-            db.session.add(admin)
-            db.session.commit()
 
     return app

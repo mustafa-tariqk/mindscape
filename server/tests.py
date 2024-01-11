@@ -8,7 +8,7 @@ from flask.testing import FlaskClient
 
 
 @pytest.fixture
-def test_client():
+def testing_client():
     """
     This fixture creates a test client for the server.
     """
