@@ -1,14 +1,73 @@
+from flask import Flask, redirect, url_for, jsonify, request, session
+from flask_login import login_manager, current_user
+from flask_dance.contrib.google import make_google_blueprint, google
+from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
+from flask_sqlalchemy import SQLAlchemy
+from functools import wraps
 from datetime import datetime
-import models
 from ai import ai_message
+import models
+
+
+blueprint = make_google_blueprint(
+    client_id="your-google-client-id",
+    client_secret="your-google-client-secret",
+    scope=["profile", "email"],
+    storage=SQLAlchemyStorage(models.OAuth, models.db.session, user=current_user),
+)
 
 # Initialize the Flask app
 app = models.create_app()
+app.register_blueprint(blueprint, url_prefix="/login")
+
+# Define the login manager
+def require_user_type(*user_types):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not google.authorized:
+                return jsonify({"error": "Authorization required"}), 403
+            resp = google.get("/oauth2/v1/userinfo")
+            if resp.ok:
+                user_info = resp.json()
+                if user_info["user_type"] not in user_types:
+                    return jsonify({"error": "Forbidden"}), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 
 # Define your routes here
 @app.route('/')
 def index():
-    return "Server is running!"
+    if not google.authorized:
+        return redirect(url_for("google.login"))
+    resp = google.get("/oauth2/v1/userinfo")
+    assert resp.ok, resp.text
+    return "You are {email} on Google".format(email=resp.json()["email"])
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return models.User.query.get(int(user_id))
+
+
+@app.route('/login/google/authorized')
+def google_authorized():
+    resp = google.authorized_response()
+    if resp is None:
+        return 'Access denied: reason=%s error=%s' % (
+            request.args['error_reason'],
+            request.args['error_description']
+        )
+    session['google_token'] = (resp['access_token'], '')
+    me = google.get('userinfo')
+    return jsonify({"data": me.data})
+
+
+@google.tokengetter
+def get_google_oauth_token():
+    return session.get('google_token')
 
 
 @app.route('/start_chat/<user_id>', methods=['POST'])
@@ -42,7 +101,48 @@ def converse(chat_id, message):
     models.db.session.commit()
     return ai_text
 
+
+@app.route('/delete_user/<user_id>', methods=['POST'])
+@require_user_type('Administrator')
+def delete_user(user_id):
+    """
+    Deletes a user from the database
+    @user_id is the id of the user to be deleted
+    """
+    user = models.Users.query.get(user_id)
+    models.db.session.delete(user)
+    models.db.session.commit()
+
+
+@app.route('/change_permission/<user_id>/<role>', methods=['POST'])
+@require_user_type('Administrator')
+def change_permission(user_id, role):
+    """
+    Changes the permission of a user
+    @user_id is the id of the user to be changed
+    @role is the new role of the user
+    """
+    if role not in ['Administrator', 'Researcher', 'Contributor']:
+        return 'Invalid role'
+    user = models.Users.query.get(user_id)
+    user.user_type = role
+    models.db.session.commit()
+
+
+@app.route('/delete_user/<user_id>', methods=['POST'])
+@require_user_type('Administrator')
+def delete_user(user_id):
+    """
+    Deletes a user from the database
+    @user_id is the id of the user to be deleted
+    """
+    user = models.Users.query.get(user_id)
+    models.db.session.delete(user)
+    models.db.session.commit()
+
+
 @app.route('/delete_chat/<chat_id>', methods=['POST'])
+@require_user_type('Administrator')
 def delete_chat(chat_id):
     """
     Deletes a chat from the database
@@ -54,6 +154,7 @@ def delete_chat(chat_id):
 
 
 @app.route('/flag/<chat_id>', methods=['POST'])
+@require_user_type('Administrator', 'Researcher')
 def flag_chat(chat_id):
     """
     Flags a chat for review
@@ -65,6 +166,7 @@ def flag_chat(chat_id):
 
 
 @app.route('/get_all_chats', methods=['GET'])
+@require_user_type('Administrator', 'Researcher')
 def get_all_chats():
     """
     @return a dictionary of all chats and their messages
@@ -74,7 +176,6 @@ def get_all_chats():
         messages = models.Messages.query.filter_by(chat=chat.id).order_by(
                                                 models.Messages.time).all()
         chat_dict[chat.id] = [message.text for message in messages]
-    
     return chat_dict
 
 
