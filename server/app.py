@@ -2,24 +2,24 @@
 This is the main file for the server. It contains all the routes and
 the logic for the routes.
 """
-from datetime import datetime
 import time
+from datetime import datetime
 from functools import wraps
-
 from os import environ
+
 import models
 from ai import ai_message
-from flask import jsonify, redirect, request, session, url_for
-from flask_dance.contrib.google import google, make_google_blueprint
 from dotenv import load_dotenv
+from flask import redirect, request, url_for
+from flask_dance.contrib.google import google, make_google_blueprint
 
 load_dotenv()
 
 blueprint = make_google_blueprint(
     client_id=environ.get("GOOGLE_CLIENT_ID"),
     client_secret=environ.get("GOOGLE_CLIENT_SECRET"),
-    scope=["https://www.googleapis.com/auth/userinfo.profile", 
-           "https://www.googleapis.com/auth/userinfo.email", 
+    scope=["https://www.googleapis.com/auth/userinfo.profile",
+           "https://www.googleapis.com/auth/userinfo.email",
            "openid"]
 )
 
@@ -31,6 +31,11 @@ app.register_blueprint(blueprint, url_prefix="/login")
 
 # decorator to check user type
 def role_required(*roles):
+    """
+    This decorator checks if the user is authorized with Google. If not, it
+    redirects to the Google login page. Then it retrieves the user's email from
+    the Google API and checks if the user has the required role.
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
