@@ -12,8 +12,9 @@ def client():
     """
     This fixture creates a test client for the server.
     """
-    with app.test_client() as test_client:
-        yield test_client
+    with app.app_context():
+        with app.test_client() as test_client:
+            yield test_client
 
 
 @pytest.fixture
@@ -27,5 +28,9 @@ def reset_db():
     models.db.drop_all()
 
 
-def test_server_is_running(client: FlaskClient):
-    assert True
+def test_index(client: FlaskClient):
+    """
+    Ensures the redirect to Google login works.
+    """
+    response = client.get('/')
+    assert response.status_code == 302  # Expecting a redirect to Google login
