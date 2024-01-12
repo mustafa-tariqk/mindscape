@@ -22,11 +22,12 @@ blueprint = make_google_blueprint(
     scope=["https://www.googleapis.com/auth/userinfo.profile", 
            "https://www.googleapis.com/auth/userinfo.email", 
            "openid"]
+           
 )
 
 # Initialize the Flask app
 app = models.create_app()
-app.secret_key = "supersekrit"
+app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
 
 
