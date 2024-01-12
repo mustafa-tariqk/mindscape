@@ -31,7 +31,7 @@ app.register_blueprint(blueprint, url_prefix="/login")
 
 
 # Define your routes here
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     """
     This function checks if the user is authorized with Google. If not, it 
