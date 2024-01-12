@@ -29,6 +29,24 @@ app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
 
 
+# decorator to check user type
+def role_required(*roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if 'user' not in session:
+                return redirect(url_for('login', next=request.url))
+            resp = google.get("/oauth2/v2/userinfo")
+            assert resp.ok, resp.text
+            email = resp.json()["email"]
+            user = models.User.query.filter_by(email=email).first()
+            if user is None or user.user_type not in roles:
+                return "You do not have permission to perform this action."
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+
 # Define your routes here
 @app.route('/', methods=['GET'])
 def index():
@@ -52,6 +70,7 @@ def index():
 
 
 @app.route('/start_chat/<user_id>', methods=['POST'])
+@role_required('Administrator', 'Researcher', 'Contributor')
 def start_chat(user_id):
     """
     Creats a new chat in the database
@@ -65,6 +84,7 @@ def start_chat(user_id):
 
 
 @app.route('/converse/<chat_id>/<message>', methods=['POST'])
+@role_required('Administrator', 'Researcher', 'Contributor')
 def converse(chat_id, message):
     """
     Adds a message to the database and returns the AI's response
@@ -86,6 +106,7 @@ def converse(chat_id, message):
 
 
 @app.route('/delete_user/<user_id>', methods=['POST'])
+@role_required('Administrator')
 def delete_user(user_id):
     """
     Deletes a user from the database
@@ -98,6 +119,7 @@ def delete_user(user_id):
 
 
 @app.route('/change_permission/<user_id>/<role>', methods=['POST'])
+@role_required('Administrator')
 def change_permission(user_id, role):
     """
     Changes the permission of a user
@@ -113,6 +135,7 @@ def change_permission(user_id, role):
 
 
 @app.route('/delete_chat/<chat_id>', methods=['POST'])
+@role_required('Administrator')
 def delete_chat(chat_id):
     """
     Deletes a chat from the database
@@ -125,6 +148,7 @@ def delete_chat(chat_id):
 
 
 @app.route('/flag/<chat_id>', methods=['POST'])
+@role_required('Administrator', 'Researcher')
 def flag_chat(chat_id):
     """
     Flags a chat for review
@@ -137,6 +161,7 @@ def flag_chat(chat_id):
 
 
 @app.route('/get_all_chats', methods=['GET'])
+@role_required('Administrator', 'Researcher')
 def get_all_chats():
     """
     @return a dictionary of all chats and their messages
