@@ -34,8 +34,8 @@ def role_required(*roles):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if 'user' not in session:
-                return redirect(url_for('login', next=request.url))
+            if not google.authorized or google.token['expires_at'] <= time.time():
+                return redirect(url_for('google.login', next=request.url))
             resp = google.get("/oauth2/v2/userinfo")
             assert resp.ok, resp.text
             email = resp.json()["email"]
