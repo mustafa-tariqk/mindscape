@@ -2,32 +2,28 @@
 This is the main file for the server. It contains all the routes and
 the logic for the routes.
 """
-from datetime import datetime
+import time
 from functools import wraps
 from os import environ
 
 import models
 from ai import ai_message
 from flask import jsonify, redirect, request, session, url_for
-from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from flask_dance.contrib.google import google, make_google_blueprint
-from flask_login import LoginManager, current_user
+
 
 blueprint = make_google_blueprint(
     client_id=environ.get("GOOGLE_CLIENT_ID"),
     client_secret=environ.get("GOOGLE_CLIENT_SECRET"),
-    scope=["profile", "email"],
-    storage=SQLAlchemyStorage(
-        models.User, models.db.session, user=current_user),
+    scope=["https://www.googleapis.com/auth/userinfo.profile", 
+           "https://www.googleapis.com/auth/userinfo.email", "openid"]
 )
 
 # Initialize the Flask app
 app = models.create_app()
+app.secret_key = "supersekrit"
 app.register_blueprint(blueprint, url_prefix="/login")
 
-
-login_manager = LoginManager()
-login_manager.init_app(app)
 
 
 # Define the login manager
@@ -54,16 +50,6 @@ def require_user_type(*user_types):
     return decorator
 
 # Define your routes here
-
-
-@app.route('/status')
-def status():
-    """
-    @return a string indicating that the server is running
-    """
-    return "Server is running"
-
-
 @app.route('/')
 def index():
     """
@@ -71,21 +57,18 @@ def index():
     redirects to the Google login page. Then it retrieves the user's email from
     the Google API and returns a message with the email address.
     """
-    if not google.authorized:
+    if not google.authorized or google.token['expires_at'] <= time.time():
         return redirect(url_for("google.login"))
-    resp = google.get("/oauth2/v1/userinfo")
+    resp = google.get("/oauth2/v2/userinfo")
     assert resp.ok, resp.text
     email = resp.json()["email"]
+    user = models.User.query.filter_by(email=email).first()
+    if user is None:
+        user = models.User(email=email, user_type='Contributor')
+        models.db.session.add(user)
+        models.db.session.commit()
+    # redirect this to front end when it's ready.
     return f"You are {email} on Google"
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    """
-    @user_id is the id of the user
-    @return the user object
-    """
-    return models.User.query.get(int(user_id))
 
 
 @app.route('/login/google/authorized')

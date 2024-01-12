@@ -2,13 +2,12 @@
 Models to be held in the database
 """
 from flask import Flask
-from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()  # Database object
 
 
-class User(OAuthConsumerMixin, db.Model):  # pylint: disable=too-few-public-methods
+class User(db.Model):  # pylint: disable=too-few-public-methods
     """
     User Model
     Represents a user in the database. Users are either Administrators, 
@@ -19,8 +18,6 @@ class User(OAuthConsumerMixin, db.Model):  # pylint: disable=too-few-public-meth
     email = db.Column(db.Text, unique=True, nullable=False)
     user_type = db.Column(
         db.Enum('Administrator', 'Researcher', 'Contributor'), nullable=False)
-    provider = db.Column(db.Text, nullable=False)
-    token = db.Column(db.PickleType, nullable=False, unique=True, index=True)
 
 
 class Chats(db.Model):  # pylint: disable=too-few-public-methods
@@ -55,7 +52,6 @@ def create_app():
     """
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
 
