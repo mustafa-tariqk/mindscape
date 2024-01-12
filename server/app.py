@@ -48,7 +48,7 @@ def role_required(*roles):
 
 
 # Define your routes here
-@app.route('/', methods=['GET'])
+@app.route('/')
 def index():
     """
     This function checks if the user is authorized with Google. If not, it 
@@ -69,7 +69,7 @@ def index():
     return f"You are {email} on Google"
 
 
-@app.route('/start_chat/<user_id>', methods=['POST'])
+@app.route('/start_chat/<user_id>')
 @role_required('Administrator', 'Researcher', 'Contributor')
 def start_chat(user_id):
     """
@@ -83,7 +83,7 @@ def start_chat(user_id):
     return str(chat.id)
 
 
-@app.route('/converse/<chat_id>/<message>', methods=['POST'])
+@app.route('/converse/<chat_id>/<message>')
 @role_required('Administrator', 'Researcher', 'Contributor')
 def converse(chat_id, message):
     """
@@ -105,7 +105,7 @@ def converse(chat_id, message):
     return ai_text
 
 
-@app.route('/delete_user/<user_id>', methods=['POST'])
+@app.route('/delete_user/<user_id>')
 @role_required('Administrator')
 def delete_user(user_id):
     """
@@ -118,7 +118,7 @@ def delete_user(user_id):
     return "User deleted"
 
 
-@app.route('/change_permission/<user_id>/<role>', methods=['POST'])
+@app.route('/change_permission/<user_id>/<role>')
 @role_required('Administrator')
 def change_permission(user_id, role):
     """
@@ -134,7 +134,7 @@ def change_permission(user_id, role):
     return "User permission changed to " + role
 
 
-@app.route('/delete_chat/<chat_id>', methods=['POST'])
+@app.route('/delete_chat/<chat_id>')
 @role_required('Administrator')
 def delete_chat(chat_id):
     """
@@ -147,7 +147,7 @@ def delete_chat(chat_id):
     return "Chat deleted"
 
 
-@app.route('/flag/<chat_id>', methods=['POST'])
+@app.route('/flag/<chat_id>')
 @role_required('Administrator', 'Researcher')
 def flag_chat(chat_id):
     """
@@ -160,7 +160,7 @@ def flag_chat(chat_id):
     return "Chat flagged"
 
 
-@app.route('/get_all_chats', methods=['GET'])
+@app.route('/get_all_chats')
 @role_required('Administrator', 'Researcher')
 def get_all_chats():
     """
