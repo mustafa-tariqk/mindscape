@@ -4,19 +4,23 @@ the logic for the routes.
 """
 import time
 from functools import wraps
-from os import environ
 
+from os import environ
 import models
 from ai import ai_message
 from flask import jsonify, redirect, request, session, url_for
 from flask_dance.contrib.google import google, make_google_blueprint
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 blueprint = make_google_blueprint(
     client_id=environ.get("GOOGLE_CLIENT_ID"),
     client_secret=environ.get("GOOGLE_CLIENT_SECRET"),
     scope=["https://www.googleapis.com/auth/userinfo.profile", 
-           "https://www.googleapis.com/auth/userinfo.email", "openid"]
+           "https://www.googleapis.com/auth/userinfo.email", 
+           "openid"]
 )
 
 # Initialize the Flask app

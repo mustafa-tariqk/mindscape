@@ -11,3 +11,4 @@ pytest
 pylint
 autopep8
 isort
+python-dotenv
