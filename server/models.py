@@ -57,5 +57,10 @@ def create_app():
 
     with app.app_context():
         db.create_all()  # Create database and tables if they don't exist
+        # make an admin user
+        if not User.query.filter_by(email="neuma.mindscape@gmail.com").first():
+            admin = User(email="neuma.mindscape@gmail.com", user_type="Administrator")
+            db.session.add(admin)
+            db.session.commit()
 
     return app

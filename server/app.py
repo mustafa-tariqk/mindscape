@@ -2,6 +2,7 @@
 This is the main file for the server. It contains all the routes and
 the logic for the routes.
 """
+from datetime import datetime
 import time
 from functools import wraps
 
@@ -29,30 +30,6 @@ app.secret_key = "supersekrit"
 app.register_blueprint(blueprint, url_prefix="/login")
 
 
-
-# Define the login manager
-def require_user_type(*user_types):
-    """
-    This is a decorator that requires the user to be logged in and have
-    a certain user type.
-    @user_types is a list of user types that are allowed to access the route
-    @return the decorated function
-    """
-    # TODO: move all auth logic to models.py
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            if not google.authorized:
-                return jsonify({"error": "Authorization required"}), 403
-            resp = google.get("/oauth2/v1/userinfo")
-            if resp.ok:
-                user_info = resp.json()
-                if user_info["user_type"] not in user_types:
-                    return jsonify({"error": "Forbidden"}), 403
-            return f(*args, **kwargs)
-        return decorated_function
-    return decorator
-
 # Define your routes here
 @app.route('/')
 def index():
@@ -75,30 +52,6 @@ def index():
     return f"You are {email} on Google"
 
 
-@app.route('/login/google/authorized')
-def google_authorized():
-    """
-    This function is called after the user logs in with Google. It retrieves 
-    the user's email address from the Google API.
-    @return the user's email address
-    """
-    resp = google.authorized_response()
-    if resp is None:
-        return f'Access denied: reason={request.args["error_reason"]} \
-        error={request.args["error_description"]}'
-    session['google_token'] = (resp['access_token'], '')
-    me = google.get('userinfo')
-    return jsonify({"data": me.data})
-
-
-# @google.tokengetter
-def get_google_oauth_token():
-    """
-    @return the user's Google token
-    """
-    return session.get('google_token')
-
-
 @app.route('/start_chat/<user_id>', methods=['POST'])
 def start_chat(user_id):
     """
@@ -109,7 +62,7 @@ def start_chat(user_id):
     chat = models.Chats(user=user_id, flag=False)
     models.db.session.add(chat)
     models.db.session.commit()
-    return str(chat.id)
+    return chat.id
 
 
 @app.route('/converse/<id>/<message>', methods=['POST'])
@@ -134,7 +87,6 @@ def converse(chat_id, message):
 
 
 @app.route('/delete_user/<user_id>', methods=['POST'])
-@require_user_type('Administrator')
 def delete_user(user_id):
     """
     Deletes a user from the database
@@ -146,7 +98,6 @@ def delete_user(user_id):
 
 
 @app.route('/change_permission/<user_id>/<role>', methods=['POST'])
-@require_user_type('Administrator')
 def change_permission(user_id, role):
     """
     Changes the permission of a user
@@ -161,7 +112,6 @@ def change_permission(user_id, role):
 
 
 @app.route('/delete_chat/<chat_id>', methods=['POST'])
-@require_user_type('Administrator')
 def delete_chat(chat_id):
     """
     Deletes a chat from the database
@@ -173,7 +123,6 @@ def delete_chat(chat_id):
 
 
 @app.route('/flag/<chat_id>', methods=['POST'])
-@require_user_type('Administrator', 'Researcher')
 def flag_chat(chat_id):
     """
     Flags a chat for review
@@ -185,7 +134,6 @@ def flag_chat(chat_id):
 
 
 @app.route('/get_all_chats', methods=['GET'])
-@require_user_type('Administrator', 'Researcher')
 def get_all_chats():
     """
     @return a dictionary of all chats and their messages
