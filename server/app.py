@@ -62,10 +62,10 @@ def start_chat(user_id):
     chat = models.Chats(user=user_id, flag=False)
     models.db.session.add(chat)
     models.db.session.commit()
-    return chat.id
+    return str(chat.id)
 
 
-@app.route('/converse/<id>/<message>', methods=['POST'])
+@app.route('/converse/<chat_id>/<message>', methods=['POST'])
 def converse(chat_id, message):
     """
     Adds a message to the database and returns the AI's response
@@ -95,6 +95,7 @@ def delete_user(user_id):
     user = models.User.query.get(user_id)
     models.db.session.delete(user)
     models.db.session.commit()
+    return "User deleted"
 
 
 @app.route('/change_permission/<user_id>/<role>', methods=['POST'])
@@ -109,6 +110,7 @@ def change_permission(user_id, role):
     user = models.User.query.get(user_id)
     user.user_type = role
     models.db.session.commit()
+    return "User permission changed to " + role
 
 
 @app.route('/delete_chat/<chat_id>', methods=['POST'])
@@ -120,6 +122,7 @@ def delete_chat(chat_id):
     chat = models.Chats.query.get(chat_id)
     models.db.session.delete(chat)
     models.db.session.commit()
+    return "Chat deleted"
 
 
 @app.route('/flag/<chat_id>', methods=['POST'])
@@ -131,6 +134,7 @@ def flag_chat(chat_id):
     chat = models.Chats.query.get(chat_id)
     chat.flag = True
     models.db.session.commit()
+    return "Chat flagged"
 
 
 @app.route('/get_all_chats', methods=['GET'])
