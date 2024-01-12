@@ -15,14 +15,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 blueprint = make_google_blueprint(
     client_id=environ.get("GOOGLE_CLIENT_ID"),
     client_secret=environ.get("GOOGLE_CLIENT_SECRET"),
     scope=["https://www.googleapis.com/auth/userinfo.profile", 
            "https://www.googleapis.com/auth/userinfo.email", 
            "openid"]
-           
 )
 
 # Initialize the Flask app
