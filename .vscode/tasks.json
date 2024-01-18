@@ -1,0 +1,62 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "docker-compose up",
+            "type": "shell",
+            "command": "docker-compose up --build -d",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "venv",
+            "type": "shell",
+            "command": "python3 -m venv venv && source venv/bin/activate && pip install -r server/requirements.txt",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+        },
+        {
+            "label": "isort",
+            "type": "shell",
+            "command": "source venv/bin/activate && isort server/**/*.py",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "autopep8",
+            "type": "shell",
+            "command": "source venv/bin/activate && autopep8 --in-place --recursive server",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "pylint",
+            "type": "shell",
+            "command": "source venv/bin/activate && pylint server/**/*.py",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "reveal": "always"
+            }
+        }
+    ]
+}

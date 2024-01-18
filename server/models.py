@@ -3,27 +3,11 @@ Models to be held in the database
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 
-db = SQLAlchemy() # Database object
-
-def create_app():
-    """
-    Initializes the Flask app and database
-    """
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    db.init_app(app)
-
-    with app.app_context():
-        db.create_all()  # Create database and tables if they don't exist
-
-    return app
+db = SQLAlchemy()  # Database object
 
 
-class User(db.Model):
+class User(db.Model):  # pylint: disable=too-few-public-methods
     """
     User Model
     Represents a user in the database. Users are either Administrators, 
@@ -32,22 +16,11 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Text, unique=True, nullable=False)
-    user_type = db.Column(db.Enum('Administrator', 'Researcher', 'Contributor'), nullable=False)
-    oauth = db.relationship('OAuth')
+    user_type = db.Column(
+        db.Enum('Administrator', 'Researcher', 'Contributor'), nullable=False)
 
 
-class OAuth(OAuthConsumerMixin, db.Model):
-    """
-    OAuth Model
-    Represents an OAuth token in the database. Each OAuth token is associated
-    with a user.
-    """
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    user = db.relationship(User)
-    db.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE')
-
-
-class Chats(db.Model):
+class Chats(db.Model):  # pylint: disable=too-few-public-methods
     """
     Chat Model
     Represents a chat in the database. Each chat is associated with a user.
@@ -58,7 +31,8 @@ class Chats(db.Model):
     flag = db.Column(db.Boolean, nullable=False)
     db.ForeignKeyConstraint(['user'], ['users.id'], ondelete='CASCADE')
 
-class Messages(db.Model):
+
+class Messages(db.Model):  # pylint: disable=too-few-public-methods
     """
     Messages Model
     Represents a message in the database. Each message is associated with a chat.
@@ -70,3 +44,24 @@ class Messages(db.Model):
     text = db.Column(db.Text, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
     db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
+
+
+def create_app():
+    """
+    Initializes the Flask app and database
+    """
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+    db.init_app(app)
+
+    with app.app_context():
+        db.create_all()  # Create database and tables if they don't exist
+        # make an admin user
+        if not User.query.filter_by(email="neuma.mindscape@gmail.com").first():
+            admin = User(email="neuma.mindscape@gmail.com",
+                         user_type="Administrator")
+            db.session.add(admin)
+            db.session.commit()
+
+    return app
