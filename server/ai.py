@@ -37,5 +37,5 @@ def ai_message(chat_id, message):
     @return: the response from the AI
     """
     conversation = models.Chats.query.get(chat_id)
-    # TODO: implement entire conversation into chain.
+    # TODO: implement entire conversation into chain. very cool
     return llm_chain.invoke(message)['text']
