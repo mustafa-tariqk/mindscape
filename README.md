@@ -1,8 +1,7 @@
-# Setup Instructions
+To install/setup the system from scratch, go to the [Installation Guide](../../wiki/Installation)
 
-For first time setup or build new code:
-`docker compose up --build -d`\
-If code has not changed, quickly run the containers with:
-`docker compose up -d`\
-Ensure the containers are running by running:
-`docker ps`
+For all things related to how to use the system through the front end, go to the [Manual](../../wiki/Manual)
+
+For troubleshooting common issues and implementing solutions, refer to the [Known Limitations and Workarounds](../../wiki/Limitations)
+
+For a system that is already up and running that you want to make changes to, go to [Maintenance Suggestions](../../wiki/Maintenance)
