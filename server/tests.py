@@ -1,14 +1,14 @@
 """
 This contains all the tests for the server.
 """
-import models
 import pytest
-from app import app
 from flask.testing import FlaskClient
+import models
+from app import app
 
 
 @pytest.fixture
-def client():
+def fake_client():
     """
     This fixture creates a test client for the server.
     """
@@ -28,9 +28,9 @@ def reset_db():
     models.db.drop_all()
 
 
-def test_index(client: FlaskClient):
+def test_index(fake_client: FlaskClient):
     """
     Ensures the redirect to Google login works.
     """
-    response = client.get('/')
+    response = fake_client.get("/")
     assert response.status_code == 302  # Expecting a redirect to Google login
