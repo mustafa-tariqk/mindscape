@@ -46,6 +46,16 @@ class Messages(db.Model):  # pylint: disable=too-few-public-methods
     db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
 
 
+class WordWeights(db.Model):  # pylint: disable=too-few-public-methods
+    """
+    Word Weights Model
+    Represents the weights of common words in the used language. Meant for retrieval by certain analytics functions
+    """
+    __tablename__ = 'word_weights'
+    id = db.Column(db.Text, primary_key = True)
+    count = db.Column(db.Integer, nullable = False)
+
+
 def create_app():
     """
     Initializes the Flask app and database
