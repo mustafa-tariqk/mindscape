@@ -3,6 +3,7 @@ Models to be held in the database
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import csv
 
 db = SQLAlchemy()  # Database object
 
@@ -46,14 +47,27 @@ class Messages(db.Model):  # pylint: disable=too-few-public-methods
     db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
 
 
-class WordWeights(db.Model):  # pylint: disable=too-few-public-methods
+class Languages(db.Model):  # pylint: disable=too-few-public-methods
+    """
+    Languages Model
+    Contains supported languages and the corresponding metadata.
+    """
+    __tablename__ = 'languages'
+    id = db.Column(db.Text, primary_key = True) # the language name
+    sample_size = db.Column(db.Integer, nullable=False) # for weight calculations
+    mean_count = db.Column(db.Integer, nullable=False) # for words not in database
+
+
+class Words(db.Model):  # pylint: disable=too-few-public-methods
     """
     Word Weights Model
     Represents the weights of common words in the used language. Meant for retrieval by certain analytics functions
     """
-    __tablename__ = 'word_weights'
-    id = db.Column(db.Text, primary_key = True)
-    count = db.Column(db.Integer, nullable = False)
+    __tablename__ = 'words'
+    id = db.Column(db.Text, primary_key = True) # the word itself
+    language = db.Column(db.Text, db.ForeignKey('languages.id'), nullable = False)
+    count = db.Column(db.Integer, nullable = False) # frequency
+    db.ForeignKeyConstraint(['language'], ['languages.id'], ondelete='CASCADE') # dependency
 
 
 def create_app():
@@ -73,5 +87,27 @@ def create_app():
                          user_type="Administrator")
             db.session.add(admin)
             db.session.commit()
+
+        # seed language and word weight
+        language = User.query.filter_by(id="english").first()
+        if not language:
+            language = Languages(id="english", sample_size=0, mean=0)
+            db.session.add(language)
+            db.session.commit()
+
+        # multi-language support should start here
+        if not User.query.filter_by(language="english").first(): # maybe problematic if you want to update words
+            sample_size = 0
+            word_count = 0
+            with open('./data/english_freq.csv', newline='') as csvfile:
+                rows = csv.reader(csvfile, delimiter=' ', quotechar='|')
+                for word, count in rows:
+                    sample_size += count 
+                    word_count += 1
+                    word = Words(id=word, language=language.id, count=count)
+            
+            language.sample_size = sample_size
+            language.mean_count = sample_size // word_count
+
 
     return app

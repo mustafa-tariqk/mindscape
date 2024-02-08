@@ -9,7 +9,9 @@ from os import environ
 from dotenv import load_dotenv
 from flask import redirect, request, url_for
 from flask_dance.contrib.google import google, make_google_blueprint
+
 import models
+import utils
 from ai import ai_message
 
 load_dotenv()
@@ -179,11 +181,7 @@ def get_all_chats():
     """
     chat_dict = {}
     for chat in models.Chats.query.all():
-        messages = (
-            models.Messages.query.filter_by(chat=chat.id)
-            .order_by(models.Messages.time)
-            .all()
-        )
+        messages = utils.get_all_chat_messages(chat.id)
         chat_dict[chat.id] = [message.text for message in messages]
     return chat_dict
 
