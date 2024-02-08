@@ -89,20 +89,21 @@ def create_app():
             db.session.commit()
 
         # seed language and word weight
-        language = User.query.filter_by(id="english").first()
+        language = Languages.query.filter_by(id="english").first()
         if not language:
-            language = Languages(id="english", sample_size=0, mean=0)
+            language = Languages(id="english", sample_size=0, mean_count=0)
             db.session.add(language)
             db.session.commit()
 
         # multi-language support should start here
-        if not User.query.filter_by(language="english").first(): # maybe problematic if you want to update words
+        if not Words.query.filter_by(language="english").first(): # maybe problematic if you want to update words
             sample_size = 0
             word_count = 0
             with open('./data/english_freq.csv', newline='') as csvfile:
-                rows = csv.reader(csvfile, delimiter=' ', quotechar='|')
+                rows = csv.reader(csvfile, delimiter=',')
+                next(rows) # skip the column names
                 for word, count in rows:
-                    sample_size += count 
+                    sample_size += int(count) 
                     word_count += 1
                     word = Words(id=word, language=language.id, count=count)
             

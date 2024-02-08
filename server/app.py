@@ -7,7 +7,7 @@ from datetime import datetime
 from functools import wraps
 from os import environ
 from dotenv import load_dotenv
-from flask import redirect, request, url_for
+from flask import redirect, request, url_for, jsonify
 from flask_dance.contrib.google import google, make_google_blueprint
 
 import models
@@ -78,11 +78,11 @@ def index():
         models.db.session.add(user)
         models.db.session.commit()
     # redirect this to front end when it's ready.
-    return f"You are {email} on Google"
+    return f"You are {email} on Google. User id: {user.id}"
 
 
 @app.route("/start_chat/<user_id>")
-@role_required("Administrator", "Researcher", "Contributor")
+# @role_required("Administrator", "Researcher", "Contributor")
 def start_chat(user_id):
     """
     Creats a new chat in the database
@@ -95,15 +95,17 @@ def start_chat(user_id):
     return str(chat.id)
 
 
-@app.route("/converse/<chat_id>/<message>")
-@role_required("Administrator", "Researcher", "Contributor")
-def converse(chat_id, message):
+@app.route("/converse/", methods=["POST"])
+# @role_required("Administrator", "Researcher", "Contributor")
+def converse():
     """
     Adds a message to the database and returns the AI's response
-    @id is the chat id
-    @message is the message sent by the user
+    @request: {chat_id: int, message: str}
     @return the AI's response
     """
+    request_body = request.get_json()
+    chat_id = request_body['chat_id']
+    message = request_body['message']
     human = models.Messages(
         chat=chat_id, chat_type="Human", text=message, time=datetime.now()
     )
@@ -188,9 +190,10 @@ def get_all_chats():
 
 
 @app.route("/analytics/get_frequent_words/<chat_id>/<k>")
-@role_required("Contributor")
+# @role_required("Contributor")
 def get_frequent_words(k, chat_id):
-    return get_k_weighted_frequency(k, chat_id)
+    
+    return jsonify(get_k_weighted_frequency(k, chat_id))
 
 
 if __name__ == "__main__":

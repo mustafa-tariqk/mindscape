@@ -2,18 +2,21 @@
 This file contains the AI logic for the chatbot. It is responsible for 
 generating responses to user messages.
 """
+import torch
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import models
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-2", trust_remote_code=True)
 base_model = AutoModelForCausalLM.from_pretrained(
     "microsoft/phi-2", trust_remote_code=True
 )
 pipe = pipeline(
-    "text-generation", model=base_model, tokenizer=tokenizer, max_new_tokens=100
+    "text-generation", model=base_model, tokenizer=tokenizer, max_new_tokens=100, device=device
 )
 llm = HuggingFacePipeline(pipeline=pipe)
 
