@@ -12,6 +12,7 @@ from flask_dance.contrib.google import google, make_google_blueprint
 
 import models
 import utils
+from analytics.wordcloud import get_k_weighted_frequency
 from ai import ai_message
 
 load_dotenv()
@@ -184,6 +185,12 @@ def get_all_chats():
         messages = utils.get_all_chat_messages(chat.id)
         chat_dict[chat.id] = [message.text for message in messages]
     return chat_dict
+
+
+@app.route("/analytics/get_frequent_words/<chat_id>/<k>")
+@role_required("Contributor")
+def get_frequent_words(k, chat_id):
+    return get_k_weighted_frequency(k, chat_id)
 
 
 if __name__ == "__main__":
