@@ -82,7 +82,7 @@ def index():
 
 
 @app.route("/start_chat/<user_id>")
-# @role_required("Administrator", "Researcher", "Contributor")
+@role_required("Administrator", "Researcher", "Contributor")
 def start_chat(user_id):
     """
     Creats a new chat in the database
@@ -96,7 +96,7 @@ def start_chat(user_id):
 
 
 @app.route("/converse/", methods=["POST"])
-# @role_required("Administrator", "Researcher", "Contributor")
+@role_required("Administrator", "Researcher", "Contributor")
 def converse():
     """
     Adds a message to the database and returns the AI's response
@@ -189,10 +189,11 @@ def get_all_chats():
     return chat_dict
 
 
-@app.route("/analytics/get_frequent_words/<chat_id>/<k>")
-# @role_required("Contributor")
-def get_frequent_words(k, chat_id):
-    
+@app.route("/analytics/get_frequent_words/", methods=["GET"])
+@role_required("Contributor")
+def get_frequent_words():
+    chat_id = request.args.get("chat_id")
+    k = int(request.args.get("k"))
     return jsonify(get_k_weighted_frequency(k, chat_id))
 
 

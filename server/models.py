@@ -30,7 +30,10 @@ class Chats(db.Model):  # pylint: disable=too-few-public-methods
     id = db.Column(db.Integer, primary_key=True)
     user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     flag = db.Column(db.Boolean, nullable=False)
+    language = db.Column(db.Text, db.ForeignKey('languages.id'), nullable=False, default='english')
     db.ForeignKeyConstraint(['user'], ['users.id'], ondelete='CASCADE')
+    # should the chats be deleted if languages are not supported?
+    db.ForeignKeyConstraint(['language'], ['languages.id'], ondelete='CASCADE')
 
 
 class Messages(db.Model):  # pylint: disable=too-few-public-methods
@@ -54,8 +57,11 @@ class Languages(db.Model):  # pylint: disable=too-few-public-methods
     """
     __tablename__ = 'languages'
     id = db.Column(db.Text, primary_key = True) # the language name
-    sample_size = db.Column(db.Integer, nullable=False) # for weight calculations
-    mean_count = db.Column(db.Integer, nullable=False) # for words not in database
+    sample_size = db.Column(db.Integer, nullable=False, default=0) # for weight calculations
+    mean_count = db.Column(db.Integer, nullable=False, default=0) 
+    max_count = db.Column(db.Integer, nullable=False, default=0) # detect common words
+    min_count = db.Column(db.Integer, nullable=False, default=0) # for words that are not in the distribution
+    # standard_deviation = db.Column(db.Float, nullable=False, default=0) # for weight calculations
 
 
 class Words(db.Model):  # pylint: disable=too-few-public-methods
@@ -81,6 +87,13 @@ def create_app():
 
     with app.app_context():
         db.create_all()  # Create database and tables if they don't exist
+        # seed language
+        language = Languages.query.filter_by(id="english").first()
+        if not language:
+            language = Languages(id="english", sample_size=0, mean_count=0)
+            db.session.add(language)
+            db.session.commit()
+
         # make an admin user
         if not User.query.filter_by(email="neuma.mindscape@gmail.com").first():
             admin = User(email="neuma.mindscape@gmail.com",
@@ -88,7 +101,7 @@ def create_app():
             db.session.add(admin)
             db.session.commit()
 
-        # seed language and word weight
+        # seed words
         language = Languages.query.filter_by(id="english").first()
         if not language:
             language = Languages(id="english", sample_size=0, mean_count=0)
@@ -99,16 +112,30 @@ def create_app():
         if not Words.query.filter_by(language="english").first(): # maybe problematic if you want to update words
             sample_size = 0
             word_count = 0
+            max = 0
+            min = 100000000 # infinity would be nice
+
+            # Fill in word count and mean
             with open('./data/english_freq.csv', newline='') as csvfile:
                 rows = csv.reader(csvfile, delimiter=',')
                 next(rows) # skip the column names
                 for word, count in rows:
-                    sample_size += int(count) 
+                    count = int(count)
+                    if count > max:
+                        max = count
+                    if count < min:
+                        min = count
+
+                    sample_size += count
                     word_count += 1
                     word = Words(id=word, language=language.id, count=count)
+                    db.session.add(word)
             
             language.sample_size = sample_size
             language.mean_count = sample_size // word_count
+            language.max_count = max
+            language.min_count = min
+            db.session.commit()
 
 
     return app
