@@ -6,6 +6,13 @@ import utils
 import models
 
 def get_k_weighted_frequency(k, chat_id):
+    """
+    Return the top k frequently seen words from a Chat session.
+    Weights frequency based on established word distribution.
+    @k: number of words to return
+    @chat_id: id of chat session
+    @return: dictionary formatted as {word: word_frequency}
+    """
     word_frequency = {}
     chat_log = filter(
         lambda x: x.isalpha() or x == ' ', # ensure words are split properly
@@ -30,5 +37,5 @@ def get_k_weighted_frequency(k, chat_id):
 
     unique_words = word_frequency.keys()
     unique_words.sort(reverse=True, key=weighted_freq) # sort in descending order based on weighted frequency
-    return unique_words[0:k] # Return the top k
+    return {x : word_frequency[x] for x in unique_words[0:k]} # Return the top k
         
