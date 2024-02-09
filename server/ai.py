@@ -14,13 +14,16 @@ from models import Messages
 with open("data/template.txt", encoding="utf-8") as file:
     template = file.read()
 
-# Setup LLM
-load_dotenv()
-llm = OpenAI()
-prompt = PromptTemplate(
-    input_variables=["history", "input"],
-    template=template
-)
+try: # Setup LLM
+    load_dotenv()
+    llm = OpenAI()
+    prompt = PromptTemplate(
+        input_variables=["history", "input"],
+        template=template
+    )
+except Exception as e: # Setup dummy text for testing/if API keys missing
+    llm = None
+    prompt = None
 
 def ai_message(chat_id, human_message):
     """
@@ -28,6 +31,9 @@ def ai_message(chat_id, human_message):
     @message: the message to the AI
     @return: the response from the AI
     """
+    if llm is None or prompt is None:
+        return "API Keys not found."
+
     # Collect message history
     messages = Messages.query.filter_by(chat=chat_id).order_by(Messages.time).all()
 
