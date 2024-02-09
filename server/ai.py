@@ -1,4 +1,8 @@
+""" 
+This file contains the AI logic for the chatbot. 
+It is responsible for generating responses to user messages. 
 """
+<<<<<<< HEAD
 This file contains the AI logic for the chatbot. It is responsible for 
 generating responses to user messages.
 """
@@ -7,8 +11,17 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-import models
+=======
 
+>>>>>>> 51bd514 (added memory)
+import models
+from dotenv import load_dotenv
+from langchain.memory import ConversationKGMemory
+from langchain_openai import OpenAI
+from langchain.chains import ConversationChain
+from langchain.prompts.prompt import PromptTemplate
+
+<<<<<<< HEAD
 # Model too big for GPU
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -20,18 +33,24 @@ pipe = pipeline(
     "text-generation", model=base_model, tokenizer=tokenizer, max_new_tokens=100
 ) # Device to gpu if possible
 llm = HuggingFacePipeline(pipeline=pipe)
+=======
+load_dotenv()
+>>>>>>> 51bd514 (added memory)
 
+llm = OpenAI()
 
-TEMPLATE = """respond to the instruction below. behave like a chatbot
-and respond to the user. try to be helpful.
-### Instruction:
-{instruction}
-Answer:"""  # future: change this template to be more helpful
+template = """The following is a friendly conversation between a human and an AI. 
+The AI is talkative and provides lots of specific details from its context. 
+If the AI does not know the answer to a question, it truthfully says it does not know. 
+The AI ONLY uses information contained in the "Relevant Information" section and does not hallucinate. 
+Relevant Information: {history} 
+Conversation: Human: {input} 
+AI:"""
 
-prompt = PromptTemplate(template=TEMPLATE, input_variables=["instruction"])
-llm_chain = LLMChain(
-    prompt=prompt,
-    llm=llm,
+prompt = PromptTemplate(input_variables=["history", "input"], template=template)
+
+conversation = ConversationChain(
+    llm=llm, prompt=prompt, memory=ConversationKGMemory(llm=llm)
 )
 
 
@@ -41,7 +60,5 @@ def ai_message(chat_id, message):
     @message: the message to the AI
     @return: the response from the AI
     """
-    conversation = models.Chats.query.get(chat_id)
-    print(conversation)
-    # future: implement entire conversation into chain. very cool
-    return llm_chain.invoke(message)["text"]
+    session = models.Chats.query.get(chat_id)
+    return conversation.predict(message)
