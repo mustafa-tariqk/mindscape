@@ -6,4 +6,4 @@ For troubleshooting common issues and implementing solutions, refer to the [Know
 
 For a system that is already up and running that you want to make changes to, go to [Maintenance Suggestions](../../wiki/Maintenance)
 
-For code documentation, navigate to server/docs or client/docs and open the html files in your web browser of choice.
+For code documentation, navigate to `server/docs` or `client/docs` and open the html files in your web browser of choice.
