@@ -5,3 +5,5 @@ For all things related to how to use the system through the front end, go to the
 For troubleshooting common issues and implementing solutions, refer to the [Known Limitations and Workarounds](../../wiki/Limitations)
 
 For a system that is already up and running that you want to make changes to, go to [Maintenance Suggestions](../../wiki/Maintenance)
+
+For code documentation, navigate to server/docs or client/docs and open the html files in your web browser of choice.
