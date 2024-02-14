@@ -8,6 +8,7 @@ langchain
 torch
 einops
 pytest
+pytest-mock
 pylint
 autopep8
 isort

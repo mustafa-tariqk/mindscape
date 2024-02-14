@@ -8,20 +8,17 @@ import utils
 import models
 
 
-def get_k_weighted_frequency(k, chat_id):
+def get_k_weighted_frequency(k, chat_id, include_ai_messages:bool=True):
     """
     Return the top k frequently seen words from a Chat session.
     Weights frequency based on established word distribution.
     @k: number of words to return
     @chat_id: id of chat session
+    @include_ai_messages: defaults to true. whether to include meessages sent by the chatbot
     @return: dictionary formatted as {word: word_frequency}
     """
     word_frequency = {}
-    # Disgusting, but works
-    chat_log = ''.join(filter(
-        lambda x: x.isalpha() or x == ' ',  # ensure words are split properly
-        ' '.join([message.text for message in utils.get_all_chat_messages(chat_id)])
-    )).lower()
+    chat_log = utils.get_stringify_chat(chat_id, include_ai_messages)
     # Change this for multi-language
     language = 'english'
     sample_size = 0
