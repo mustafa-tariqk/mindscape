@@ -4,6 +4,7 @@ Models to be held in the database
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import csv
+import nltk
 
 db = SQLAlchemy()  # Database object
 
@@ -56,7 +57,8 @@ class Languages(db.Model):  # pylint: disable=too-few-public-methods
     Contains supported languages and the corresponding metadata.
     """
     __tablename__ = 'languages'
-    id = db.Column(db.Text, primary_key = True) # the language name
+    # the language name, use print(nltk.corpusstopwords.fileids()) to see what's available
+    id = db.Column(db.Text, primary_key = True) 
     sample_size = db.Column(db.Integer, nullable=False, default=0) # for weight calculations
     mean_count = db.Column(db.Integer, nullable=False, default=0) 
     max_count = db.Column(db.Integer, nullable=False, default=0) # detect common words
@@ -84,6 +86,10 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
     db.init_app(app)
+
+    nltk.download("stopwords") # Stopwords library
+    nltk.download("punkt") # Tokenizer
+    # print(nltk.corpus.stopwords.fileids()) # To show the available languages
 
     with app.app_context():
         db.create_all()  # Create database and tables if they don't exist
