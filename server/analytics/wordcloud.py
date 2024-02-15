@@ -40,7 +40,7 @@ def get_k_weighted_frequency(k, chat_id, include_ai_messages:bool=True):
             count_diff = language_data.max_count - word_data.count
 
         freq_diff = count_diff/language_data.sample_size
-        return (word_frequency[x])*(freq_diff)**3
+        return (freq_diff)
 
     # Debugging
     # def display(x):

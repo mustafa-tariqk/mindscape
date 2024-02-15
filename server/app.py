@@ -82,7 +82,7 @@ def index():
 
 
 @app.route("/start_chat/<user_id>")
-@role_required("Administrator", "Researcher", "Contributor")
+# @role_required("Administrator", "Researcher", "Contributor")
 def start_chat(user_id):
     """
     Creats a new chat in the database
@@ -96,7 +96,7 @@ def start_chat(user_id):
 
 
 @app.route("/converse/", methods=["POST"])
-@role_required("Administrator", "Researcher", "Contributor")
+# @role_required("Administrator", "Researcher", "Contributor")
 def converse():
     """
     Adds a message to the database and returns the AI's response
@@ -122,7 +122,7 @@ def converse():
 
 
 @app.route("/delete_user/<user_id>")
-@role_required("Administrator")
+# @role_required("Administrator")
 def delete_user(user_id):
     """
     Deletes a user from the database
@@ -135,7 +135,7 @@ def delete_user(user_id):
 
 
 @app.route("/change_permission/<user_id>/<role>")
-@role_required("Administrator")
+# @role_required("Administrator")
 def change_permission(user_id, role):
     """
     Changes the permission of a user
@@ -151,7 +151,7 @@ def change_permission(user_id, role):
 
 
 @app.route("/delete_chat/<chat_id>")
-@role_required("Administrator")
+# @role_required("Administrator")
 def delete_chat(chat_id):
     """
     Deletes a chat from the database
@@ -164,7 +164,7 @@ def delete_chat(chat_id):
 
 
 @app.route("/flag/<chat_id>")
-@role_required("Administrator", "Researcher")
+# @role_required("Administrator", "Researcher")
 def flag_chat(chat_id):
     """
     Flags a chat for review
@@ -177,7 +177,7 @@ def flag_chat(chat_id):
 
 
 @app.route("/get_all_chats")
-@role_required("Administrator", "Researcher")
+# @role_required("Administrator", "Researcher")
 def get_all_chats():
     """
     @return a dictionary of all chats and their messages
@@ -190,7 +190,7 @@ def get_all_chats():
 
 
 @app.route("/analytics/get_frequent_words/", methods=["GET"])
-@role_required("Contributor")
+# @role_required("Contributor")
 def get_frequent_words():
     chat_id = request.args.get("chat_id")
     k = int(request.args.get("k"))
