@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationKGMemory, ChatMessageHistory
 from langchain.prompts.prompt import PromptTemplate
-from langchain_openai import OpenAI
+from langchain_openai import OpenAI, OpenAIEmbeddings
 
 from models import Messages
 
@@ -17,6 +17,7 @@ with open("data/template.txt", encoding="utf-8") as file:
 try: # Setup LLM
     load_dotenv()
     llm = OpenAI()
+    llm_embedder = OpenAIEmbeddings()
     prompt = PromptTemplate(
         input_variables=["history", "input"],
         template=template

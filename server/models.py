@@ -3,10 +3,15 @@ Models to be held in the database
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from langchain_community.vectorstores import faiss # vectorestore
 import csv
 import nltk
 
+from analytics.experience import create_vectorstore
+from utils import get_all_chat_messages
+
 db = SQLAlchemy()  # Database object
+vectorstore = faiss() # Vectorstore
 
 
 class User(db.Model):  # pylint: disable=too-few-public-methods
@@ -78,6 +83,17 @@ class Words(db.Model):  # pylint: disable=too-few-public-methods
     db.ForeignKeyConstraint(['language'], ['languages.id'], ondelete='CASCADE') # dependency
 
 
+class Experience(db.Model):
+    """
+    Experience Tag Model
+    Represents the different experience clusters.
+    """
+    __tablename__ = 'experiences'
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.Text, nullable = False) # Name of the experience in English (default language)
+    submission_count = db.Column(db.Integer, nullable = False, default = 0) # how many in cluster
+
+
 def create_app():
     """
     Initializes the Flask app and database
@@ -143,5 +159,6 @@ def create_app():
             language.min_count = min
             db.session.commit()
 
+    create_vectorstore(get_all_chat_messages())
 
     return app

@@ -12,13 +12,16 @@ def get_chat_language(chat_id):
     """
     return models.Chats.query.get(chat_id).language
 
-def get_all_chat_messages(chat_id):
+def get_all_chat_messages(chat_id=None):
     """
     Does exactly as the name implies
-    @chat_id: the id of the chat
+    @chat_id: the id of the chat. Defaults to None. If not provided, get all messages.
     @return: A list of messages from the requested chat
     """
-    return models.Messages.query.filter_by(chat=chat_id).order_by(models.Messages.time).all()
+    if not chat_id:
+        return models.Messages.query.order_by(models.Messages.time).all()
+    else:
+        return models.Messages.query.filter_by(chat=chat_id).order_by(models.Messages.time).all()
 
 def get_stringify_chat(chat_id, exclude_ai_messages:bool=False, prune_stop_words:bool=False, lowercase: bool=False):
     """

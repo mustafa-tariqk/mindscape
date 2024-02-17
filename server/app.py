@@ -13,6 +13,7 @@ from flask_dance.contrib.google import google, make_google_blueprint
 import models
 import utils
 from analytics.wordcloud import get_k_weighted_frequency
+from analytics.experience import create_vectorstore
 from ai import ai_message
 
 load_dotenv()
