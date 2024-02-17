@@ -13,7 +13,7 @@ from flask_dance.contrib.google import google, make_google_blueprint
 import models
 import utils
 from analytics.wordcloud import get_k_weighted_frequency
-from analytics.experience import create_vectorstore
+from server.analytics.vstore_handler import create_vectorstores, cluster_new_message, new_experience
 from ai import ai_message
 
 load_dotenv()
@@ -33,6 +33,8 @@ app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
 
+# Initialize vectorstores
+message_vstore, exp_vstore = create_vectorstores(utils.get_all_chat_messages(), utils.get_all_experiences())
 
 # decorator to check user type
 def role_required(*roles):
@@ -119,6 +121,12 @@ def converse():
     models.db.session.add(human)
     models.db.session.add(ai)
     models.db.session.commit()
+
+    # vectorstore shenanigans
+    message, new = cluster_new_message(human, message_vstore, exp_vstore, 100) # Arbitrary threshold for now
+    if new: # new cluster
+        exp = models.Experiences() # TODO: prompt the model to name the experience
+
     return ai_text
 
 

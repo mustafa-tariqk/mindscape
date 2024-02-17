@@ -7,7 +7,7 @@ from langchain_community.vectorstores import faiss # vectorestore
 import csv
 import nltk
 
-from analytics.experience import create_vectorstore
+from server.analytics.vstore_handler import create_vectorstores
 from utils import get_all_chat_messages
 
 db = SQLAlchemy()  # Database object
@@ -53,7 +53,9 @@ class Messages(db.Model):  # pylint: disable=too-few-public-methods
     chat_type = db.Column(db.Enum('Human', 'AI'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
+    experience = db.Column(db.Integer, db.ForeignKey('experiences.id'), nullable=True) # flagged submissions will have null here
     db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
+    db.ForeignKeyConstraint(['experience'], ['experiences.id'], ondelete='NULL') # primed for reclustering
 
 
 class Languages(db.Model):  # pylint: disable=too-few-public-methods
@@ -83,14 +85,15 @@ class Words(db.Model):  # pylint: disable=too-few-public-methods
     db.ForeignKeyConstraint(['language'], ['languages.id'], ondelete='CASCADE') # dependency
 
 
-class Experience(db.Model):
+class Experiences(db.Model): # pylint: disable=too-few-public-methods
     """
     Experience Tag Model
     Represents the different experience clusters.
     """
     __tablename__ = 'experiences'
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.Text, nullable = False) # Name of the experience in English (default language)
+    name = db.Column(db.Text, nullable = False) # name of the experience in English (default language)
+    centroid_id = db.Column(db.Text, nullable = False) # the centroid id in vectorstore
     submission_count = db.Column(db.Integer, nullable = False, default = 0) # how many in cluster
 
 
@@ -158,7 +161,5 @@ def create_app():
             language.max_count = max
             language.min_count = min
             db.session.commit()
-
-    create_vectorstore(get_all_chat_messages())
 
     return app

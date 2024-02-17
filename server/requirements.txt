@@ -13,5 +13,8 @@ pylint
 autopep8
 isort
 python-dotenv
-langchain_openai
+langchain-openai
+langchain-community
 nltk
+faiss-cpu
+tiktoken

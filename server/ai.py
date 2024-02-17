@@ -3,6 +3,7 @@ This file contains the AI logic for the chatbot.
 It is responsible for generating responses to user messages. 
 """
 from dotenv import load_dotenv
+from langchain_core.documents import Document
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationKGMemory, ChatMessageHistory
 from langchain.prompts.prompt import PromptTemplate
@@ -52,3 +53,11 @@ def ai_message(chat_id, human_message):
         prompt=prompt,
         memory=ConversationKGMemory(llm=llm, chat_memory=chat_memory)
     ).predict(human_message)
+
+def get_common_experience(documents: list[Document]) -> str:
+    """
+    From a list of messages that should contain common experiences, find the commonality between them.
+    @documents: list of messages as Document
+    @return: AI response
+    """
+    # TODO: make a prompt template
