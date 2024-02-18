@@ -17,6 +17,7 @@ def get_messages_as_documents(messages: list) -> list[Document]:
     return [Document(text=message.text, metadata={ # the text is pretty arbitrary
         "message_id": message.id, # for clustering
         "chat_id": message.chat, # mostly to figure out whether messages are from the same chat
+        "centroid-replacement": message.centroid,
     }) for message in messages]
 
 def create_vectorstores(messages: list, experiences: list=[]):
@@ -84,7 +85,13 @@ def cluster_new_message(message, message_vstore: FAISS, exp_vstore: FAISS, simil
 
     if similarity_score <= similarity_threshold: # inside this cluster
         # TODO: implement online k-means
-        message.experience = closest_exp_doc.page_content
+        # TODO: cleanup centroid messages
+        exp_id = int(closest_exp_doc.page_content)
+        experience = utils.get_experience(exp_id)
+        centroid_message = utils.get_message(experience.centroid)
+        centroid_embeddings = exp_vstore.embeddings.embed_query(centroid_message.text)
+
+        message.experience = exp_id
         return message, False
     else: # new cluster
         return message, True # message experience will be set by the sql handler

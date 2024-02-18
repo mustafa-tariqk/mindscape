@@ -12,6 +12,14 @@ def get_chat_language(chat_id):
     """
     return models.Chats.query.get(chat_id).language
 
+def get_experience(exp_id):
+    """
+    Get the experience database object
+    @exp_id: the id of the experience
+    @return: the associated database object
+    """
+    return models.Experiences.query.get(exp_id)
+
 def get_message(message_id):
     """
     Get the message database object

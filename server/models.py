@@ -53,7 +53,9 @@ class Messages(db.Model):  # pylint: disable=too-few-public-methods
     chat_type = db.Column(db.Enum('Human', 'AI'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
+    embedding = db.Column(db.Text, nullable=True) # contains the id of the corresponding doc in vectorstore
     experience = db.Column(db.Integer, db.ForeignKey('experiences.id'), nullable=True) # flagged submissions will have null here
+    centroid = db.Column(db.Boolean, nullable = False, default=False) # if this message is a centroid replacement
     db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
     db.ForeignKeyConstraint(['experience'], ['experiences.id'], ondelete='NULL') # primed for reclustering
 
@@ -93,8 +95,9 @@ class Experiences(db.Model): # pylint: disable=too-few-public-methods
     __tablename__ = 'experiences'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.Text, nullable = False) # name of the experience in English (default language)
-    centroid_id = db.Column(db.Text, nullable = False) # the centroid id in vectorstore
-    submission_count = db.Column(db.Integer, nullable = False, default = 0) # how many in cluster
+    centroid = db.Column(db.Integer, db.ForeignKey('messages.id'), nullable = False) # the centroid id in vectorstore
+    count = db.Column(db.Integer, nullable = False, default = 1) # how many in cluster
+    db.ForeignKeyConstraint(['centroid'], ['messages.id'], ondelete='CASCADE') # dependency
 
 
 def create_app():

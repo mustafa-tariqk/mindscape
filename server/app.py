@@ -126,6 +126,11 @@ def converse():
     message, new = cluster_new_message(human, message_vstore, exp_vstore, 100) # Arbitrary threshold for now
     if new: # new cluster
         exp = models.Experiences() # TODO: prompt the model to name the experience
+    else: # increment cluster count
+        exp = models.Experiences.query.get(message.experience)
+        exp.count += 1
+
+    models.db.session.commit()
 
     return ai_text
 
