@@ -78,7 +78,7 @@ def index():
         models.db.session.add(user)
         models.db.session.commit()
     # redirect this to front end when it's ready.
-    return f"You are {email} on Google. User id: {user.id}"
+    return {"email": email, "user_id": user.id}
 
 
 @app.route("/start_chat/<user_id>")
@@ -92,7 +92,7 @@ def start_chat(user_id):
     chat = models.Chats(user=user_id, flag=False)
     models.db.session.add(chat)
     models.db.session.commit()
-    return str(chat.id)
+    return {"chat_id": chat.id}
 
 
 @app.route("/converse/", methods=["POST"])
@@ -118,7 +118,7 @@ def converse():
     models.db.session.add(human)
     models.db.session.add(ai)
     models.db.session.commit()
-    return ai_text
+    return {"ai_response": ai_text}
 
 
 @app.route("/delete_user/<user_id>")
@@ -131,7 +131,7 @@ def delete_user(user_id):
     user = models.User.query.get(user_id)
     models.db.session.delete(user)
     models.db.session.commit()
-    return "User deleted"
+    return {"user_id": user.id, "status": "deleted" }
 
 
 @app.route("/change_permission/<user_id>/<role>")
@@ -147,7 +147,7 @@ def change_permission(user_id, role):
     user = models.User.query.get(user_id)
     user.user_type = role
     models.db.session.commit()
-    return "User permission changed to " + role
+    return {"user_id": user.id, "role": user.user_type}
 
 
 @app.route("/delete_chat/<chat_id>")
@@ -160,7 +160,7 @@ def delete_chat(chat_id):
     chat = models.Chats.query.get(chat_id)
     models.db.session.delete(chat)
     models.db.session.commit()
-    return "Chat deleted"
+    return {"chat_id": chat.id, "status": "deleted"}
 
 
 @app.route("/flag/<chat_id>")
@@ -173,7 +173,7 @@ def flag_chat(chat_id):
     chat = models.Chats.query.get(chat_id)
     chat.flag = True
     models.db.session.commit()
-    return "Chat flagged"
+    return {"chat_id": chat.id, "status": "flagged"}
 
 
 @app.route("/get_all_chats")
@@ -192,6 +192,9 @@ def get_all_chats():
 @app.route("/analytics/get_frequent_words/", methods=["GET"])
 @role_required("Contributor")
 def get_frequent_words():
+    """
+    @return a dictionary of the most frequent words in the chat
+    """
     chat_id = request.args.get("chat_id")
     k = int(request.args.get("k"))
     return jsonify(get_k_weighted_frequency(k, chat_id))
