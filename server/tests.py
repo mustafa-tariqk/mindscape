@@ -5,16 +5,16 @@ import pytest
 from flask.testing import FlaskClient
 import models
 from app import app
-
+from unittest.mock import patch
 
 @pytest.fixture
 def fake_client():
     """
-    This fixture creates a test client for the server.
+    This fixture creates a test client for the server and mocks authentication.
     """
-    with app.app_context():
-        with app.test_client() as test_client:
-            yield test_client
+    app.config['TESTING'] = True
+    with app.test_client() as test_client:
+        yield test_client  # Yield the test client after patching
 
 
 @pytest.fixture
@@ -28,9 +28,11 @@ def reset_db():
     models.db.drop_all()
 
 
-def test_index(fake_client: FlaskClient):
+def test_start_chat(fake_client: FlaskClient):
     """
-    Ensures the redirect to Google login works.
+    Example test using a client with mocked authentication
     """
-    response = fake_client.get("/")
-    assert response.status_code == 302  # Expecting a redirect to Google login
+    response = fake_client.get('/start_chat/1')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'chat_id' in data

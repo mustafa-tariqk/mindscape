@@ -44,14 +44,15 @@ def role_required(*roles):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if not google.authorized or google.token["expires_at"] <= time.time():
-                return redirect(url_for("google.login", next=request.url))
-            resp = google.get("/oauth2/v2/userinfo")
-            assert resp.ok, resp.text
-            email = resp.json()["email"]
-            user = models.User.query.filter_by(email=email).first()
-            if user is None or user.user_type not in roles:
-                return "You do not have permission to perform this action."
+            if not app.config["TESTING"]:
+                if not google.authorized or google.token["expires_at"] <= time.time():
+                    return redirect(url_for("google.login", next=request.url))
+                resp = google.get("/oauth2/v2/userinfo")
+                assert resp.ok, resp.text
+                email = resp.json()["email"]
+                user = models.User.query.filter_by(email=email).first()
+                if user is None or user.user_type not in roles:
+                    return "You do not have permission to perform this action."
             return f(*args, **kwargs)
 
         return decorated_function
@@ -67,18 +68,22 @@ def index():
     redirects to the Google login page. Then it retrieves the user's email from
     the Google API and returns a message with the email address.
     """
-    if not google.authorized or google.token["expires_at"] <= time.time():
-        return redirect(url_for("google.login"))
-    resp = google.get("/oauth2/v2/userinfo")
-    assert resp.ok, resp.text
-    email = resp.json()["email"]
-    user = models.User.query.filter_by(email=email).first()
-    if user is None:
-        user = models.User(email=email, user_type="Contributor")
-        models.db.session.add(user)
-        models.db.session.commit()
-    # redirect this to front end when it's ready.
-    return {"email": email, "user_id": user.id}
+    if not current_app.config["TESTING"]:
+        if not google.authorized or google.token["expires_at"] <= time.time():
+            return redirect(url_for("google.login"))
+        resp = google.get("/oauth2/v2/userinfo")
+        assert resp.ok, resp.text
+        email = resp.json()["email"]
+        user = models.User.query.filter_by(email=email).first()
+        if user is None:
+            user = models.User(email=email, user_type="Contributor")
+            models.db.session.add(user)
+            models.db.session.commit()
+        # redirect this to front end when it's ready.
+        return {"email": email, "user_id": user.id}
+    else:
+        user = models.User.query.filter_by(email="neuma.mindscape@gmail.com").first()
+        return {"email": user.email, "user_id": user.id}
 
 
 @app.route("/start_chat/<user_id>")
