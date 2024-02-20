@@ -23,10 +23,16 @@ jobs:
             cd mindscape
             touch iwashere.txt
             rm -rf .env
-            secrets=("CLIENT_PORT" "SERVER_PORT" "GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET" "FLASK_SECRET_KEY" "AUTHLIB_INSECURE_TRANSPORT" "OPENAI_KEY" "OPENAI_ORGANIZATION")
-            for secret_name in "${secrets[@]}"; do
-              echo "$secret_name=${{ secrets[$secret_name] }}" >> .env
-            done
+
+            echo "CLIENT_PORT=${{ secrets.CLIENT_PORT }}">> .env
+            echo "SERVER_PORT=${{ secrets.SERVER_PORT }}">> .env
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}">> .env
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}">> .env
+            echo "FLASK_SECRET_KEY=${{ secrets.FLASK_SECRET_KEY }}">> .env
+            echo "AUTHLIB_INSECURE_TRANSPORT=${{ secrets.AUTHLIB_INSECURE_TRANSPORT }}">> .env
+            echo "OPENAI_KEY=${{ secrets.OPENAI_KEY }}">> .env
+            echo "OPENAI_ORGANIZATION=${{ secrets.OPENAI_ORGANIZATION }}">> .env
+
             git pull origin main
             docker compose build
             docker compose up -d
