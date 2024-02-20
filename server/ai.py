@@ -10,7 +10,7 @@ from langchain_openai import OpenAI
 
 from models import Messages
 
-# Load in template
+# Load in the template
 with open("data/template.txt", encoding="utf-8") as file:
     template = file.read()
 
