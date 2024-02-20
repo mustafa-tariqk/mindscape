@@ -17,8 +17,6 @@ from ai import ai_message
 
 load_dotenv()
 
-app.config["TESTING"] # I'm doing this in a pinch. 
-
 blueprint = make_google_blueprint(
     client_id=environ.get("GOOGLE_CLIENT_ID"),
     client_secret=environ.get("GOOGLE_CLIENT_SECRET"),
