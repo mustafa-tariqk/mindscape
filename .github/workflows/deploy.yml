@@ -21,6 +21,7 @@ jobs:
           password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
           script: |
             cd mindscape
+            touch iwashere.txt
             git pull origin main
             docker-compose build
             docker-compose up -d
