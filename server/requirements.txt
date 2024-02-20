@@ -3,13 +3,8 @@ Flask-SQLAlchemy
 Flask-Dance[sqla] 
 flask-dance[google]
 flask_login
-transformers
 langchain
-torch
-einops
+langchain-openai
+python-dotenv
 pytest
 pylint
-autopep8
-isort
-python-dotenv
-langchain-openai
