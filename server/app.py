@@ -68,7 +68,7 @@ def index():
     redirects to the Google login page. Then it retrieves the user's email from
     the Google API and returns a message with the email address.
     """
-    if not current_app.config["TESTING"]:
+    if not app.config["TESTING"]:
         if not google.authorized or google.token["expires_at"] <= time.time():
             return redirect(url_for("google.login"))
         resp = google.get("/oauth2/v2/userinfo")
