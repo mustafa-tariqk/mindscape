@@ -87,7 +87,7 @@ def index():
 
 
 @app.route("/start_chat/<user_id>")
-@role_required("Administrator", "Researrher", "Contributor")
+@role_required("Administrator", "Researcher", "Contributor")
 def start_chat(user_id):
     """
     Creats a new chat in the database
