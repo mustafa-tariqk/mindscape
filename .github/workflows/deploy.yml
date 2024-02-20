@@ -22,6 +22,11 @@ jobs:
           script: |
             cd mindscape
             touch iwashere.txt
+            rm -rf .env
+            secrets=("CLIENT_PORT" "SERVER_PORT" "GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET" "FLASK_SECRET_KEY" "AUTHLIB_INSECURE_TRANSPORT" "OPENAI_KEY" "OPENAI_ORGANIZATION")
+            for secret_name in "${secrets[@]}"; do
+              echo "$secret_name=${{ secrets[$secret_name] }}" >> .env
+            done
             git pull origin main
-            docker-compose build
-            docker-compose up -d
+            docker compose build
+            docker compose up -d
