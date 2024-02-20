@@ -21,7 +21,6 @@ jobs:
           password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
           script: |
             cd mindscape
-            touch iwashere.txt
             rm -rf .env
 
             echo "CLIENT_PORT=${{ secrets.CLIENT_PORT }}">> .env
@@ -36,4 +35,3 @@ jobs:
             git pull origin main
             docker compose build
             docker compose up -d
-
