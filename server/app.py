@@ -31,7 +31,8 @@ blueprint = make_google_blueprint(
 app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
-
+# uncomment line below to skip auth
+# app.config["TESTING"] = True
 
 # decorator to check user type
 def role_required(*roles):
@@ -206,4 +207,4 @@ def get_frequent_words():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, ssl_context=('cert.pem', 'key.pem'))
+    app.run(debug=True)#, ssl_context=('cert.pem', 'key.pem')
