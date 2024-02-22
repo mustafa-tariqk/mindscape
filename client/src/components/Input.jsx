@@ -22,8 +22,8 @@ function Input(props) {
             <input 
                 value={currMessage} 
                 onInput={e => {setCurrMessage(e.target.value)}} 
-                onInputCapture={ e => {
-                    if (e.key === "Enter" && currMessage.length > 0) {
+                onKeyDown={ e => {
+                    if (e.code === "Enter" && currMessage.length > 0) {
                         handleSendMessage()
                     }
                 }}
