@@ -1,3 +1,4 @@
+// Desc: Search component for searching users
 import React from "react"
 import Arvin from "../img/Arvin Head.png"
 

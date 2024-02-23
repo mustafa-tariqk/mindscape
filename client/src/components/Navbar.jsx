@@ -1,3 +1,4 @@
+// Desc: Navbar component for the chat app
 import React from "react"
 import Image from "../img/2.25+ KD Club logo.png"
 

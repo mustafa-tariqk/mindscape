@@ -1,3 +1,4 @@
+// Desc: Chats component for the chat section of the dashboard
 import React from "react"
 import Arvin from "../img/Arvin Head.png"
 
