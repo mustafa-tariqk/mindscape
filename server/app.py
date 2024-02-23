@@ -9,6 +9,7 @@ from os import environ
 from dotenv import load_dotenv
 from flask import redirect, request, url_for, jsonify
 from flask_dance.contrib.google import google, make_google_blueprint
+from flask_cors import CORS
 
 import models
 import utils
@@ -32,7 +33,12 @@ app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
 # uncomment line below to skip auth
+<<<<<<< ours
 app.config["TESTING"] = True
+=======
+# app.config["TESTING"] = True
+CORS(app)
+>>>>>>> theirs
 
 # decorator to check user type
 def role_required(*roles):
