@@ -9,6 +9,7 @@ from os import environ
 from dotenv import load_dotenv
 from flask import redirect, request, url_for, jsonify
 from flask_dance.contrib.google import google, make_google_blueprint
+from flask_cors import CORS
 
 import models
 import utils
@@ -33,8 +34,13 @@ app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
 
+# uncomment line below to skip auth
+# app.config["TESTING"] = True
+CORS(app)
+
 # Initialize vectorstores
 message_vstore, exp_vstore = create_vectorstores(utils.get_all_chat_messages(), utils.get_all_experiences())
+
 
 # decorator to check user type
 def role_required(*roles):
@@ -47,14 +53,15 @@ def role_required(*roles):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if not google.authorized or google.token["expires_at"] <= time.time():
-                return redirect(url_for("google.login", next=request.url))
-            resp = google.get("/oauth2/v2/userinfo")
-            assert resp.ok, resp.text
-            email = resp.json()["email"]
-            user = models.User.query.filter_by(email=email).first()
-            if user is None or user.user_type not in roles:
-                return "You do not have permission to perform this action."
+            if not app.config["TESTING"]:
+                if not google.authorized or google.token["expires_at"] <= time.time():
+                    return redirect(url_for("google.login", next=request.url))
+                resp = google.get("/oauth2/v2/userinfo")
+                assert resp.ok, resp.text
+                email = resp.json()["email"]
+                user = models.User.query.filter_by(email=email).first()
+                if user is None or user.user_type not in roles:
+                    return "You do not have permission to perform this action."
             return f(*args, **kwargs)
 
         return decorated_function
@@ -70,18 +77,22 @@ def index():
     redirects to the Google login page. Then it retrieves the user's email from
     the Google API and returns a message with the email address.
     """
-    if not google.authorized or google.token["expires_at"] <= time.time():
-        return redirect(url_for("google.login"))
-    resp = google.get("/oauth2/v2/userinfo")
-    assert resp.ok, resp.text
-    email = resp.json()["email"]
-    user = models.User.query.filter_by(email=email).first()
-    if user is None:
-        user = models.User(email=email, user_type="Contributor")
-        models.db.session.add(user)
-        models.db.session.commit()
-    # redirect this to front end when it's ready.
-    return f"You are {email} on Google. User id: {user.id}"
+    if not app.config["TESTING"]:
+        if not google.authorized or google.token["expires_at"] <= time.time():
+            return redirect(url_for("google.login"))
+        resp = google.get("/oauth2/v2/userinfo")
+        assert resp.ok, resp.text
+        email = resp.json()["email"]
+        user = models.User.query.filter_by(email=email).first()
+        if user is None:
+            user = models.User(email=email, user_type="Contributor")
+            models.db.session.add(user)
+            models.db.session.commit()
+        # redirect this to front end when it's ready.
+        return {"email": email, "user_id": user.id}
+    else:
+        user = models.User.query.filter_by(email="neuma.mindscape@gmail.com").first()
+        return {"email": user.email, "user_id": user.id}
 
 
 @app.route("/start_chat/<user_id>")
@@ -95,7 +106,7 @@ def start_chat(user_id):
     chat = models.Chats(user=user_id, flag=False)
     models.db.session.add(chat)
     models.db.session.commit()
-    return str(chat.id)
+    return {"chat_id": chat.id}
 
 
 @app.route("/converse/", methods=["POST"])
@@ -132,7 +143,7 @@ def converse():
 
     models.db.session.commit()
 
-    return ai_text
+    return {"ai_response": ai_text}
 
 
 @app.route("/delete_user/<user_id>")
@@ -145,7 +156,7 @@ def delete_user(user_id):
     user = models.User.query.get(user_id)
     models.db.session.delete(user)
     models.db.session.commit()
-    return "User deleted"
+    return {"user_id": user.id, "status": "deleted" }
 
 
 @app.route("/change_permission/<user_id>/<role>")
@@ -161,7 +172,7 @@ def change_permission(user_id, role):
     user = models.User.query.get(user_id)
     user.user_type = role
     models.db.session.commit()
-    return "User permission changed to " + role
+    return {"user_id": user.id, "role": user.user_type}
 
 
 @app.route("/delete_chat/<chat_id>")
@@ -174,7 +185,7 @@ def delete_chat(chat_id):
     chat = models.Chats.query.get(chat_id)
     models.db.session.delete(chat)
     models.db.session.commit()
-    return "Chat deleted"
+    return {"chat_id": chat.id, "status": "deleted"}
 
 
 @app.route("/flag/<chat_id>")
@@ -187,7 +198,7 @@ def flag_chat(chat_id):
     chat = models.Chats.query.get(chat_id)
     chat.flag = True
     models.db.session.commit()
-    return "Chat flagged"
+    return {"chat_id": chat.id, "status": "flagged"}
 
 
 @app.route("/get_all_chats")
@@ -206,10 +217,13 @@ def get_all_chats():
 @app.route("/analytics/get_frequent_words/", methods=["GET"])
 # @role_required("Contributor")
 def get_frequent_words():
+    """
+    @return a dictionary of the most frequent words in the chat
+    """
     chat_id = request.args.get("chat_id")
     k = int(request.args.get("k"))
     return jsonify(get_k_weighted_frequency(k, chat_id))
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)#, ssl_context=('cert.pem', 'key.pem')

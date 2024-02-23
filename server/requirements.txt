@@ -2,19 +2,15 @@ Flask
 Flask-SQLAlchemy
 Flask-Dance[sqla] 
 flask-dance[google]
+flask-cors
 flask_login
-transformers
 langchain
-torch
-einops
+langchain-openai
+python-dotenv
 pytest
 pytest-mock
 pylint
-autopep8
-isort
-python-dotenv
-langchain-openai
 langchain-community
 nltk
-faiss-cpu
+faiss-cpu # change to gpu if available?
 tiktoken
