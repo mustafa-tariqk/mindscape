@@ -14,8 +14,8 @@ from flask_cors import CORS
 import models
 import utils
 from analytics.wordcloud import get_k_weighted_frequency
-from server.analytics.vstore_handler import create_vectorstores, cluster_new_message, new_experience
-from ai import ai_message
+from analytics.vstore_handler import create_vectorstores, cluster_new_message, new_experience
+from ai import ai_message, llm_embedder
 
 load_dotenv()
 
@@ -39,7 +39,8 @@ app.register_blueprint(blueprint, url_prefix="/login")
 CORS(app)
 
 # Initialize vectorstores
-message_vstore, exp_vstore = create_vectorstores(utils.get_all_chat_messages(), utils.get_all_experiences())
+with app.app_context():
+    message_vstore, exp_vstore = create_vectorstores(utils.get_all_chat_messages(), llm_embedder, utils.get_all_experiences())
 
 
 # decorator to check user type

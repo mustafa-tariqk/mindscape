@@ -5,7 +5,9 @@ Also handles vectorstores.
 from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
 
-from ai import llm_embedder
+# typing
+from langchain_core.embeddings import Embeddings
+
 import utils
 
 def get_messages_as_documents(messages: list) -> list[Document]:
@@ -20,7 +22,7 @@ def get_messages_as_documents(messages: list) -> list[Document]:
         "centroid-replacement": message.centroid,
     }) for message in messages]
 
-def create_vectorstores(messages: list, experiences: list=[]):
+def create_vectorstores(messages: list, llm_embedder:Embeddings, experiences: list=[]):
     """
     Load the message vectorstore with messages and the experience vectorstore with experience.
     Must be done after database is initialized.
@@ -28,8 +30,10 @@ def create_vectorstores(messages: list, experiences: list=[]):
     @experiences: the list of experiences db objects. Defaults to empty (brand new)
     @return 
     """
+    docs = get_messages_as_documents(messages)
+
     message_vectorstore = FAISS.from_documents(
-        get_messages_as_documents(messages), llm_embedder
+        docs , llm_embedder
     )
 
     # Set up experiences for embedding
@@ -38,7 +42,7 @@ def create_vectorstores(messages: list, experiences: list=[]):
     exp_vectorstore = FAISS.from_embeddings(id_embedding_tuple, llm_embedder)
     return message_vectorstore, exp_vectorstore
 
-def get_k_nearest(query, vectorstore, k) -> list[tuple(Document, float)]:
+def get_k_nearest(query, vectorstore, k) -> list[tuple[Document, float]]:
     """
     Query the k nearest documents to the embedding vector. Theoretically, messages that are similar will be clustered together.
 
@@ -50,7 +54,7 @@ def get_k_nearest(query, vectorstore, k) -> list[tuple(Document, float)]:
     results = vectorstore.similarity_search_with_score(query, k)
     return results
 
-def get_k_nearest_by_vector(embedding_vector, vectorstore, k) -> list[tuple(Document, float)]:
+def get_k_nearest_by_vector(embedding_vector, vectorstore, k) -> list[tuple[Document, float]]:
     """
     Query the k nearest documents to the embedding vector. Theoretically, messages that are similar will be clustered together.
 

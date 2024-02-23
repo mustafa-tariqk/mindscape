@@ -3,15 +3,10 @@ Models to be held in the database
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from langchain_community.vectorstores import faiss # vectorestore
 import csv
 import nltk
 
-from server.analytics.vstore_handler import create_vectorstores
-from utils import get_all_chat_messages
-
 db = SQLAlchemy()  # Database object
-vectorstore = faiss() # Vectorstore
 
 
 class User(db.Model):  # pylint: disable=too-few-public-methods
@@ -53,7 +48,7 @@ class Messages(db.Model):  # pylint: disable=too-few-public-methods
     chat_type = db.Column(db.Enum('Human', 'AI'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
-    embedding = db.Column(db.Text, nullable=True) # contains the id of the corresponding doc in vectorstore
+    embedding = db.Column(db.Text, nullable=True, default=None) # contains the id of the corresponding doc in vectorstore
     experience = db.Column(db.Integer, db.ForeignKey('experiences.id'), nullable=True) # flagged submissions will have null here
     centroid = db.Column(db.Boolean, nullable = False, default=False) # if this message is a centroid replacement
     db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')

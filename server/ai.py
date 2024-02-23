@@ -9,7 +9,7 @@ from langchain.memory import ConversationKGMemory, ChatMessageHistory
 from langchain.prompts.prompt import PromptTemplate
 from langchain_openai import OpenAI, OpenAIEmbeddings
 
-from models import Messages
+import utils
 
 # Load in the template
 with open("data/template.txt", encoding="utf-8") as file:
@@ -24,10 +24,12 @@ try: # Setup LLM
         template=template
     )
 except Exception as e: # Setup dummy text for testing/if API keys missing
+    print(e)
     llm = None
+    llm_embedder = None
     prompt = None
 
-def ai_message(chat_id, human_message):
+def ai_message(chat_id, human_message, history):
     """
     @chat_id: the id of the chat
     @message: the message to the AI
@@ -37,7 +39,7 @@ def ai_message(chat_id, human_message):
         return "API Keys not found."
 
     # Collect message history
-    messages = Messages.query.filter_by(chat=chat_id).order_by(Messages.time).all()
+    messages = utils.get_all_chat_messages(chat_id)
 
     # Transform data for langchain useage
     chat_memory = ChatMessageHistory()
