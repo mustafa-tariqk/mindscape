@@ -50,4 +50,4 @@ def ai_message(chat_id, human_message):
         llm=llm,
         prompt=prompt,
         memory=ConversationKGMemory(llm=llm, chat_memory=chat_memory)
-    ).predict(human_message)
+    ).predict(input=human_message)
