@@ -33,12 +33,10 @@ app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
 # uncomment line below to skip auth
-<<<<<<< ours
 app.config["TESTING"] = True
-=======
 # app.config["TESTING"] = True
 CORS(app)
->>>>>>> theirs
+
 
 # decorator to check user type
 def role_required(*roles):
