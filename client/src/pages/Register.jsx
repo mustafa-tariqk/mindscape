@@ -1,5 +1,5 @@
 import React from 'react'
-import Add from "../img/2.25+ KD Club logo.png"
+import User from "../img/userprofile.png";
 
 const Register = () => {
     return (
@@ -13,8 +13,8 @@ const Register = () => {
                     <input type="password" placeholder='password'/>
                     <input style={{display:"none"}} type="file" id="file"/>
                     <label htmlFor='file'>
-                        <img src={Add} alt="cool image fuck yeah!"/>
-                        <span>Add an Avatar</span>
+                        <img src={User} alt="cool image fuck yeah!"/>
+                        <span>User an Avatar</span>
                     </label>
                     <button>Sign Up</button>
                 </form>
