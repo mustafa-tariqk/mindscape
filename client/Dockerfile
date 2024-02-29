@@ -2,14 +2,9 @@
 FROM node:16
 
 # Add app source code to image
-WORKDIR /app
-
-# DELETE THIS WHEN YOU MAKE YOUR OWN FRONTEND
-RUN npx create-react-app .
+WORKDIR /client 
 
 COPY package*.json ./
-
-ENV REACT_APP_API_BASE_URL=http://localhost:8080
 
 RUN npm install 
 
