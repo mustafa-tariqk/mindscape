@@ -37,7 +37,6 @@ app.config["TESTING"] = True
 # app.config["TESTING"] = True
 CORS(app)
 
-
 # decorator to check user type
 def role_required(*roles):
     """
