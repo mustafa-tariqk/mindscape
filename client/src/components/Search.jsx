@@ -1,6 +1,6 @@
 // Desc: Search component for searching users
 import React from "react"
-import Arvin from "../img/Arvin Head.png"
+import Neuma from "../img/Neuma Logo.png";
 
 const Search = () => {
     return (
@@ -9,9 +9,9 @@ const Search = () => {
                 <input type="text" placeholder="Find a user"/>
             </div>
             <div className="userChat">
-                <img src={Arvin} alt=""/>
+                <img src={Neuma} alt=""/>
                 <div className="userChatInfo">
-                    <span>Arvin</span>
+                    <span>Neuma</span>
                 </div>
             </div>
         </div>

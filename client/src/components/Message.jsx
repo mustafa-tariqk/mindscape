@@ -6,10 +6,8 @@
 // It also uses the messageInfo and messageContent divs to display the message and the time it was sent.
 // It also uses the owner class to determine if the message is from the user or the bot.
 // It also uses the just now span to display the time the message was sent.
-
-import Neuma from "/Users/ibrahim/Documents/GitHub/mindscape/client/src/img/Neuma Logo.png";
-import User from "/Users/ibrahim/Documents/GitHub/mindscape/client/src/img/userprofile.png";
-
+import Neuma from "../img/Neuma Logo.png";
+import User from "../img/userprofile.png";
 
 const Message = ({ whoIsIt, passedMessage }) => {
     return (
@@ -26,33 +24,3 @@ const Message = ({ whoIsIt, passedMessage }) => {
 };
 
 export default Message;
-
-
-
-
-
-
-
-
-
-
-// import React from "react"
-// import Neuma from "/Users/ibrahim/Documents/GitHub/mindscape/client/src/img/Neuma Logo.png"
-// import User from "/Users/ibrahim/Documents/GitHub/mindscape/client/src/img/userprofile.png"
-
-// const Message = ({key, whoIsIt, passedMessage}) => {
-//     return (
-//         <div className={`message ${whoIsIt === "me" && "owner"}`} key={origin + key}>
-//             {/* What this does is add multiple class names*/}
-//             <div className="messageInfo">
-//                 <img src={whoIsIt === "me" ? User : Neuma} alt=""/>
-//                 <span>just now</span>
-//             </div>
-//             <div className="messageContent">
-//                 <p>{passedMessage}</p>
-//             </div>
-//         </div>
-//     )
-// }
-
-// export default Message

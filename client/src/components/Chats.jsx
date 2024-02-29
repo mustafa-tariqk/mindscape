@@ -1,28 +1,28 @@
 // Desc: Chats component for the chat section of the dashboard
 import React from "react"
-import Arvin from "../img/Arvin Head.png"
+import Neuma from "../img/Neuma Logo.png";
 
 const Chats = () => {
     return (
         <div className="chats">
             <div className="userChat">
-                <img src={Arvin} alt=""/>
+                <img src={Neuma} alt=""/>
                 <div className="userChatInfo">
-                    <span>Arvin</span>
+                    <span>Neuma</span>
                     <p>Bro this video is ass</p>
                 </div>
             </div>
             <div className="userChat">
-                <img src={Arvin} alt=""/>
+                <img src={Neuma} alt=""/>
                 <div className="userChatInfo">
-                    <span>Arvin</span>
+                    <span>Neuma</span>
                     <p>Bro this video is ass</p>
                 </div>
             </div>
             <div className="userChat">
-                <img src={Arvin} alt=""/>
+                <img src={Neuma} alt=""/>
                 <div className="userChatInfo">
-                    <span>Arvin</span>
+                    <span>Neuma</span>
                     <p>Bro this video is ass</p>
                 </div>
             </div>
