@@ -9,21 +9,21 @@ const Chats = () => {
                 <img src={Neuma} alt=""/>
                 <div className="userChatInfo">
                     <span>Neuma</span>
-                    <p>Bro this video is ass</p>
+                    <p>Example</p>
                 </div>
             </div>
             <div className="userChat">
                 <img src={Neuma} alt=""/>
                 <div className="userChatInfo">
                     <span>Neuma</span>
-                    <p>Bro this video is ass</p>
+                    <p>Example2</p>
                 </div>
             </div>
             <div className="userChat">
                 <img src={Neuma} alt=""/>
                 <div className="userChatInfo">
                     <span>Neuma</span>
-                    <p>Bro this video is ass</p>
+                    <p>Example3</p>
                 </div>
             </div>
         </div>
