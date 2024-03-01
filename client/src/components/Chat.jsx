@@ -66,6 +66,9 @@ function Chat() {
                 ))}
             </div>
             <Input onSendMessage={handleSendMessage}/>
+            <div className="submit-convo">
+                <button type="submit" id="submit">SUBMIT CONVERSATION</button>
+            </div>
         </div>
     );
 }
