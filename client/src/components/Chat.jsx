@@ -82,7 +82,7 @@ function Chat() {
             </div>
             <Input onSendMessage={handleSendMessage}/>
             <div className="submit-convo">
-                <button type="submit" id="submit">SUBMIT CONVERSATION</button>
+                <button type="submit" id="submit" onClick={handleSubmit}>SUBMIT CONVERSATION</button>
             </div>
         </div>
     );

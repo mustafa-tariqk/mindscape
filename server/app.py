@@ -134,7 +134,8 @@ def submit():
     """
     Handles submission of the chat
     @request: {chat_id: int}
-    @return the information retrieved about the submission
+    @return schema: {weight: int, height: int, substance: string}
+    schema could change on request, but it's an object fs
     """
     request_body = request.get_json()
     chatId = request_body['chatId']
@@ -215,7 +216,12 @@ def get_all_chats():
 @role_required("Contributor")
 def get_frequent_words():
     """
-    @return a dictionary of the most frequent words in the chat
+    @return schema {
+            'global_count': frequency in language distribution,
+            'local_count': frequency in chat,
+            'global_max - global_count': difference from the most used word,
+            'weight': attributed weight
+        }
     """
     chat_id = request.args.get("chat_id")
     k = int(request.args.get("k"))
