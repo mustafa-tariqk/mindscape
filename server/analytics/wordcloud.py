@@ -68,4 +68,4 @@ def get_k_weighted_frequency(k, chat_id):
     # sort in descending order based on weighted frequency
     unique_words.sort(reverse=True, key=weighted_freq)
     # Return the top k
-    return json.dumps({x: word_frequency[x] for x in unique_words[0:k]}, indent=4)
+    return json.dumps({x: display(x) for x in unique_words[0:k]}, indent=4)
