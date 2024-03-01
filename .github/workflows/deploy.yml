@@ -1,4 +1,4 @@
-name: SSH and Echo
+name: Deploy to Digital Ocean
 
 on:
   push:
@@ -16,4 +16,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        script: echo "Hello World"
+        script: /
+          cd mindscape
+          git pull origin main
+          docker compose up --build -d
