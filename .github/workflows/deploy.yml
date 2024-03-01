@@ -16,7 +16,4 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        script: /
-          cd mindscape
-          git pull origin main
-          docker compose up --build -d
+        script: cd mindscape && git pull origin main && docker compose up --build -d
