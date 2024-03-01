@@ -1,10 +1,12 @@
 // Desc: This file contains the chat component which is the main component for the chat feature. 
 // It contains the chat info, messages, and input components.
 // It also contains the state for the messages and the function to set the messages.
-import { useEffect, useState } from "react";
-import Neuma from "../img/Neuma Logo.png";
+import { useEffect, useState, useContext } from "react";
+import EnvContext from "../App"
 import Message from "./Message";
 import Input from "./Input";
+
+const SERVER_URL = useContext(EnvContext);
 
 function Chat() {
     const [messages, setMessages] = useState([]);
