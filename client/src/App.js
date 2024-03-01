@@ -7,7 +7,7 @@ import "./style.scss"
 
 function App() {
   return (
-    <Home />
+    <Complete />
   );
 }
 

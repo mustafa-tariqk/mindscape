@@ -167,7 +167,8 @@
 
         .grid-container {
             span{
-                margin-right: 25%;
+                margin-right: 12.5%;
+                margin-left: 12.5%;
             }
         }
 
@@ -204,6 +205,38 @@
                 height: 100%;
                 border-radius: 10vw;
                 cursor: pointer;
+            }
+        }
+
+        .graphs {
+            display: flex;
+            .wordCloud {
+                flex: 1;
+                width: 30%;
+            }
+
+            .similarity {
+                flex: 1;
+            }
+
+            .experience{
+                flex: 1;
+                margin-top: 10%;
+
+                .grid-item {
+                    display: flex;
+                    justify-content: center;
+                    padding: 5px;
+                    flex-direction: row;
+                    width: 100%;
+                    .cell {
+                        border: 1px solid black;
+                        padding: 1%;
+                        width: 12.5%;
+                        font-size: 60%;
+                        font-weight: bolder;
+                    }
+                }
             }
         }
     }

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "react": "^18.2.0",
+    "react-d3-cloud": "^1.0.6",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",
     "sass": "^1.71.1"
