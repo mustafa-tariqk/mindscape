@@ -51,3 +51,12 @@ def ai_message(chat_id, human_message):
         prompt=prompt,
         memory=ConversationKGMemory(llm=llm, chat_memory=chat_memory)
     ).predict(input=human_message)
+
+
+def handle_submission(chat_id):
+    """
+    Verifies that there is enough information for submission and categorize accordingly.
+    Flag submissions without enough information. 
+    @chat_id: the id of the chat
+    """
+    pass
