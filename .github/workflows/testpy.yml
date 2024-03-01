@@ -1,7 +1,7 @@
 name: Pytest Workflow
 
 on:
-  pull_request:
+  push:
     branches:
       - tests
 
