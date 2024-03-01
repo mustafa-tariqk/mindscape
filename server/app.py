@@ -14,7 +14,7 @@ from flask_cors import CORS
 import models
 import utils
 from analytics.wordcloud import get_k_weighted_frequency
-from ai import ai_message
+from ai import ai_message, handle_submission
 
 load_dotenv()
 
@@ -128,6 +128,20 @@ def converse():
     models.db.session.commit()
     return {"ai_response": ai_text}
 
+@app.route("/submit/", methods=["POST"])
+@role_required("Administrator", "Researcher", "Contributor")
+def submit():
+    """
+    Handles submission of the chat
+    @request: {chat_id: int}
+    @return the information retrieved about the submission
+    """
+    request_body = request.get_json()
+    chat_id = request_body['chat_id']
+
+    result = handle_submission(chat_id)
+
+    return {"data": jsonify(result)}
 
 @app.route("/delete_user/<user_id>")
 @role_required("Administrator")

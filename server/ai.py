@@ -3,12 +3,12 @@ This file contains the AI logic for the chatbot.
 It is responsible for generating responses to user messages. 
 """
 from dotenv import load_dotenv
-from langchain.chains import ConversationChain
+from langchain.chains import ConversationChain, create_structured_output_runnable
 from langchain.memory import ConversationKGMemory, ChatMessageHistory
 from langchain.prompts.prompt import PromptTemplate
 from langchain_openai import OpenAI
 
-from models import Messages
+from utils import get_all_chat_messages, get_stringify_chat
 
 # Load in the template
 with open("data/template.txt", encoding="utf-8") as file:
@@ -35,7 +35,7 @@ def ai_message(chat_id, human_message):
         return "API Keys not found."
 
     # Collect message history
-    messages = Messages.query.filter_by(chat=chat_id).order_by(Messages.time).all()
+    messages = get_all_chat_messages(chat_id)
 
     # Transform data for langchain useage
     chat_memory = ChatMessageHistory()
@@ -59,4 +59,23 @@ def handle_submission(chat_id):
     Flag submissions without enough information. 
     @chat_id: the id of the chat
     """
-    pass
+    # Defines schema for extraction, add more in template
+    submission_schema = {
+        "type": "object",
+        "properties": {
+            "weight": {"type": "integer"},
+            "height": {"type": "integer"},
+            "substance": {"type": "string"}, # Possibly multiple
+        }
+    }
+
+    # Define extractor
+    extractor = create_structured_output_runnable(submission_schema, llm)
+
+    # Fetch chat. Disgusting, but works. Maybe move this to utils.
+    chat_log = get_stringify_chat(chat_id, True)
+
+    # Extract from chat. TODO: add to database
+    submission_info = extractor.invoke(chat_log)
+
+    return submission_info
