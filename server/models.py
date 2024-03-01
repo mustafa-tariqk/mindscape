@@ -85,6 +85,10 @@ def create_app():
 
     db.init_app(app)
 
+    nltk.download("stopwords") # Stopwords library
+    nltk.download("punkt") # Tokenizer
+    # print(nltk.corpus.stopwords.fileids()) # To show the available languages
+
     with app.app_context():
         db.create_all()  # Create database and tables if they don't exist
         # seed language
@@ -136,6 +140,5 @@ def create_app():
             language.max_count = max
             language.min_count = min
             db.session.commit()
-
 
     return app

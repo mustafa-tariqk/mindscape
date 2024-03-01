@@ -8,22 +8,20 @@ import utils
 import models
 
 
-def get_k_weighted_frequency(k, chat_id):
+def get_k_weighted_frequency(k, chat_id, exclude_ai_messages:bool=True):
     """
     Return the top k frequently seen words from a Chat session.
     Weights frequency based on established word distribution.
     @k: number of words to return
     @chat_id: id of chat session
+    @exclude_ai_messages: defaults to true. whether to exclude meessages sent by the chatbot
     @return: dictionary formatted as {word: word_frequency}
     """
     word_frequency = {}
-    # Disgusting, but works
-    chat_log = ''.join(filter(
-        lambda x: x.isalpha() or x == ' ',  # ensure words are split properly
-        ' '.join([message.text for message in utils.get_all_chat_messages(chat_id)])
-    )).lower()
-    # Change this for multi-language
-    language = 'english'
+    chat_log = utils.get_stringify_chat(chat_id, exclude_ai_messages, True, True)
+    language = utils.get_chat_language(chat_id)
+    language_data = models.Languages.query.get(language)
+
     sample_size = 0
     for word in chat_log.split(" "):
         sample_size += 1
@@ -35,7 +33,6 @@ def get_k_weighted_frequency(k, chat_id):
     def weighted_freq(x):
         """Calculate the weights associated with the word's frequency"""
         word_data = models.Words.query.get(x)
-        language_data = models.Languages.query.get(language)
         # may need some tuning.
         if not word_data:  # Very very rare words, possibly names
             count_diff = language_data.max_count-language_data.min_count
@@ -43,24 +40,26 @@ def get_k_weighted_frequency(k, chat_id):
             count_diff = language_data.max_count - word_data.count
 
         freq_diff = count_diff/language_data.sample_size
-        return (word_frequency[x])*(freq_diff)**3
+        return freq_diff
 
-    # API results
+    # Maybe ensure both
     def display(x):
         word_data = models.Words.query.get(x)
-        language_data = models.Languages.query.get(language)
         global_count = 0
+        weight = 0
 
         if not word_data:  # Very very rare words, possibly names
             global_count = language_data.min_count
         else:  # Detect rare descriptors
             global_count = word_data.count
 
+        weight = (language_data.max_count - global_count)/language_data.sample_size
+
         data = {
             'global_count': global_count,
             'local_count': word_frequency[x],
             'global_max - global_count': language_data.max_count - global_count,
-            'frequency_weight': weighted_freq(x)
+            'weight': weight
         }
         return data
 
