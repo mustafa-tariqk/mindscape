@@ -52,18 +52,23 @@ function Chat() {
 
     return (
         <div className="chat">
+            {/*
             <div className="chatInfo">
                 <span>Neuma</span>
                 <div className="chatIcons">
                     <img src={Neuma} alt="" />
                 </div>
             </div>
+            */}
             <div className='messages'>
                 {messages.map((mess, index) => (
                     <Message key={index} whoIsIt={mess.origin} passedMessage={mess.content} /> 
                 ))}
             </div>
             <Input onSendMessage={handleSendMessage}/>
+            <div className="submit-convo">
+                <button type="submit" id="submit">SUBMIT CONVERSATION</button>
+            </div>
         </div>
     );
 }
