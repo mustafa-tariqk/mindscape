@@ -39,7 +39,7 @@ the&nbsp;logic&nbsp;for&nbsp;the&nbsp;routes.</span></p>
  <dl><dt><a name="-flag_chat"><strong>flag_chat</strong></a>(chat_id)</dt><dd><span class="code">Flags&nbsp;a&nbsp;chat&nbsp;for&nbsp;review<br>
 @chat_id&nbsp;is&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat&nbsp;to&nbsp;be&nbsp;flagged</span></dd></dl>
  <dl><dt><a name="-get_all_chats"><strong>get_all_chats</strong></a>()</dt><dd><span class="code">@return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;all&nbsp;chats&nbsp;and&nbsp;their&nbsp;messages</span></dd></dl>
- <dl><dt><a name="-get_frequent_words"><strong>get_frequent_words</strong></a>()</dt></dl>
+ <dl><dt><a name="-get_frequent_words"><strong>get_frequent_words</strong></a>()</dt><dd><span class="code">@return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;most&nbsp;frequent&nbsp;words&nbsp;in&nbsp;the&nbsp;chat</span></dd></dl>
  <dl><dt><a name="-index"><strong>index</strong></a>()</dt><dd><span class="code">This&nbsp;function&nbsp;checks&nbsp;if&nbsp;the&nbsp;user&nbsp;is&nbsp;authorized&nbsp;with&nbsp;Google.&nbsp;If&nbsp;not,&nbsp;it<br>
 redirects&nbsp;to&nbsp;the&nbsp;Google&nbsp;login&nbsp;page.&nbsp;Then&nbsp;it&nbsp;retrieves&nbsp;the&nbsp;user's&nbsp;email&nbsp;from<br>
 the&nbsp;Google&nbsp;API&nbsp;and&nbsp;returns&nbsp;a&nbsp;message&nbsp;with&nbsp;the&nbsp;email&nbsp;address.</span></dd></dl>
@@ -57,7 +57,7 @@ the&nbsp;Google&nbsp;API&nbsp;and&nbsp;checks&nbsp;if&nbsp;the&nbsp;user&nbsp;ha
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><strong>app</strong> = &lt;Flask 'models'&gt;<br>
 <strong>blueprint</strong> = &lt;OAuth2ConsumerBlueprint 'google'&gt;<br>
-<strong>environ</strong> = environ({'STARSHIP_SHELL': 'zsh', 'MANPATH': '/o... 'COLORTERM': 'truecolor', '_': '/usr/bin/find'})<br>
+<strong>environ</strong> = environ({'MANPATH': '/opt/homebrew/share/man:/us...I_ORGANIZATION': 'org-HmGSdYi8wyzPTHO4NhsqCYew'})<br>
 <strong>google</strong> = &lt;LocalProxy unbound&gt;<br>
 <strong>request</strong> = &lt;LocalProxy unbound&gt;</td></tr></table>
 </body></html>
