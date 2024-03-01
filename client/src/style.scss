@@ -88,7 +88,7 @@ $colorVariable: wheat;
         top: 0;
         width: 100vw;
         height: 20vh;
-        background-color: #9e9c9b;
+        background-color: #FEF8F3;
 
         .left {
             max-width: 30%;
@@ -108,6 +108,7 @@ $colorVariable: wheat;
                 max-width: 10%;
                 max-height: auto;
                 border-radius: 50%;
+                cursor: pointer;
             }
         }
           
@@ -129,6 +130,19 @@ $colorVariable: wheat;
             flex: 2;
             background-color: green($color: #000000);
             max-width: 100%;
+
+            .submit-convo{
+                justify-content: center;
+                display: flex;
+                margin-top: 2vh;
+
+                button{
+                    color: black;
+                    border: 2px solid black;
+                    padding: 5px;
+                    background-color: #13f085;
+                }
+            }
 
             .chatInfo{
                 height: 50px;
