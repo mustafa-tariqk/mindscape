@@ -15,17 +15,21 @@ function Input({ onSendMessage }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="input-area">
-            <input
-                type="text"
-                id="message-input"
-                placeholder="Enter your message..."
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                autoComplete="off" // Optionally disable autocomplete
-            />
-            <button type="submit" id="send-button">Send</button>
-        </form>
+        <div className='input'>
+            <form onSubmit={handleSubmit} className="input-area">
+                <input
+                    type="text"
+                    id="message-input"
+                    placeholder="Enter your message..."
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    autoComplete="off" // Optionally disable autocomplete
+                />
+                <div className='send'>
+                    <button type="submit" id="send-button">Send</button>
+                </div>
+            </form>
+        </div>
     );
 }
 

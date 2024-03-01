@@ -14,7 +14,6 @@ const Message = ({ whoIsIt, passedMessage }) => {
         <div className={`message ${whoIsIt === "me" ? "owner" : ""}`}>
             <div className="messageInfo">
                 <img src={whoIsIt === "me" ? User : Neuma} alt="" />
-                <span>just now</span>
             </div>
             <div className="messageContent">
                 <p>{passedMessage}</p>
