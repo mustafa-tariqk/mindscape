@@ -1,9 +1,9 @@
 name: Pytest Workflow
 
 on:
-  push:
+  pull_request:
     branches:
-      - tests
+      - main
 
 jobs:
   test:
