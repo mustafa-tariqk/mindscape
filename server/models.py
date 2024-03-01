@@ -4,6 +4,7 @@ Models to be held in the database
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import csv
+import nltk
 
 db = SQLAlchemy()  # Database object
 
