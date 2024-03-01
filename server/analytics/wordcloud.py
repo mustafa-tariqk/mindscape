@@ -45,29 +45,24 @@ def get_k_weighted_frequency(k, chat_id):
         freq_diff = count_diff/language_data.sample_size
         return (word_frequency[x])*(freq_diff)**3
 
-    # Debugging
-    # def display(x):
-    #     word_data = models.Words.query.get(x)
-    #     language_data = models.Languages.query.get(language)
-    #     global_count = 0
-    #     weight = 0
+    # API results
+    def display(x):
+        word_data = models.Words.query.get(x)
+        language_data = models.Languages.query.get(language)
+        global_count = 0
 
-    #     if not word_data:  # Very very rare words, possibly names
-    #         global_count = language_data.min_count
-    #         weight = ((language_data.max_count -
-    #                   language_data.min_count) / language_data.sample_size)**3
-    #     else:  # Detect rare descriptors
-    #         global_count = word_data.count
-    #         weight = ((language_data.max_count - word_data.count) /
-    #                   language_data.sample_size)**3
+        if not word_data:  # Very very rare words, possibly names
+            global_count = language_data.min_count
+        else:  # Detect rare descriptors
+            global_count = word_data.count
 
-    #     data = {
-    #         'global_count': global_count,
-    #         'local_count': word_frequency[x],
-    #         'global_max - global_count': language_data.max_count - global_count,
-    #         'frequency_weight': weight
-    #     }
-    #     return data
+        data = {
+            'global_count': global_count,
+            'local_count': word_frequency[x],
+            'global_max - global_count': language_data.max_count - global_count,
+            'frequency_weight': weighted_freq(x)
+        }
+        return data
 
     unique_words = list(word_frequency.keys())
     # sort in descending order based on weighted frequency
