@@ -72,10 +72,10 @@ def handle_submission(chat_id):
     # Define extractor
     extractor = create_structured_output_runnable(submission_schema, llm)
 
-    # Fetch chat. Disgusting, but works. Maybe move this to utils.
+    # Fetch chat
     chat_log = get_stringify_chat(chat_id, True)
 
-    # Extract from chat. TODO: add to database
+    # Extract from chat TODO: add to database
     submission_info = extractor.invoke(chat_log)
 
     return submission_info
