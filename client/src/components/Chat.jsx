@@ -13,8 +13,7 @@ function Chat() {
     const [chatId, setChatId] = useState(null);
 
     useEffect(() => {
-        // Replace 'http://127.0.0.1:8080/' with your actual API endpoint
-        fetch('http://127.0.0.1:8080/') 
+        fetch(SERVER_URL+'/') 
             .then(response => response.json())
             .then(data => {
                 const userId = data.user_id;
@@ -23,7 +22,7 @@ function Chat() {
     }, []);
 
     function startChat(userId) {
-        fetch('http://127.0.0.1:8080/start_chat/' + userId)
+        fetch(SERVER_URL+'/start_chat/' + userId)
             .then(response => response.json())
             .then(data => {
                 setChatId(data.chat_id);
@@ -36,7 +35,7 @@ function Chat() {
             return;
         }
         const messageToSend = { chat_id: chatId, message: userInput };
-        fetch('http://127.0.0.1:8080/converse/', {
+        fetch(SERVER_URL+'/converse/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -51,6 +50,20 @@ function Chat() {
         // Also add the user message to the chat history
         setMessages(prevMessages => [...prevMessages, { origin: 'me', content: userInput }]);
     };
+
+    const handleSubmit = () => {
+        if (!chatId) {
+            console.error("Chat ID is not set.");
+            return;
+        }
+        fetch(SERVER_URL+'/submit/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({chatId})
+        }).then(response => console.log(response.json())) // Handle this data in analytics
+    }
 
     return (
         <div className="chat">

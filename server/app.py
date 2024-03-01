@@ -137,9 +137,9 @@ def submit():
     @return the information retrieved about the submission
     """
     request_body = request.get_json()
-    chat_id = request_body['chat_id']
+    chatId = request_body['chatId']
 
-    result = handle_submission(chat_id)
+    result = handle_submission(chatId)
 
     return {"data": jsonify(result)}
 
