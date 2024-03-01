@@ -3,7 +3,7 @@ name: SSH and Echo
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   build:
