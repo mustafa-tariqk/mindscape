@@ -5,7 +5,6 @@ import pytest
 from flask.testing import FlaskClient
 import models
 from app import app
-from unittest.mock import patch
 
 @pytest.fixture
 def fake_client():
@@ -36,3 +35,63 @@ def test_start_chat(fake_client: FlaskClient):
     assert response.status_code == 200
     data = response.get_json()
     assert 'chat_id' in data
+
+
+def test_converse(fake_client: FlaskClient):
+    """
+    Test the converse route
+    """
+    response = fake_client.post('/converse/', json={'chat_id': 1, 'message': 'Hello'})
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'ai_response' in data
+
+
+def test_change_permission(fake_client: FlaskClient):
+    """
+    Test the change permission route
+    """
+    response = fake_client.get('/change_permission/1/Administrator')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'role' in data and data['role'] == 'Administrator'
+
+
+def test_flag_chat(fake_client: FlaskClient):
+    """
+    Test the flag chat route
+    """
+    response = fake_client.get('/flag/1')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'status' in data and data['status'] == 'flagged'
+
+
+def test_get_all_chats(fake_client: FlaskClient):
+    """
+    Test the get all chats route
+    """
+    response = fake_client.get('/get_all_chats')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert isinstance(data, dict)
+
+
+def test_delete_chat(fake_client: FlaskClient):
+    """
+    Test the delete chat route
+    """
+    response = fake_client.get('/delete_chat/1')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'status' in data and data['status'] == 'deleted'
+
+
+def test_delete_user(fake_client: FlaskClient):
+    """
+    Test the delete user route, has to be run last.
+    """
+    response = fake_client.get('/delete_user/1')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'status' in data and data['status'] == 'deleted'
