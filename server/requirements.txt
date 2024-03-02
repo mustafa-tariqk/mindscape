@@ -11,4 +11,3 @@ pytest
 pylint
 networkx
 nltk
-python-dotenv
