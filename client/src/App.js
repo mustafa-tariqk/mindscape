@@ -1,16 +1,12 @@
-import { createContext } from 'react';
-
-import Home from "./pages/Home";
+import React from "react";
+import Home from "./pages/Home.jsx";
 import "./style.scss"
 
-const EnvContext = createContext({})
 
 function App() {
   return (
-    <EnvContext.Provider value={process.env}>
-      <Home/>
-    </EnvContext.Provider>
+    <Home/>
   );
 }
 
-export default {App, EnvContext};
+export default App;

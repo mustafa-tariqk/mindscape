@@ -217,11 +217,11 @@ def get_all_chats():
 def get_frequent_words():
     """
     @return schema {
-            'global_count': frequency in language distribution,
-            'local_count': frequency in chat,
-            'global_max - global_count': difference from the most used word,
-            'weight': attributed weight
-        }
+        'global_count': frequency in language distribution,
+        'local_count': frequency in chat,
+        'global_max - global_count': difference from the most used word,
+        'weight': attributed weight
+    }
     """
     chat_id = request.args.get("chat_id")
     k = int(request.args.get("k"))

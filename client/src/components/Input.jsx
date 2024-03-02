@@ -1,7 +1,7 @@
 // Desc: This file contains the input component for the chat app. 
 // It allows the user to type a message and send it to the chat window.
 // It also allows the user to send a file to the chat window.
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 function Input({ onSendMessage }) {
     const [userInput, setUserInput] = useState('');

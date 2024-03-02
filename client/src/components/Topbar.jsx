@@ -1,3 +1,4 @@
+import React from 'react';
 import image1 from '../img/Logo_with_subtext_upscaled.png'
 import image2 from '../img/userprofile.png'
 
