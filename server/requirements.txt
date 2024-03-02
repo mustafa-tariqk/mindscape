@@ -8,5 +8,5 @@ langchain
 langchain-openai
 python-dotenv
 pytest
-pylint
 networkx
+gunicorn

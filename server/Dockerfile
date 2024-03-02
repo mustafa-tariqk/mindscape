@@ -1,7 +1,7 @@
 #use the offically supported node.js base image
 FROM python:3.10
 
-ENV PORT = 8080
+ENV PORT=8080
 
 COPY requirements.txt ./
 
@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD flask run --host=0.0.0.0 -p 8080
+CMD gunicorn --bind 0.0.0.0:8080 --timeout 0 app:app
