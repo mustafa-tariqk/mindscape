@@ -4,6 +4,11 @@ import React, { useEffect } from 'react';
 import { render } from 'react-dom';
 import WordCloud from 'react-d3-cloud';
 import GridList from '../components/GridList';
+import PieChart from '../components/PieChart';
+import {Chart, ArcElement, Tooltip, Legend} from 'chart.js'
+Chart.register(ArcElement);
+Chart.register(Tooltip);
+Chart.register(Legend);
 
 const data = [
     { text: 'Hey', value: 1000 },
@@ -13,32 +18,26 @@ const data = [
     { text: 'duck', value: 10 },
 ];
 
+const piechartData = {
+    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    datasets: [
+      {
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          'red',
+          'blue',
+          'yellow',
+          'green',
+          'purple',
+          'orange',
+        ],
+        borderWidth: 1,
+      },
+    ],
+};
+
 const Complete = () => {
-    useEffect(() => {
-        //generateWordCloud();
-    }, []);
-
-    const generateWordCloud = () => {
-        render (
-            <WordCloud
-                className="wordCloud"
-                data={data}
-                width={500}
-                height={500}
-                font="Times"
-                fontStyle="italic"
-                fontWeight="bold"
-                fontSize={(word) => Math.log2(word.value) * 5}
-                spiral="rectangular"
-                rotate={(word) => word.value % 360}
-                padding={5}
-                random={Math.random}
-            />,
-            document.getElementById('root')
-        )
-        console.log("Image Generated");
-    }
-
     return (
         <div className='resultsScreen'>
             <div className='menubar'>
@@ -73,7 +72,11 @@ const Complete = () => {
                         random={Math.random}
                         />
                     </div>
-                    <div className='similarity'></div>
+                    <div className='similarity'>
+                        <div className='pieChartStyle'>
+                            <PieChart data={piechartData} />
+                        </div>
+                    </div>
                     <div className='experience'>
                         {/* First Grid is for Dosage Information*/}
                         <GridList items={[["DOSE:", "UNIT:", "METHOD:", "SUBSTANCE:", "SHAPE:"], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]]}/>

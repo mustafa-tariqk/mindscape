@@ -217,6 +217,19 @@
 
             .similarity {
                 flex: 1;
+                width: 100%;
+
+                .pieChartStyle {
+                    display: flex;
+                    width: 100%;
+                    height: 100%;
+                    justify-content: center;
+                    margin-top: 15%;
+
+                    .pieChartInfo {
+                        width: 75%;
+                    }
+                }
             }
 
             .experience{
