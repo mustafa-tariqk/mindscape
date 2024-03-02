@@ -85,7 +85,7 @@ const Complete = () => {
                     </div>
                 </div>
                 <div className="grid-container">
-                   <span>World Cloud</span>
+                   <span>Word Cloud</span>
                    <span>Experience Similarity</span>
                    <span>Experience Class</span>
                 </div>
