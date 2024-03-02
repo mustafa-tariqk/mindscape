@@ -139,8 +139,9 @@ def submit():
     """
     request_body = request.get_json()
     chatId = request_body['chatId']
-
-    result = handle_submission(chatId)
+    result = {}
+    with app.app_context():
+        result = handle_submission(chatId)
 
     return {"data": jsonify(result)}
 
@@ -225,7 +226,8 @@ def get_frequent_words():
     """
     chat_id = request.args.get("chat_id")
     k = int(request.args.get("k"))
-    return jsonify(get_k_weighted_frequency(k, chat_id))
+    with app.app_context():
+        return jsonify(get_k_weighted_frequency(k, chat_id))
 
 
 if __name__ == "__main__":

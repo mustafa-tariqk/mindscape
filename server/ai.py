@@ -58,6 +58,7 @@ def handle_submission(chat_id):
     Verifies that there is enough information for submission and categorize accordingly.
     Flag submissions without enough information. 
     @chat_id: the id of the chat
+    @app: the flask app to get the app context
     """
     # Defines schema for extraction, add more in template
     submission_schema = {
@@ -69,10 +70,11 @@ def handle_submission(chat_id):
         }
     }
     # Define extractor
-    extractor = create_structured_output_runnable(submission_schema, llm)
+    runnable = create_structured_output_runnable(submission_schema, llm)
     # Fetch chat
     chat_log = get_stringify_chat(chat_id, True)
+
     # Extract from chat TODO: add to database
-    submission_info = extractor.invoke(chat_log)
+    submission_info = runnable.invoke(chat_log)
 
     return submission_info

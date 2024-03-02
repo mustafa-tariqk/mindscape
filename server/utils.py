@@ -1,5 +1,5 @@
 """
-Utilities functions.
+Utilities functions. Most require app context to be called
 """
 
 import models
