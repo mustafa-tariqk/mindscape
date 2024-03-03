@@ -4,6 +4,7 @@ Models to be held in the database
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import csv
+import nltk
 
 db = SQLAlchemy()  # Database object
 
@@ -85,6 +86,10 @@ def create_app():
 
     db.init_app(app)
 
+    nltk.download("stopwords") # Stopwords library
+    nltk.download("punkt") # Tokenizer
+    # print(nltk.corpus.stopwords.fileids()) # To show the available languages
+
     with app.app_context():
         db.create_all()  # Create database and tables if they don't exist
         # seed language
@@ -136,6 +141,5 @@ def create_app():
             language.max_count = max
             language.min_count = min
             db.session.commit()
-
 
     return app

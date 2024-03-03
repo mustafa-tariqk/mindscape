@@ -1,18 +1,18 @@
 // Desc: This file contains the chat component which is the main component for the chat feature. 
 // It contains the chat info, messages, and input components.
 // It also contains the state for the messages and the function to set the messages.
-import { useEffect, useState } from "react";
-import Neuma from "../img/Neuma Logo.png";
-import Message from "./Message";
-import Input from "./Input";
+import React, { useEffect, useState } from "react";
+import Message from "./Message.jsx";
+import Input from "./Input.jsx";
+
+const SERVER_URL = process.env.SERVER_URL;
 
 function Chat() {
     const [messages, setMessages] = useState([]);
     const [chatId, setChatId] = useState(null);
 
     useEffect(() => {
-        // Replace 'http://127.0.0.1:8080/' with your actual API endpoint
-        fetch('http://127.0.0.1:8080/') 
+        fetch(SERVER_URL+'/') 
             .then(response => response.json())
             .then(data => {
                 const userId = data.user_id;
@@ -21,7 +21,7 @@ function Chat() {
     }, []);
 
     function startChat(userId) {
-        fetch('http://127.0.0.1:8080/start_chat/' + userId)
+        fetch(SERVER_URL+'/start_chat/' + userId)
             .then(response => response.json())
             .then(data => {
                 setChatId(data.chat_id);
@@ -34,7 +34,7 @@ function Chat() {
             return;
         }
         const messageToSend = { chat_id: chatId, message: userInput };
-        fetch('http://127.0.0.1:8080/converse/', {
+        fetch(SERVER_URL+'/converse/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -49,6 +49,20 @@ function Chat() {
         // Also add the user message to the chat history
         setMessages(prevMessages => [...prevMessages, { origin: 'me', content: userInput }]);
     };
+
+    const handleSubmit = () => {
+        if (!chatId) {
+            console.error("Chat ID is not set.");
+            return;
+        }
+        fetch(SERVER_URL+'/submit/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({chatId})
+        }).then(response => console.log(response.json())) // Handle this data in analytics
+    }
 
     return (
         <div className="chat">
@@ -67,7 +81,7 @@ function Chat() {
             </div>
             <Input onSendMessage={handleSendMessage}/>
             <div className="submit-convo">
-                <button type="submit" id="submit">SUBMIT CONVERSATION</button>
+                <button type="submit" id="submit" onClick={handleSubmit}>SUBMIT CONVERSATION</button>
             </div>
         </div>
     );

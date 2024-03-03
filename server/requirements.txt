@@ -9,4 +9,5 @@ langchain-openai
 python-dotenv
 pytest
 networkx
+nltk
 gunicorn

@@ -6,6 +6,7 @@
 // It also uses the messageInfo and messageContent divs to display the message and the time it was sent.
 // It also uses the owner class to determine if the message is from the user or the bot.
 // It also uses the just now span to display the time the message was sent.
+import React from 'react';
 import Neuma from "../img/Neuma Logo.png";
 import User from "../img/userprofile.png";
 
