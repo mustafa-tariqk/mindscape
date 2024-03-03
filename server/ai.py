@@ -6,7 +6,10 @@ from dotenv import load_dotenv
 from langchain.chains import ConversationChain, create_structured_output_runnable
 from langchain.memory import ConversationKGMemory, ChatMessageHistory
 from langchain.prompts.prompt import PromptTemplate
-from langchain_openai import OpenAI
+
+# new stuff
+from langchain_openai import ChatOpenAI
+
 
 from utils import get_all_chat_messages, get_stringify_chat
 
@@ -16,7 +19,14 @@ with open("data/template.txt", encoding="utf-8") as file:
 
 try: # Setup LLM
     load_dotenv()
-    llm = OpenAI()
+    #llm = OpenAI()
+
+    llm = ChatOpenAI(
+    model_name='gpt-3.5-turbo-16k',
+    temperature = 0.8,
+             
+)
+
     prompt = PromptTemplate(
         input_variables=["history", "input"],
         template=template
@@ -64,8 +74,8 @@ def handle_submission(chat_id):
     submission_schema = {
         "type": "object",
         "properties": {
-            "weight": {"type": "integer"},
-            "height": {"type": "integer"},
+            "weight in kg": {"type": "integer"},
+            "height in cm": {"type": "integer"},
             "substance": {"type": "string"}, # Possibly multiple
         }
     }

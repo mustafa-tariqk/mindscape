@@ -43,7 +43,6 @@ def role_required(*roles):
     redirects to the Google login page. Then it retrieves the user's email from
     the Google API and checks if the user has the required role.
     """
-
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -143,7 +142,7 @@ def submit():
     with app.app_context():
         result = handle_submission(chatId)
 
-    return {"data": jsonify(result)}
+    return result
 
 @app.route("/delete_user/<user_id>")
 @role_required("Administrator")
