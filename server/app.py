@@ -120,7 +120,7 @@ def start_chat(user_id):
 
 
 @cross_origin()
-@app.route("/converse/", methods=["POST"])
+@app.route("/converse", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def converse():
     """
@@ -147,7 +147,7 @@ def converse():
 
 
 @cross_origin()
-@app.route("/submit/", methods=["POST"])
+@app.route("/submit", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def submit():
     """
@@ -237,7 +237,7 @@ def get_all_chats():
     return chat_dict
 
 
-@app.route("/analytics/get_frequent_words/", methods=["GET"])
+@app.route("/analytics/get_frequent_words", methods=["GET"])
 @role_required("Contributor")
 def get_frequent_words():
     """
