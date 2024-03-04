@@ -1,6 +1,6 @@
 import React from 'react'
-import Chat from '../components/Chat'
-import Topbar from '../components/Topbar'
+import Chat from '../components/Chat.jsx'
+import Topbar from '../components/Topbar.jsx'
 
 const Home = () => {
     return (

@@ -40,4 +40,4 @@ If any of these points have yet to be satisfied, make sure that you set the titl
 - [ ] Code follows the specification
 - [ ] Code is the best solution for the issue
 - [ ] Branch is **ahead of main**
-- [ ] Ensures the fix/feature works locally  
+- [ ] Ensures the fix/feature works locally (`docker compose up --build`)

@@ -1,10 +1,9 @@
 import Neuma from '../img/Logo_with_subtext_upscaled.png';
 import User from '../img/userprofile.png';
-import React, { useEffect } from 'react';
-import { render } from 'react-dom';
+import React from 'react';
 import WordCloud from 'react-d3-cloud';
-import GridList from '../components/GridList';
-import PieChart from '../components/PieChart';
+import GridList from '../components/GridList.jsx';
+import PieChart from '../components/PieChart.jsx';
 import {Chart, ArcElement, Tooltip, Legend} from 'chart.js'
 Chart.register(ArcElement);
 Chart.register(Tooltip);
