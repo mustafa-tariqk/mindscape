@@ -63,6 +63,7 @@ def role_required(*roles):
     return decorator
 
 
+@cross_origin()
 @app.route("/login")
 def login():
     """
@@ -75,6 +76,8 @@ def login():
     session['google_auth'] = resp.json()
     return redirect(environ.get("FRONTEND_URL"))
 
+
+@cross_origin()
 @app.route("/logout")
 def logout():
     """
@@ -84,6 +87,7 @@ def logout():
     return redirect(environ.get("FRONTEND_URL"))
 
 
+@cross_origin()
 @app.route("/")
 @role_required("Administrator", "Researcher", "Contributor")
 def index():
@@ -108,6 +112,7 @@ def index():
         return {"email": user.email, "user_id": user.id}
 
 
+@cross_origin()
 @app.route("/start_chat/<user_id>")
 @role_required("Administrator", "Researcher", "Contributor")
 def start_chat(user_id):
@@ -122,6 +127,7 @@ def start_chat(user_id):
     return {"chat_id": chat.id}
 
 
+@cross_origin()
 @app.route("/converse/", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def converse():
@@ -147,6 +153,8 @@ def converse():
     models.db.session.commit()
     return {"ai_response": ai_text}
 
+
+@cross_origin()
 @app.route("/submit/", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def submit():
@@ -164,6 +172,8 @@ def submit():
 
     return result
 
+
+@cross_origin()
 @app.route("/delete_user/<user_id>")
 @role_required("Administrator")
 def delete_user(user_id):
@@ -177,6 +187,7 @@ def delete_user(user_id):
     return {"user_id": user.id, "status": "deleted" }
 
 
+@cross_origin()
 @app.route("/change_permission/<user_id>/<role>")
 @role_required("Administrator")
 def change_permission(user_id, role):
@@ -193,6 +204,7 @@ def change_permission(user_id, role):
     return {"user_id": user.id, "role": user.user_type}
 
 
+@cross_origin()
 @app.route("/delete_chat/<chat_id>")
 @role_required("Administrator")
 def delete_chat(chat_id):
@@ -206,6 +218,7 @@ def delete_chat(chat_id):
     return {"chat_id": chat.id, "status": "deleted"}
 
 
+@cross_origin()
 @app.route("/flag/<chat_id>")
 @role_required("Administrator", "Researcher")
 def flag_chat(chat_id):
@@ -219,6 +232,7 @@ def flag_chat(chat_id):
     return {"chat_id": chat.id, "status": "flagged"}
 
 
+@cross_origin()
 @app.route("/get_all_chats")
 @role_required("Administrator", "Researcher")
 def get_all_chats():
