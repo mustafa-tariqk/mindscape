@@ -7,9 +7,9 @@ from datetime import datetime
 from functools import wraps
 from os import environ
 from dotenv import load_dotenv
-from flask import redirect, request, url_for, jsonify
+from flask import redirect, request, url_for, jsonify, session
 from flask_dance.contrib.google import google, make_google_blueprint
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 import models
 import utils
@@ -26,17 +26,18 @@ blueprint = make_google_blueprint(
         "https://www.googleapis.com/auth/userinfo.email",
         "openid",
     ],
+    redirect_url="/login",
 )
 
 # Initialize the Flask app
 app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
-# uncomment line below to skip auth
-app.config["TESTING"] = True
-CORS(app)
+CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
+app.config["TESTING"] = bool(int(environ.get("TESTING", 0)))
 
-# decorator to check user type
+
+
 def role_required(*roles):
     """
     This decorator checks if the user is authorized with Google. If not, it
@@ -48,13 +49,13 @@ def role_required(*roles):
         def decorated_function(*args, **kwargs):
             if not app.config["TESTING"]:
                 if not google.authorized or google.token["expires_at"] <= time.time():
-                    return redirect(url_for("google.login", next=request.url))
+                    return {"error": "Unauthorized"}
                 resp = google.get("/oauth2/v2/userinfo")
                 assert resp.ok, resp.text
                 email = resp.json()["email"]
                 user = models.User.query.filter_by(email=email).first()
                 if user is None or user.user_type not in roles:
-                    return "You do not have permission to perform this action."
+                    return {"error": "User does not have the required role"}
             return f(*args, **kwargs)
 
         return decorated_function
@@ -62,8 +63,29 @@ def role_required(*roles):
     return decorator
 
 
-# Define your routes here
+@app.route("/login")
+def login():
+    """
+    Redirects to the Google login page
+    """
+    if not google.authorized or google.token["expires_at"] <= time.time():
+        return redirect(url_for("google.login"))
+    resp = google.get("/oauth2/v2/userinfo")
+    assert resp.ok, resp.text
+    session['google_auth'] = resp.json()
+    return redirect(environ.get("FRONTEND_URL"))
+
+@app.route("/logout")
+def logout():
+    """
+    Logs the user out and redirects to the Google logout page
+    """
+    session.clear()
+    return redirect(environ.get("FRONTEND_URL"))
+
+
 @app.route("/")
+@role_required("Administrator", "Researcher", "Contributor")
 def index():
     """
     This function checks if the user is authorized with Google. If not, it
@@ -71,8 +93,6 @@ def index():
     the Google API and returns a message with the email address.
     """
     if not app.config["TESTING"]:
-        if not google.authorized or google.token["expires_at"] <= time.time():
-            return redirect(url_for("google.login"))
         resp = google.get("/oauth2/v2/userinfo")
         assert resp.ok, resp.text
         email = resp.json()["email"]
@@ -230,4 +250,4 @@ def get_frequent_words():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)#, ssl_context=('cert.pem', 'key.pem')
+    app.run(port=8080, debug=True)
