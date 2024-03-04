@@ -72,7 +72,7 @@ def login():
     resp = google.get("/oauth2/v2/userinfo")
     assert resp.ok, resp.text
     session['google_auth'] = resp.json()
-    return redirect(environ.get("FRONTEND_URL"))
+    return redirect(environ.get("CLIENT_URL"))
 
 
 @cross_origin()
@@ -82,7 +82,7 @@ def logout():
     Logs the user out and redirects to the homepage
     """
     session.clear()
-    return redirect(environ.get("FRONTEND_URL"))
+    return redirect(environ.get("CLIENT_URL"))
 
 
 @cross_origin()
@@ -161,7 +161,6 @@ def submit():
     result = {}
     with app.app_context():
         result = handle_submission(chatId)
-
     return result
 
 
