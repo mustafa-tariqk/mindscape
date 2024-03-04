@@ -1,73 +1,299 @@
-$colorVariable: wheat;
-
-.formContainer { //notice how the name is the ontainer name of our divider!
-    background-color: aquamarine;
+.agreementScreen {
+    background-color: #FEF8F3;
     height: 100vh; //THIS MEANS 100% OF THE THING
+    margin-top: 20vh;
     display: flex;
     align-items: center; //Alighn Vertical
-    justify-content: center; //allign horizontal
+    justify-content: center; //allign horizontal 
 
-    //child wrappers, you can edit children in your parents using scss
-    .formWrapper {
-        background-color: violet;
-        padding: 20px 60px; //vertical first then horizontal
-        border-radius: 10px;
+    .menubar{
         display: flex;
-        flex-direction: column;
-        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        width: 100vw;
+        height: 20vh;
+        background-color: #FEF8F3;
+
+        .left {
+            max-width: 30%;
+            img {
+                max-width: 100%;
+                max-height: auto;
+            }
+        }
+
+        .right {
+            a {
+                margin-right: 15%;
+                font-size: 20px;
+            }
+
+            img {
+                max-width: 10%;
+                max-height: auto;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+        }
+          
+        .gap {
+            width: 5px; /* Set your desired gap width */
+        }
+    }
+
+    .page {
+        position: relative;
+        width: 100vw; /* Set your desired width */
+        height: 60vh;
+        top: -30vh;
+
+        .background {
+            img {
+                position: absolute;
+                top: 25%;
+                left: 10%;
+                width: 80vw; /* Set your desired width */
+                height: 65vh; /* Set your desired height */
+                background-size: cover;
+                background-repeat: no-repeat;
+                opacity: 0.45; /* Set your desired opacity */
+            }
+          
+            .content {
+                display: flex;
+                position: relative;
+                align-items: center;
+                justify-content: center;
+                left: 25%;
+                top: 15vh;
+                height: 50%;
+                width: 50%;
+                z-index: 1;
+                text-align: center;
+                padding: 10px; /* Add padding for better appearance */
+                flex-direction: column;
+
+                h1 {
+                    color: #005670;
+                    font-size: 40px;
+                    max-height: 40px;
+                    max-width: 150%;
+                }
+
+                h2 {
+                    color: #005670;
+                    font-size: 30px;
+                }
+            }
+          
+            button {
+                padding: 10px 20px; /* Add padding for better appearance */
+                background-color: #005670; /* Set your desired background color */
+                color: #fff; /* Set text color to white */
+                border: none; /* Remove border */
+                border-radius: 5px; /* Optional: Add border radius for rounded corners */
+                cursor: pointer; /* Add cursor pointer on hover */
+                margin-top: 20%;
+            }
+        }
+    }
+}
+
+.resultsScreen {
+    background-color: #FEF8F3;
+    height: 100vh; //THIS MEANS 100% OF THE THING
+    margin-top: 10vh;
+    display: flex;
+    align-items: center; //Alighn Vertical
+    justify-content: center; //allign horizontal 
+    flex-direction: column;
+
+    .menubar{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        width: 100vw;
+        height: 20vh;
+        background-color: #FEF8F3;
+
+        .left {
+            max-width: 30%;
+            img {
+                max-width: 100%;
+                max-height: auto;
+            }
+        }
+
+        .right {
+            a {
+                margin-right: 15%;
+                font-size: 20px;
+            }
+
+            img {
+                max-width: 10%;
+                max-height: auto;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+        }
+          
+        .gap {
+            width: 5px; /* Set your desired gap width */
+        }
+    }
+
+    .contribcontainer{
+        height: 80vh;
+        width: 100%;
         align-items: center;
 
-        .logo{
-            color:forestgreen;
-            font-weight: bold;
+        .bigtitle{
+            flex: 1;
             font-size: 30px;
+            text-align: center;
         }
 
-        .title{
-            color:springgreen;
-            font-weight: lighter;
-            font-size: 15px;
+        .subtitle{
+            flex: 1;
+            font-size: 25px;
+            text-align: center;
+            margin-bottom: 2vh;
         }
 
-        form{
+        .grid-container {
+            span{
+                margin-right: 12.5%;
+                margin-left: 12.5%;
+            }
+        }
+
+        .imagebutton{
+            flex: 1;
+            margin-top: 2%;
+            height: 10%;
+            align-items: center;
+            justify-content: center;
             display: flex;
-            flex-direction: column;
-            gap: 15px; //15 pixels
-
-            input{
-                background-color: goldenrod;
-                border: 3px solid white;
-                padding: 15px;
-            }
-            input:focus{
-                background-color: orangered;
-                border: 3px solid black;
-            }
-            input::placeholder{
-                color: black;
-            }
+            
             button{
-                background-color: cornflowerblue;
-                cursor: pointer; //get the finger to appear when hovering!
-            }
-            label{
-                display: flex;
-                align-items: center;
-                gap: 10px;
+                background-color: #005670;
+                color: white;
+                width: 30%;
+                height: 100%;
+                border-radius: 10vw;
                 cursor: pointer;
-                color: darkslateblue;
-                font-size: 14px;
-                img{
-                    width: 50px;
+            }
+        }
+
+        .feedbackbutton{
+            flex: 1;
+            margin-top: 1%;
+            height: 10%;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            
+            button{
+                background-color: #005670;
+                color: white;
+                width: 30%;
+                height: 100%;
+                border-radius: 10vw;
+                cursor: pointer;
+            }
+        }
+
+        .graphs {
+            display: flex;
+            .wordCloud {
+                flex: 1;
+                width: 30%;
+            }
+
+            .similarity {
+                flex: 1;
+                width: 100%;
+
+                .pieChartStyle {
+                    display: flex;
+                    width: 100%;
+                    height: 100%;
+                    justify-content: center;
+                    margin-top: 15%;
+
+                    .pieChartInfo {
+                        width: 75%;
+                    }
+                }
+            }
+
+            .experience{
+                flex: 1;
+                margin-top: 10%;
+
+                .grid-item {
+                    display: flex;
+                    justify-content: center;
+                    padding: 5px;
+                    flex-direction: row;
+                    width: 100%;
+                    .cell {
+                        border: 1px solid black;
+                        padding: 1%;
+                        width: 12.5%;
+                        font-size: 60%;
+                        font-weight: bolder;
+                    }
                 }
             }
         }
+    }
 
-        p{
-            color: red;
-            font-size: 12px;
-            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-            margin-top: 10px;
+
+}
+
+.adminhome {
+    
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        width: 20%; /* Set the width of the sidebar */
+        height: 100vh; /* Set the height of the sidebar to fill the viewport */
+        background-color: #f0f0f0; /* Background color for visualization */
+
+        .logoBox {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc; /* Add a border between items */
+            img {
+                width: 80%;
+                
+            }
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc; /* Add a border between items */
+            height: 5%;
+
+            img {
+                width: 30px; /* Set the width of the image */
+                height: 30px; /* Set the height of the image */
+                margin-right: 10px; /* Add spacing between image and text */
+            }
+
+            span{
+                flex: 1; /* Allow text to take up remaining space */
+            }
+
         }
     }
 }

@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "chart.js": "^4.4.2",
     "dotenv": "^16.4.5",
     "file-loader": "^6.2.0",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-d3-cloud": "^1.0.6",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",
     "sass": "^1.71.1",
@@ -24,18 +27,6 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
     ]
   }
 }
