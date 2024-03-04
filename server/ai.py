@@ -37,7 +37,7 @@ except Exception as e: # Setup dummy text for testing/if API keys missing
     llm_embedder = None
     prompt = None
 
-def ai_message(chat_id, human_message, history):
+def ai_message(chat_id, human_message):
     """
     @chat_id: the id of the chat
     @message: the message to the AI
@@ -94,7 +94,7 @@ def handle_submission(chat_id):
     # Fetch chat
     chat_log = get_stringify_chat(chat_id, True)
 
-    # Extract from chat TODO: add to database
+    # Extract from chat
     submission_info = runnable.invoke(chat_log)
 
     return submission_info

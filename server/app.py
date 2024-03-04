@@ -160,6 +160,8 @@ def submit():
     with app.app_context():
         result = handle_submission(chatId)
 
+    
+
     return result
 
 @app.route("/delete_user/<user_id>")

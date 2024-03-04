@@ -94,6 +94,14 @@ class Experiences(db.Model): # pylint: disable=too-few-public-methods
     count = db.Column(db.Integer, nullable = False, default = 1) # how many in cluster
     db.ForeignKeyConstraint(['centroid'], ['messages.id'], ondelete='CASCADE') # dependency
 
+class Chats_Categories(db.Model): # pylint: disable=too-few-public-methods
+    """
+    Models the relationship between the different chats and some categorizations.
+    In this case, Chat-Substance pair will be the default key pair.
+    Because of this, some chats may appear multiple times if multiple substances were used.
+    """
+    
+
 
 def create_app():
     """
