@@ -34,7 +34,7 @@ app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
 CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
-app.config["TESTING"] = bool(int(environ.get("TESTING", 0))) or True
+app.config["TESTING"] = bool(int(environ.get("TESTING", 1)))
 
 
 
