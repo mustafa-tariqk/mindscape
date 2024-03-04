@@ -62,7 +62,7 @@ def ai_message(chat_id, human_message, history):
         llm=llm,
         prompt=prompt,
         memory=ConversationKGMemory(llm=llm, chat_memory=chat_memory)
-    )).predict(input=human_message)
+    ).predict(input=human_message)
 
 def get_common_experience(documents: list[Document]) -> str:
     """
