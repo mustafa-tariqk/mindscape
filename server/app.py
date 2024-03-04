@@ -50,9 +50,7 @@ def role_required(*roles):
             if not app.config["TESTING"]:
                 if not google.authorized or google.token["expires_at"] <= time.time():
                     return {"error": "Unauthorized"}
-                resp = google.get("/oauth2/v2/userinfo")
-                assert resp.ok, resp.text
-                email = resp.json()["email"]
+                email = session["google_auth"]["email"]
                 user = models.User.query.filter_by(email=email).first()
                 if user is None or user.user_type not in roles:
                     return {"error": "User does not have the required role"}
@@ -67,7 +65,7 @@ def role_required(*roles):
 @app.route("/login")
 def login():
     """
-    Redirects to the Google login page
+    Redirects to the Google login page, then back to the homepage
     """
     if not google.authorized or google.token["expires_at"] <= time.time():
         return redirect(url_for("google.login"))
@@ -81,7 +79,7 @@ def login():
 @app.route("/logout")
 def logout():
     """
-    Logs the user out and redirects to the Google logout page
+    Logs the user out and redirects to the homepage
     """
     session.clear()
     return redirect(environ.get("FRONTEND_URL"))
@@ -92,24 +90,18 @@ def logout():
 @role_required("Administrator", "Researcher", "Contributor")
 def index():
     """
-    This function checks if the user is authorized with Google. If not, it
-    redirects to the Google login page. Then it retrieves the user's email from
-    the Google API and returns a message with the email address.
+    This function returns the user's email and user_id
     """
-    if not app.config["TESTING"]:
-        resp = google.get("/oauth2/v2/userinfo")
-        assert resp.ok, resp.text
-        email = resp.json()["email"]
-        user = models.User.query.filter_by(email=email).first()
-        if user is None:
-            user = models.User(email=email, user_type="Contributor")
-            models.db.session.add(user)
-            models.db.session.commit()
-        # redirect this to front end when it's ready.
-        return {"email": email, "user_id": user.id}
-    else:
+    if app.config["TESTING"]:
         user = models.User.query.filter_by(email="neuma.mindscape@gmail.com").first()
         return {"email": user.email, "user_id": user.id}
+    email = session["google_auth"]["email"]
+    user = models.User.query.filter_by(email=email).first()
+    if user is None:
+        user = models.User(email=email, user_type="Contributor")
+        models.db.session.add(user)
+        models.db.session.commit()
+    return {"email": email, "user_id": user.id}
 
 
 @cross_origin()
