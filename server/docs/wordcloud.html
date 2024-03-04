@@ -26,10 +26,11 @@ Uses&nbsp;the&nbsp;frequency&nbsp;files&nbsp;in&nbsp;data.&nbsp;This&nbsp;freque
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
     
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-get_k_weighted_frequency"><strong>get_k_weighted_frequency</strong></a>(k, chat_id)</dt><dd><span class="code">Return&nbsp;the&nbsp;top&nbsp;k&nbsp;frequently&nbsp;seen&nbsp;words&nbsp;from&nbsp;a&nbsp;Chat&nbsp;session.<br>
+<td class="singlecolumn"><dl><dt><a name="-get_k_weighted_frequency"><strong>get_k_weighted_frequency</strong></a>(k, chat_id, exclude_ai_messages: bool = True)</dt><dd><span class="code">Return&nbsp;the&nbsp;top&nbsp;k&nbsp;frequently&nbsp;seen&nbsp;words&nbsp;from&nbsp;a&nbsp;Chat&nbsp;session.<br>
 Weights&nbsp;frequency&nbsp;based&nbsp;on&nbsp;established&nbsp;word&nbsp;distribution.<br>
 @k:&nbsp;number&nbsp;of&nbsp;words&nbsp;to&nbsp;return<br>
 @chat_id:&nbsp;id&nbsp;of&nbsp;chat&nbsp;session<br>
+@exclude_ai_messages:&nbsp;defaults&nbsp;to&nbsp;true.&nbsp;whether&nbsp;to&nbsp;exclude&nbsp;meessages&nbsp;sent&nbsp;by&nbsp;the&nbsp;chatbot<br>
 @return:&nbsp;dictionary&nbsp;formatted&nbsp;as&nbsp;{word:&nbsp;word_frequency}</span></dd></dl>
 </td></tr></table>
 </body></html>
