@@ -99,8 +99,14 @@ class Chats_Categories(db.Model): # pylint: disable=too-few-public-methods
     Models the relationship between the different chats and some categorizations.
     In this case, Chat-Substance pair will be the default key pair.
     Because of this, some chats may appear multiple times if multiple substances were used.
+    Weight is assumed to be in kg.
     """
-    
+    __tablename__ = 'chats_categories'
+    chat = db.Column(db.Integer, db.ForeignKey('chats.id'), nullable=False, primary_key=True)
+    substance = db.Column(db.Text, nullable=False, primary_key=True)
+    age = db.Column(db.Integer, nullable=True)
+    weight = db.Column(db.Integer, nullable=True)
+    db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
 
 
 def create_app():
