@@ -15,7 +15,7 @@ import models
 import utils
 from analytics.wordcloud import get_k_weighted_frequency
 from analytics.vstore_handler import create_vectorstores, cluster_new_message, new_experience
-from ai import ai_message, llm_embedder
+from ai import ai_message, llm_embedder, handle_submission
 
 load_dotenv()
 
@@ -35,7 +35,7 @@ app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
 
 # uncomment line below to skip auth
-# app.config["TESTING"] = True
+app.config["TESTING"] = True
 CORS(app)
 
 # Initialize vectorstores
@@ -50,7 +50,6 @@ def role_required(*roles):
     redirects to the Google login page. Then it retrieves the user's email from
     the Google API and checks if the user has the required role.
     """
-
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -146,6 +145,22 @@ def converse():
 
     return {"ai_response": ai_text}
 
+@app.route("/submit/", methods=["POST"])
+@role_required("Administrator", "Researcher", "Contributor")
+def submit():
+    """
+    Handles submission of the chat
+    @request: {chat_id: int}
+    @return schema: {weight: int, height: int, substance: string}
+    schema could change on request, but it's an object fs
+    """
+    request_body = request.get_json()
+    chatId = request_body['chatId']
+    result = {}
+    with app.app_context():
+        result = handle_submission(chatId)
+
+    return result
 
 @app.route("/delete_user/<user_id>")
 # @role_required("Administrator")
@@ -219,11 +234,17 @@ def get_all_chats():
 # @role_required("Contributor")
 def get_frequent_words():
     """
-    @return a dictionary of the most frequent words in the chat
+    @return schema {
+        'global_count': frequency in language distribution,
+        'local_count': frequency in chat,
+        'global_max - global_count': difference from the most used word,
+        'weight': attributed weight
+    }
     """
     chat_id = request.args.get("chat_id")
     k = int(request.args.get("k"))
-    return jsonify(get_k_weighted_frequency(k, chat_id))
+    with app.app_context():
+        return jsonify(get_k_weighted_frequency(k, chat_id))
 
 
 if __name__ == "__main__":

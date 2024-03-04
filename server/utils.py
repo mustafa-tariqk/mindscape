@@ -1,5 +1,5 @@
 """
-Utilities functions. Mostly sql handlers
+Utilities functions. Most require app context to be called
 """
 import models
 import nltk

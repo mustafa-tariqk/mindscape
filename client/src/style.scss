@@ -1,0 +1,316 @@
+$colorVariable: wheat;
+
+.formContainer { //notice how the name is the ontainer name of our divider!
+    background-color: aquamarine;
+    height: 100vh; //THIS MEANS 100% OF THE THING
+    display: flex;
+    align-items: center; //Alighn Vertical
+    justify-content: center; //allign horizontal
+
+    //child wrappers, you can edit children in your parents using scss
+    .formWrapper {
+        background-color: violet;
+        padding: 20px 60px; //vertical first then horizontal
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+
+        .logo{
+            color:forestgreen;
+            font-weight: bold;
+            font-size: 30px;
+        }
+
+        .title{
+            color:springgreen;
+            font-weight: lighter;
+            font-size: 15px;
+        }
+
+        form{
+            display: flex;
+            flex-direction: column;
+            gap: 15px; //15 pixels
+
+            input{
+                background-color: goldenrod;
+                border: 3px solid white;
+                padding: 15px;
+            }
+            input:focus{
+                background-color: orangered;
+                border: 3px solid black;
+            }
+            input::placeholder{
+                color: black;
+            }
+            button{
+                background-color: cornflowerblue;
+                cursor: pointer; //get the finger to appear when hovering!
+            }
+            label{
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+                color: darkslateblue;
+                font-size: 14px;
+                img{
+                    width: 50px;
+                }
+            }
+        }
+
+        p{
+            color: red;
+            font-size: 12px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            margin-top: 10px;
+        }
+    }
+}
+
+.home{
+    background-color: #FEF8F3;
+    height: 80vh; //THIS MEANS 100% OF THE THING
+    margin-top: 20vh;
+    display: flex;
+    align-items: center; //Alighn Vertical
+    justify-content: center; //allign horizontal
+
+    .topbar{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        width: 100vw;
+        height: 20vh;
+        background-color: #FEF8F3;
+
+        .left {
+            max-width: 30%;
+            img {
+                max-width: 100%;
+                max-height: auto;
+            }
+        }
+
+        .right {
+            a {
+                margin-right: 15%;
+                font-size: 20px;
+            }
+
+            img {
+                max-width: 10%;
+                max-height: auto;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+        }
+          
+        .gap {
+            width: 5px; /* Set your desired gap width */
+        }
+
+    }
+
+    .container{
+        border: 0px solid white;
+        border-radius: 10px;
+        width: 65%;
+        height: 85%;
+        display: flex;
+        overflow: visible;
+
+        .chat{
+            flex: 2;
+            background-color: green($color: #000000);
+            max-width: 100%;
+
+            .submit-convo{
+                justify-content: center;
+                display: flex;
+                margin-top: 2vh;
+
+                button{
+                    color: black;
+                    border: 2px solid black;
+                    padding: 5px;
+                    background-color: #13f085;
+                }
+            }
+
+            .chatInfo{
+                height: 50px;
+                background-color: grey;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px;
+                color: lightblue;
+
+                .chatIcons{
+                    img{
+                        background-color: white;
+                        height: 24px;
+                        width: 24px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                        cursor: pointer;
+                        margin-right: 5px;
+                    }
+                }
+            }
+
+            .messages::-webkit-scrollbar {
+                display: none;
+            }
+
+            .messages {
+                background-color: #FEF8F3;
+                padding: 10px;
+                height: calc(100% - 160px);
+                overflow: scroll;
+                overflow-x: hidden;
+
+                .message{
+                    display: flex;
+                    gap: 20px;
+                    margin-left: 10%;
+                    max-width: 80%; /* Set your desired maximum width */
+                    word-wrap: break-word; /* Wrap long words */
+                    overflow-wrap: break-word; /* For older browsers */
+
+                    .messageInfo{
+                        display: flex;
+                        flex-direction: column;
+                        color: gray;
+                        font-weight: lighter;
+                        font-size: 12px;
+                        margin-bottom: 20px;
+                        img{
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            object-fit: cover;
+                            background-color: black;
+                            margin-top: 35%;
+                        }
+                    }
+                    .messageContent{
+                        max-width: 80%;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+
+                        p{
+                          background-color: #005670;
+                          border-radius: 0px 10px 10px 10px;  
+                          padding: 10px 20px;
+                          color: white;
+                          max-width: max-content;
+                        }
+
+                        img{
+                            width: 50%;
+                        }
+                    }
+
+                    &.owner{
+                        //if it is a message, AND it is an owner, since we have 2 class names we can have combinations
+                        flex-direction: row-reverse;
+                        margin-left: 12%;
+
+                        .messageContent{
+                            align-items: flex-end;
+                            p{
+                                background-color: #43BDAD;
+                                color: black;
+                                border-radius: 10px 0px 10px 10px;
+                                max-width: max-content;
+                            }
+                        }
+
+                        .messageInfo {
+                            img {
+                                filter: invert(1.0);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .input {
+                height: 7vh;
+                background-color: #FEF8F3;
+                width: 70%;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+                margin-left: 10%;
+                padding-left: 10%;
+                justify-content: space-between;
+                padding-top: 50px;
+                overflow: hidden;
+                border-radius: 50px;
+                border: 4px solid black;
+
+                .input-area{
+                    width: 35vw;
+                    display: flex;
+                    input{
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                        outline: none;
+                        background-color: #FEF8F3;
+                        color: black;
+                        font-size: 18px;
+                        border-radius: 20px;
+                        margin-right: auto;
+                        text-align: left;
+
+                        &::placeholder{
+                            color: black;
+                            text-align: left;
+                        }
+
+                    
+                    }
+                }
+                
+
+                .send{
+                    display: flex;
+                    height: 100%;
+
+                    button{
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 10px 15px;
+                        height: 50px;
+                        width: 5vw;
+                        color: black;
+                        background-color: #FEF8F3;
+                        border: 4px solid black;
+                        cursor: pointer;
+                        font-weight: bolder;
+                        font-size: 1vw;
+                        text-align: center;
+                        margin-left: 150%;
+                        position: relative;
+                        top: 50%;
+                    }
+                }
+            }
+        }
+    }
+}

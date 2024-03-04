@@ -8,9 +8,8 @@ langchain
 langchain-openai
 python-dotenv
 pytest
-pytest-mock
-pylint
-langchain-community
+networkx
 nltk
+gunicorn
 faiss-cpu # change to gpu if available?
 tiktoken
