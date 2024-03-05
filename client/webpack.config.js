@@ -59,6 +59,7 @@ module.exports = {
     }),
   ],
   devServer: {
-    port: JSON.stringify(process.env.CLIENT_PORT)
+    port: JSON.stringify(process.env.CLIENT_PORT),
+    allowedHosts: 'all',
   }
 };
