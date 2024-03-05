@@ -52,7 +52,11 @@ def role_required(*roles):
                     return {"error": "Unauthorized"}
                 email = session["google_auth"]["email"]
                 user = models.User.query.filter_by(email=email).first()
-                if user is None or user.user_type not in roles:
+                if user is None:
+                    user = models.User(email=email, user_type="Contributor")
+                    models.db.session.add(user)
+                    models.db.session.commit()
+                if user.user_type not in roles:
                     return {"error": "User does not have the required role"}
             return f(*args, **kwargs)
 
