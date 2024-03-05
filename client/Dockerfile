@@ -10,10 +10,8 @@ RUN npm install
 
 COPY . . 
 
-ENV PORT=3000 
+EXPOSE ${CLIENT_PORT}
 
-EXPOSE 3000
+RUN npm run build
 
-CMD [ "npm", "build" ]
-
-CMD [ "npm", "start" ]
+CMD npm start -- --port ${CLIENT_PORT}

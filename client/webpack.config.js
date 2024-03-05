@@ -59,6 +59,6 @@ module.exports = {
     }),
   ],
   devServer: {
-    port: 3000
+    port: JSON.stringify(process.env.CLIENT_PORT)
   }
 };
