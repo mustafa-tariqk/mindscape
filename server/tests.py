@@ -41,7 +41,7 @@ def test_converse(fake_client: FlaskClient):
     """
     Test the converse route
     """
-    response = fake_client.post('/converse/', json={'chat_id': 1, 'message': 'Hello'})
+    response = fake_client.post('/converse', json={'chat_id': 1, 'message': 'Hello'})
     assert response.status_code == 200
     data = response.get_json()
     assert 'ai_response' in data

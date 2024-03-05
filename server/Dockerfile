@@ -1,7 +1,4 @@
-#use the offically supported node.js base image
 FROM python:3.10
-
-ENV PORT=8080
 
 COPY requirements.txt ./
 
@@ -9,6 +6,14 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8080
+EXPOSE ${SERVER_PORT}
 
-CMD gunicorn --bind 0.0.0.0:8080 --timeout 0 app:app
+CMD if [ "$TESTING" = "0" ]; then \
+    gunicorn --bind 0.0.0.0:${SERVER_PORT} \
+    --certfile=fullchain.pem \
+    --keyfile=privkey.pem \
+    --timeout 0 app:app; \
+else \
+    gunicorn --bind 0.0.0.0:${SERVER_PORT} \
+    --timeout 0 app:app; \
+fi

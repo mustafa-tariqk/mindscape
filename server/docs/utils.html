@@ -9,7 +9,7 @@
 <tr class="heading-text decor">
 <td class="title">&nbsp;<br><strong class="title">utils</strong></td>
 <td class="extra"><a href=".">index</a><br><a href="file:/Users/mustafa/Documents/mindscape/server/utils.py">/Users/mustafa/Documents/mindscape/server/utils.py</a></td></tr></table>
-    <p><span class="code">Utilities&nbsp;functions.</span></p>
+    <p><span class="code">Utilities&nbsp;functions.&nbsp;Most&nbsp;require&nbsp;app&nbsp;context&nbsp;to&nbsp;be&nbsp;called</span></p>
 <p>
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
@@ -17,15 +17,23 @@
     
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="models.html">models</a><br>
-</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+</td><td class="multicolumn"><a href="nltk.html">nltk</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor functions-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
     
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-get_all_chat_messages"><strong>get_all_chat_messages</strong></a>(chat_id)</dt><dd><span class="code">Does&nbsp;exactly&nbsp;as&nbsp;the&nbsp;name&nbsp;implies<br>
+<td class="singlecolumn"><dl><dt><a name="-get_all_chat_messages"><strong>get_all_chat_messages</strong></a>(chat_id=None)</dt><dd><span class="code">Does&nbsp;exactly&nbsp;as&nbsp;the&nbsp;name&nbsp;implies<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat.&nbsp;Defaults&nbsp;to&nbsp;None.&nbsp;If&nbsp;not&nbsp;provided,&nbsp;get&nbsp;all&nbsp;messages.<br>
+@return:&nbsp;A&nbsp;list&nbsp;of&nbsp;messages&nbsp;from&nbsp;the&nbsp;requested&nbsp;chat</span></dd></dl>
+ <dl><dt><a name="-get_chat_language"><strong>get_chat_language</strong></a>(chat_id)</dt><dd><span class="code">Does&nbsp;exactly&nbsp;as&nbsp;the&nbsp;name&nbsp;implies<br>
 @chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
-@return:&nbsp;A&nbsp;list&nbsp;of&nbsp;string&nbsp;of&nbsp;messages&nbsp;from&nbsp;the&nbsp;requested&nbsp;chat</span></dd></dl>
+@return:&nbsp;The&nbsp;language&nbsp;associated&nbsp;with&nbsp;the&nbsp;chat</span></dd></dl>
+ <dl><dt><a name="-get_stringify_chat"><strong>get_stringify_chat</strong></a>(chat_id, exclude_ai_messages: bool = False, prune_stop_words: bool = False, lowercase: bool = False)</dt><dd><span class="code">Returns&nbsp;all&nbsp;messages&nbsp;in&nbsp;the&nbsp;specified&nbsp;chat&nbsp;as&nbsp;a&nbsp;single&nbsp;string.<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
+@exclude_ai_messages:&nbsp;defaults&nbsp;to&nbsp;true.&nbsp;whether&nbsp;to&nbsp;exclude&nbsp;meessages&nbsp;sent&nbsp;by&nbsp;the&nbsp;chatbot<br>
+@return:&nbsp;A&nbsp;string&nbsp;containing&nbsp;the&nbsp;entire&nbsp;correspondence.</span></dd></dl>
  <dl><dt><a name="-get_word_weight"><strong>get_word_weight</strong></a>(word, language='english')</dt><dd><span class="code">Calculate&nbsp;the&nbsp;weights&nbsp;for&nbsp;the&nbsp;given&nbsp;word<br>
 @word:&nbsp;word&nbsp;to&nbsp;calculate&nbsp;weight&nbsp;for.&nbsp;Must&nbsp;be&nbsp;lowercase&nbsp;and&nbsp;does&nbsp;not&nbsp;contain&nbsp;special&nbsp;characters&nbsp;(language&nbsp;specific)&nbsp;or&nbsp;numbers<br>
 @return:&nbsp;weight&nbsp;attributed&nbsp;to&nbsp;the&nbsp;word</span></dd></dl>

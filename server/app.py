@@ -7,9 +7,9 @@ from datetime import datetime
 from functools import wraps
 from os import environ
 from dotenv import load_dotenv
-from flask import redirect, request, url_for, jsonify
+from flask import redirect, request, url_for, jsonify, session
 from flask_dance.contrib.google import google, make_google_blueprint
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 import models
 import utils
@@ -26,17 +26,18 @@ blueprint = make_google_blueprint(
         "https://www.googleapis.com/auth/userinfo.email",
         "openid",
     ],
+    redirect_url="/login",
 )
 
 # Initialize the Flask app
 app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
-# uncomment line below to skip auth
-app.config["TESTING"] = True
-CORS(app)
+CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
+app.config["TESTING"] = bool(int(environ.get("TESTING", 1)))
 
-# decorator to check user type
+
+
 def role_required(*roles):
     """
     This decorator checks if the user is authorized with Google. If not, it
@@ -48,13 +49,11 @@ def role_required(*roles):
         def decorated_function(*args, **kwargs):
             if not app.config["TESTING"]:
                 if not google.authorized or google.token["expires_at"] <= time.time():
-                    return redirect(url_for("google.login", next=request.url))
-                resp = google.get("/oauth2/v2/userinfo")
-                assert resp.ok, resp.text
-                email = resp.json()["email"]
+                    return {"error": "Unauthorized"}
+                email = session["google_auth"]["email"]
                 user = models.User.query.filter_by(email=email).first()
                 if user is None or user.user_type not in roles:
-                    return "You do not have permission to perform this action."
+                    return {"error": "User does not have the required role"}
             return f(*args, **kwargs)
 
         return decorated_function
@@ -62,32 +61,50 @@ def role_required(*roles):
     return decorator
 
 
-# Define your routes here
+@cross_origin()
+@app.route("/login")
+def login():
+    """
+    Redirects to the Google login page, then back to the homepage
+    """
+    if not google.authorized or google.token["expires_at"] <= time.time():
+        return redirect(url_for("google.login"))
+    resp = google.get("/oauth2/v2/userinfo")
+    assert resp.ok, resp.text
+    session['google_auth'] = resp.json()
+    return redirect(environ.get("CLIENT_URL"))
+
+
+@cross_origin()
+@app.route("/logout")
+def logout():
+    """
+    Logs the user out and redirects to the homepage
+    """
+    session.clear()
+    return redirect(environ.get("CLIENT_URL"))
+
+
+@cross_origin()
 @app.route("/")
+@role_required("Administrator", "Researcher", "Contributor")
 def index():
     """
-    This function checks if the user is authorized with Google. If not, it
-    redirects to the Google login page. Then it retrieves the user's email from
-    the Google API and returns a message with the email address.
+    This function returns the user's email and user_id
     """
-    if not app.config["TESTING"]:
-        if not google.authorized or google.token["expires_at"] <= time.time():
-            return redirect(url_for("google.login"))
-        resp = google.get("/oauth2/v2/userinfo")
-        assert resp.ok, resp.text
-        email = resp.json()["email"]
-        user = models.User.query.filter_by(email=email).first()
-        if user is None:
-            user = models.User(email=email, user_type="Contributor")
-            models.db.session.add(user)
-            models.db.session.commit()
-        # redirect this to front end when it's ready.
-        return {"email": email, "user_id": user.id}
-    else:
+    if app.config["TESTING"]:
         user = models.User.query.filter_by(email="neuma.mindscape@gmail.com").first()
         return {"email": user.email, "user_id": user.id}
+    email = session["google_auth"]["email"]
+    user = models.User.query.filter_by(email=email).first()
+    if user is None:
+        user = models.User(email=email, user_type="Contributor")
+        models.db.session.add(user)
+        models.db.session.commit()
+    return {"email": email, "user_id": user.id}
 
 
+@cross_origin()
 @app.route("/start_chat/<user_id>")
 @role_required("Administrator", "Researcher", "Contributor")
 def start_chat(user_id):
@@ -102,7 +119,8 @@ def start_chat(user_id):
     return {"chat_id": chat.id}
 
 
-@app.route("/converse/", methods=["POST"])
+@cross_origin()
+@app.route("/converse", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def converse():
     """
@@ -127,7 +145,9 @@ def converse():
     models.db.session.commit()
     return {"ai_response": ai_text}
 
-@app.route("/submit/", methods=["POST"])
+
+@cross_origin()
+@app.route("/submit", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def submit():
     """
@@ -141,9 +161,10 @@ def submit():
     result = {}
     with app.app_context():
         result = handle_submission(chatId)
-
     return result
 
+
+@cross_origin()
 @app.route("/delete_user/<user_id>")
 @role_required("Administrator")
 def delete_user(user_id):
@@ -157,6 +178,7 @@ def delete_user(user_id):
     return {"user_id": user.id, "status": "deleted" }
 
 
+@cross_origin()
 @app.route("/change_permission/<user_id>/<role>")
 @role_required("Administrator")
 def change_permission(user_id, role):
@@ -173,6 +195,7 @@ def change_permission(user_id, role):
     return {"user_id": user.id, "role": user.user_type}
 
 
+@cross_origin()
 @app.route("/delete_chat/<chat_id>")
 @role_required("Administrator")
 def delete_chat(chat_id):
@@ -186,6 +209,7 @@ def delete_chat(chat_id):
     return {"chat_id": chat.id, "status": "deleted"}
 
 
+@cross_origin()
 @app.route("/flag/<chat_id>")
 @role_required("Administrator", "Researcher")
 def flag_chat(chat_id):
@@ -199,6 +223,7 @@ def flag_chat(chat_id):
     return {"chat_id": chat.id, "status": "flagged"}
 
 
+@cross_origin()
 @app.route("/get_all_chats")
 @role_required("Administrator", "Researcher")
 def get_all_chats():
@@ -212,7 +237,7 @@ def get_all_chats():
     return chat_dict
 
 
-@app.route("/analytics/get_frequent_words/", methods=["GET"])
+@app.route("/analytics/get_frequent_words", methods=["GET"])
 @role_required("Contributor")
 def get_frequent_words():
     """
@@ -230,4 +255,4 @@ def get_frequent_words():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)#, ssl_context=('cert.pem', 'key.pem')
+    app.run(port=8080, debug=True)
