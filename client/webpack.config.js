@@ -54,12 +54,13 @@ module.exports = {
       // Only giving it what it needs
       "process.env": {
         "SERVER_PORT": JSON.stringify(process.env.SERVER_PORT),
-        "SERVER_URL": JSON.stringify(process.env.SERVER_URL)
+        "SERVER_URL": JSON.stringify(process.env.SERVER_URL),
+        "CLIENT_PORT": JSON.stringify(process.env.CLIENT_PORT)
       }
     }),
   ],
   devServer: {
-    port: JSON.stringify(process.env.CLIENT_PORT),
+    port: process.env.CLIENT_PORT, 
     allowedHosts: 'all',
   }
 };
