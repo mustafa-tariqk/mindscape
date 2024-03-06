@@ -66,10 +66,10 @@
                 position: relative;
                 align-items: center;
                 justify-content: center;
-                left: 25%;
-                top: 15vh;
+                left: 12.5%;
+                top: 13vh;
                 height: 50%;
-                width: 50%;
+                width: 75%;
                 z-index: 1;
                 text-align: center;
                 padding: 10px; /* Add padding for better appearance */
@@ -86,6 +86,10 @@
                     color: #005670;
                     font-size: 30px;
                 }
+
+                p {
+                    font-size: 12px;
+                }
             }
           
             button {
@@ -95,7 +99,7 @@
                 border: none; /* Remove border */
                 border-radius: 5px; /* Optional: Add border radius for rounded corners */
                 cursor: pointer; /* Add cursor pointer on hover */
-                margin-top: 20%;
+                margin-top: 5%;
             }
         }
     }
