@@ -1,6 +1,7 @@
 import Neuma from '../img/Logo_with_subtext_upscaled.png'
 import User from '../img/userprofile.png'
 import Wellness from '../img/wellness_background.png'
+import React from 'react'
 
 const Login = () => {
     return (
