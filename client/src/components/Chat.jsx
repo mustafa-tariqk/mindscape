@@ -4,12 +4,12 @@
 import React, { useEffect, useState } from "react";
 import Message from "./Message.jsx";
 import Input from "./Input.jsx";
+import { Route, Navigate } from "react-router-dom"
 
 const SERVER_URL = process.env.SERVER_URL;
 
-function Chat() {
+function Chat({chatId, setChatId}) {
     const [messages, setMessages] = useState([]);
-    const [chatId, setChatId] = useState(null);
 
     useEffect(() => {
         fetch(SERVER_URL+'/') 
@@ -34,7 +34,7 @@ function Chat() {
             return;
         }
         const messageToSend = { chat_id: chatId, message: userInput };
-        fetch(SERVER_URL+'/converse/', {
+        fetch(SERVER_URL+'/converse', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -51,17 +51,19 @@ function Chat() {
     };
 
     const handleSubmit = () => {
-        if (!chatId) {
-            console.error("Chat ID is not set.");
-            return;
-        }
-        fetch(SERVER_URL+'/submit/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({chatId})
-        }).then(response => console.log(response.json())) // Handle this data in analytics
+        // if (!chatId) {
+        //     console.error("Chat ID is not set.");
+        //     return;
+        // }
+        // fetch(SERVER_URL+'/submit', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({chatId})
+        // }).then(response => console.log(response.json())) // Handle this data in analytics
+        console.log("Bruh")
+        return <Route path="/" element={<Navigate to="/complete" replace />} />
     }
 
     return (
@@ -79,7 +81,7 @@ function Chat() {
                     <Message key={index} whoIsIt={mess.origin} passedMessage={mess.content} /> 
                 ))}
             </div>
-            <Input onSendMessage={handleSendMessage}/>
+            <Input onSendMessage={handleSubmit}/>
             <div className="submit-convo">
                 <button type="submit" id="submit" onClick={handleSubmit}>SUBMIT CONVERSATION</button>
             </div>

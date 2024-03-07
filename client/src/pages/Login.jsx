@@ -3,7 +3,25 @@ import User from '../img/userprofile.png'
 import Wellness from '../img/wellness_background.png'
 import React from 'react'
 
+const SERVER_URL = process.env.SERVER_URL;
+
 const Login = () => {
+    fetch(SERVER_URL + "/analytics/get_frequent_words?" + new URLSearchParams({
+        chat_id: 2,
+        k: 10,
+    }), {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(`Response: ${data}`);
+        console.log(data)
+    })
     return (
         <div className='agreementScreen'>
             <div className='menubar'>
