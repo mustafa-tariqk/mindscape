@@ -90,26 +90,22 @@ def logout():
 
 
 @cross_origin()
-@app.route("/")
+@app.route("/api/user")
 @role_required("Administrator", "Researcher", "Contributor")
 def index():
     """
     This function returns the user's email and user_id
     """
     if app.config["TESTING"]:
-        user = models.User.query.filter_by(email="neuma.mindscape@gmail.com").first()
-        return {"email": user.email, "user_id": user.id}
-    email = session["google_auth"]["email"]
+        email = "neuma.mindscape@gmail.com"
+    else:
+        email = session["google_auth"]["email"]
     user = models.User.query.filter_by(email=email).first()
-    if user is None:
-        user = models.User(email=email, user_type="Contributor")
-        models.db.session.add(user)
-        models.db.session.commit()
-    return {"email": email, "user_id": user.id}
+    return {"email": user.email, "user_id": user.id}
 
 
 @cross_origin()
-@app.route("/start_chat/<user_id>")
+@app.route("/api/start_chat/<user_id>")
 @role_required("Administrator", "Researcher", "Contributor")
 def start_chat(user_id):
     """
@@ -124,7 +120,7 @@ def start_chat(user_id):
 
 
 @cross_origin()
-@app.route("/converse", methods=["POST"])
+@app.route("/api/converse", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def converse():
     """
@@ -151,7 +147,7 @@ def converse():
 
 
 @cross_origin()
-@app.route("/submit", methods=["POST"])
+@app.route("/api/submit", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def submit():
     """
@@ -169,7 +165,7 @@ def submit():
 
 
 @cross_origin()
-@app.route("/delete_user/<user_id>")
+@app.route("/api/delete_user/<user_id>")
 @role_required("Administrator")
 def delete_user(user_id):
     """
@@ -183,7 +179,7 @@ def delete_user(user_id):
 
 
 @cross_origin()
-@app.route("/change_permission/<user_id>/<role>")
+@app.route("/api/change_permission/<user_id>/<role>")
 @role_required("Administrator")
 def change_permission(user_id, role):
     """
@@ -200,7 +196,7 @@ def change_permission(user_id, role):
 
 
 @cross_origin()
-@app.route("/delete_chat/<chat_id>")
+@app.route("/api/delete_chat/<chat_id>")
 @role_required("Administrator")
 def delete_chat(chat_id):
     """
@@ -214,7 +210,7 @@ def delete_chat(chat_id):
 
 
 @cross_origin()
-@app.route("/flag/<chat_id>")
+@app.route("/api/flag/<chat_id>")
 @role_required("Administrator", "Researcher")
 def flag_chat(chat_id):
     """
@@ -228,7 +224,7 @@ def flag_chat(chat_id):
 
 
 @cross_origin()
-@app.route("/get_all_chats")
+@app.route("/api/get_all_chats")
 @role_required("Administrator", "Researcher")
 def get_all_chats():
     """
@@ -241,7 +237,7 @@ def get_all_chats():
     return chat_dict
 
 
-@app.route("/analytics/get_frequent_words", methods=["GET"])
+@app.route("/api/analytics/get_frequent_words", methods=["GET"])
 @role_required("Contributor")
 def get_frequent_words():
     """
