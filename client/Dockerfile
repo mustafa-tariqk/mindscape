@@ -12,6 +12,8 @@ COPY . .
 
 EXPOSE ${CLIENT_PORT}
 
-RUN npm run build
-
-CMD npm start -- --port ${CLIENT_PORT}
+CMD if [ "$TESTING" = "0" ]; then \
+    npm run start:https -- --port ${CLIENT_PORT}; \
+else \
+    npm start -- --port ${CLIENT_PORT}; \
+fi
