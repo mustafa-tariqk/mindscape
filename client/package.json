@@ -20,6 +20,7 @@
   },
   "scripts": {
     "start": "webpack serve",
+    "start:https": "webpack serve --https",
     "build": "webpack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
