@@ -357,10 +357,14 @@ body {
     .container{
         border: 0px solid white;
         border-radius: 10px;
-        width: 65%;
+        width: 100%;
         height: 85%;
         display: flex;
         overflow: visible;
+
+        .bg{
+            width: 100%;
+        }
 
         .chat{
             flex: 2;
@@ -497,7 +501,7 @@ body {
                 border: 4px solid black;
 
                 .input-area{
-                    width: 35vw;
+                    width: 65vw;
                     display: flex;
                     input{
                         display: flex;
@@ -527,6 +531,7 @@ body {
                 .send{
                     display: flex;
                     height: 100%;
+                    left: 50vw;
 
                     button{
                         display: flex;
@@ -542,7 +547,7 @@ body {
                         font-weight: bolder;
                         font-size: 1vw;
                         text-align: center;
-                        margin-left: 150%;
+                        margin-left: 50%;
                         position: relative;
                         top: 50%;
                     }

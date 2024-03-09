@@ -95,7 +95,8 @@ const Complete = ({chatId}) => {
         const modified = JSON.parse(wordCloudData);
         const newData = []
         for (const key in modified) {
-            const newObject = { text: key, value: Math.max(parseInt(0.355 * (Math.pow(modified[key].weight, -4)) - 148244), 10) }
+            const newObject = { text: key, value: (Math.max(parseInt(0.355 * (Math.pow(modified[key].weight, -4)) - 148244), 90) / 4) }
+            // Math.max(parseInt(0.355 * (Math.pow(modified[key].weight, -4)) - 148244), 10)
             // console.log(key);
             // console.log(modified[key].weight)
             newData.push(newObject)
