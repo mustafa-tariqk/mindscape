@@ -9,9 +9,28 @@ import {
 } from 'react-router-dom'
 import Complete from './Complete.jsx';
 
+const SERVER_URL = process.env.SERVER_URL;
+
 
 function Home() {
 
+    //Login check here
+    fetch(SERVER_URL+'/api/user', {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if("error" in data) {
+            window.location.href = SERVER_URL + '/login';
+        }
+    });
+
+    //Chat id passing
     const [chatId, setChatId] = useState(null);
 
     return (
