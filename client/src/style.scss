@@ -108,6 +108,7 @@
 .resultsScreen {
     background-color: #FEF8F3;
     height: 100vh; //THIS MEANS 100% OF THE THING
+    width: 100%;
     margin-top: 10vh;
     display: flex;
     align-items: center; //Alighn Vertical
@@ -155,6 +156,7 @@
         height: 80vh;
         width: 100%;
         align-items: center;
+        background-color: #FEF8F3;
 
         .bigtitle{
             flex: 1;
@@ -171,8 +173,7 @@
 
         .grid-container {
             span{
-                margin-right: 12.5%;
-                margin-left: 12.5%;
+                margin-left: 12.5vw;
             }
         }
 
@@ -302,9 +303,14 @@
     }
 }
 
+body {
+    background-color: #FEF8F3;
+}
+
 .home{
     background-color: #FEF8F3;
     height: 80vh; //THIS MEANS 100% OF THE THING
+    width: 100%;
     margin-top: 20vh;
     display: flex;
     align-items: center; //Alighn Vertical
