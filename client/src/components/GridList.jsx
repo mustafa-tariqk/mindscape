@@ -1,7 +1,6 @@
 import React from 'react';
 
 const GridItem = ({ cellValues }) => {
-  console.log(cellValues)
   return (
     <div className="grid-item">
       {/* Render each cell with its respective value */}
@@ -15,7 +14,6 @@ const GridItem = ({ cellValues }) => {
 };
 
 const GridList = ({ items }) => {
-  console.log(items)
   return (
     <div className="grid-list">
       {/* Render each grid item */}

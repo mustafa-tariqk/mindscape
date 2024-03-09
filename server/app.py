@@ -161,7 +161,8 @@ def submit():
     result = {}
     with app.app_context():
         result = handle_submission(chatId)
-    return result
+    #result = {"weight in kg":155, "height in cm":191, "substance":"Lean"}, 
+    return jsonify(result)
 
 
 @cross_origin()

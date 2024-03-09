@@ -4,28 +4,35 @@
 import React, { useEffect, useState } from "react";
 import Message from "./Message.jsx";
 import Input from "./Input.jsx";
+import { Link, useNavigate } from "react-router-dom"
 
 const SERVER_URL = process.env.SERVER_URL;
 
-function Chat() {
+function Chat({chatId, setChatId}) {
     const [messages, setMessages] = useState([]);
-    const [chatId, setChatId] = useState(null);
+    const navigate = useNavigate()
 
     useEffect(() => {
-        fetch(SERVER_URL+'/') 
-            .then(response => response.json())
-            .then(data => {
-                const userId = data.user_id;
-                startChat(userId);
-            });
+        fetch(SERVER_URL+'/api/user', {
+            mode: 'cors',
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(data => {
+            const userId = data.user_id;
+            startChat(userId);
+        });
     }, []);
 
     function startChat(userId) {
-        fetch(SERVER_URL+'/start_chat/' + userId)
-            .then(response => response.json())
-            .then(data => {
-                setChatId(data.chat_id);
-            });
+        fetch(SERVER_URL+'/api/start_chat/' + userId, {
+            mode: 'cors',
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(data => {
+            setChatId(data.chat_id);
+        });
     }
 
     const handleSendMessage = (userInput) => {
@@ -34,8 +41,10 @@ function Chat() {
             return;
         }
         const messageToSend = { chat_id: chatId, message: userInput };
-        fetch(SERVER_URL+'/converse/', {
+        fetch(SERVER_URL+'/api/converse', {
             method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -51,17 +60,7 @@ function Chat() {
     };
 
     const handleSubmit = () => {
-        if (!chatId) {
-            console.error("Chat ID is not set.");
-            return;
-        }
-        fetch(SERVER_URL+'/submit/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({chatId})
-        }).then(response => console.log(response.json())) // Handle this data in analytics
+        navigate("/complete")
     }
 
     return (
@@ -81,6 +80,7 @@ function Chat() {
             </div>
             <Input onSendMessage={handleSendMessage}/>
             <div className="submit-convo">
+                {/* <Link to="/complete" type="submit" id="submit">Submit Conversation</Link> */}
                 <button type="submit" id="submit" onClick={handleSubmit}>SUBMIT CONVERSATION</button>
             </div>
         </div>
