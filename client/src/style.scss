@@ -172,8 +172,12 @@
         }
 
         .grid-container {
+            display: flex;
+            justify-content: row;
+            align-items: row;
             span{
                 margin-left: 12.5vw;
+                margin-right: 12.5vw;
             }
         }
 
