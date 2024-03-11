@@ -67,6 +67,16 @@ def test_flag_chat(fake_client: FlaskClient):
     assert 'status' in data and data['status'] == 'flagged'
 
 
+def test_get_trolls(fake_client: FlaskClient):
+    """
+    Test the get trolls route
+    """
+    response = fake_client.get('/get_trolls')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert isinstance(data, dict)
+
+
 def test_get_all_chats(fake_client: FlaskClient):
     """
     Test the get all chats route

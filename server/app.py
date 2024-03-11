@@ -166,6 +166,23 @@ def submit():
 
 
 @cross_origin()
+@app.route("api/get_trolls")
+@role_required("Administrator")
+def get_trolls():
+    """
+    @return {email: str, flag_count: int}
+    """
+    trolls = {}
+    for chat in models.Chats.query.all():
+        user = models.User.query.get(chat.user)
+        if chat.flag:
+            if user.email not in trolls:
+                trolls[user.email] = 0
+            trolls[user.email] += 1
+    return dict(sorted(trolls.items(), key=lambda item: item[1]))
+
+
+@cross_origin()
 @app.route("/api/delete_user/<user_id>")
 @role_required("Administrator")
 def delete_user(user_id):
