@@ -7,9 +7,9 @@ from datetime import datetime
 from functools import wraps
 from os import environ
 from dotenv import load_dotenv
-from flask import redirect, request, url_for, jsonify
+from flask import redirect, request, url_for, jsonify, session
 from flask_dance.contrib.google import google, make_google_blueprint
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 import models
 import utils
@@ -27,6 +27,7 @@ blueprint = make_google_blueprint(
         "https://www.googleapis.com/auth/userinfo.email",
         "openid",
     ],
+    redirect_url="/login",
 )
 
 # Initialize the Flask app
@@ -55,13 +56,15 @@ def role_required(*roles):
         def decorated_function(*args, **kwargs):
             if not app.config["TESTING"]:
                 if not google.authorized or google.token["expires_at"] <= time.time():
-                    return redirect(url_for("google.login", next=request.url))
-                resp = google.get("/oauth2/v2/userinfo")
-                assert resp.ok, resp.text
-                email = resp.json()["email"]
+                    return {"error": "Unauthorized"}
+                email = session["google_auth"]["email"]
                 user = models.User.query.filter_by(email=email).first()
-                if user is None or user.user_type not in roles:
-                    return "You do not have permission to perform this action."
+                if user is None:
+                    user = models.User(email=email, user_type="Contributor")
+                    models.db.session.add(user)
+                    models.db.session.commit()
+                if user.user_type not in roles:
+                    return {"error": "User does not have the required role"}
             return f(*args, **kwargs)
 
         return decorated_function
@@ -69,34 +72,48 @@ def role_required(*roles):
     return decorator
 
 
-# Define your routes here
-@app.route("/")
+@cross_origin()
+@app.route("/login")
+def login():
+    """
+    Redirects to the Google login page, then back to the homepage
+    """
+    if not google.authorized or google.token["expires_at"] <= time.time():
+        return redirect(url_for("google.login"))
+    resp = google.get("/oauth2/v2/userinfo")
+    assert resp.ok, resp.text
+    session['google_auth'] = resp.json()
+    return redirect(environ.get("CLIENT_URL"))
+
+
+@cross_origin()
+@app.route("/logout")
+def logout():
+    """
+    Logs the user out and redirects to the homepage
+    """
+    session.clear()
+    return redirect(environ.get("CLIENT_URL"))
+
+
+@cross_origin()
+@app.route("/api/user")
+@role_required("Administrator", "Researcher", "Contributor")
 def index():
     """
-    This function checks if the user is authorized with Google. If not, it
-    redirects to the Google login page. Then it retrieves the user's email from
-    the Google API and returns a message with the email address.
+    This function returns the user's email and user_id
     """
-    if not app.config["TESTING"]:
-        if not google.authorized or google.token["expires_at"] <= time.time():
-            return redirect(url_for("google.login"))
-        resp = google.get("/oauth2/v2/userinfo")
-        assert resp.ok, resp.text
-        email = resp.json()["email"]
-        user = models.User.query.filter_by(email=email).first()
-        if user is None:
-            user = models.User(email=email, user_type="Contributor")
-            models.db.session.add(user)
-            models.db.session.commit()
-        # redirect this to front end when it's ready.
-        return {"email": email, "user_id": user.id}
+    if app.config["TESTING"]:
+        email = "neuma.mindscape@gmail.com"
     else:
-        user = models.User.query.filter_by(email="neuma.mindscape@gmail.com").first()
-        return {"email": user.email, "user_id": user.id}
+        email = session["google_auth"]["email"]
+    user = models.User.query.filter_by(email=email).first()
+    return {"email": user.email, "user_id": user.id}
 
 
-@app.route("/start_chat/<user_id>")
-# @role_required("Administrator", "Researcher", "Contributor")
+@cross_origin()
+@app.route("/api/start_chat/<user_id>")
+@role_required("Administrator", "Researcher", "Contributor")
 def start_chat(user_id):
     """
     Creats a new chat in the database
@@ -109,8 +126,9 @@ def start_chat(user_id):
     return {"chat_id": chat.id}
 
 
-@app.route("/converse/", methods=["POST"])
-# @role_required("Administrator", "Researcher", "Contributor")
+@cross_origin()
+@app.route("/api/converse", methods=["POST"])
+@role_required("Administrator", "Researcher", "Contributor")
 def converse():
     """
     Adds a message to the database and returns the AI's response
@@ -145,7 +163,9 @@ def converse():
 
     return {"ai_response": ai_text}
 
-@app.route("/submit/", methods=["POST"])
+
+@cross_origin()
+@app.route("/api/submit", methods=["POST"])
 @role_required("Administrator", "Researcher", "Contributor")
 def submit():
     """
@@ -159,68 +179,93 @@ def submit():
     result = {}
     with app.app_context():
         result = handle_submission(chatId)
+    #result = {"weight in kg":155, "height in cm":191, "substance":"Lean"}, 
+    return jsonify(result)
 
-    
 
-    return result
+@cross_origin()
+@app.route("/api/get_trolls")
+@role_required("Administrator")
+def get_trolls():
+    """
+    @return {email: str, flag_count: int}
+    """
+    trolls = {}
+    for chat in models.Chats.query.all():
+        user = models.User.query.filter_by(id=chat.user).first()
+        if chat.flag:
+            if user.email not in trolls:
+                trolls[user.email] = 0
+            trolls[user.email] += 1
+    return dict(sorted(trolls.items(), key=lambda item: item[1]))
 
-@app.route("/delete_user/<user_id>")
-# @role_required("Administrator")
-def delete_user(user_id):
+
+@cross_origin()
+@app.route("/api/delete_user/<user_email>")
+@role_required("Administrator")
+def delete_user(user_email):
     """
     Deletes a user from the database
-    @user_id is the id of the user to be deleted
+    @user_email is the email of the user to be deleted
     """
-    user = models.User.query.get(user_id)
+    user = models.User.query.filter_by(email=user_email).first()
+    if user is None:
+        return {"error": "User not found"}, 404
     models.db.session.delete(user)
     models.db.session.commit()
-    return {"user_id": user.id, "status": "deleted" }
+    return {"user_email": user.email, "status": "deleted" }
 
 
-@app.route("/change_permission/<user_id>/<role>")
-# @role_required("Administrator")
-def change_permission(user_id, role):
+@cross_origin()
+@app.route("/api/change_permission/<user_email>/<role>")
+@role_required("Administrator")
+def change_permission(user_email, role):
     """
     Changes the permission of a user
-    @user_id is the id of the user to be changed
+    @user_email is the email of the user to be changed
     @role is the new role of the user
     """
     if role not in ["Administrator", "Researcher", "Contributor"]:
         raise ValueError("Invalid role")
-    user = models.User.query.get(user_id)
+    user = models.User.query.filter_by(email=user_email).first()
+    if user is None:
+        return {"error": "User not found"}, 404
     user.user_type = role
     models.db.session.commit()
-    return {"user_id": user.id, "role": user.user_type}
+    return {"user_email": user.email, "role": user.user_type}
 
 
-@app.route("/delete_chat/<chat_id>")
-# @role_required("Administrator")
+@cross_origin()
+@app.route("/api/delete_chat/<chat_id>")
+@role_required("Administrator")
 def delete_chat(chat_id):
     """
     Deletes a chat from the database
     @chat_id is the id of the chat to be deleted
     """
-    chat = models.Chats.query.get(chat_id)
+    chat = models.Chats.query.filter_by(id=chat_id).first()
     models.db.session.delete(chat)
     models.db.session.commit()
     return {"chat_id": chat.id, "status": "deleted"}
 
 
-@app.route("/flag/<chat_id>")
-# @role_required("Administrator", "Researcher")
+@cross_origin()
+@app.route("/api/flag/<chat_id>")
+@role_required("Administrator", "Researcher")
 def flag_chat(chat_id):
     """
     Flags a chat for review
     @chat_id is the id of the chat to be flagged
     """
-    chat = models.Chats.query.get(chat_id)
+    chat = models.Chats.query.filter_by(id=chat_id).first()
     chat.flag = True
     models.db.session.commit()
     return {"chat_id": chat.id, "status": "flagged"}
 
 
-@app.route("/get_all_chats")
-# @role_required("Administrator", "Researcher")
+@cross_origin()
+@app.route("/api/get_all_chats")
+@role_required("Administrator", "Researcher")
 def get_all_chats():
     """
     @return a dictionary of all chats and their messages
@@ -232,8 +277,8 @@ def get_all_chats():
     return chat_dict
 
 
-@app.route("/analytics/get_frequent_words/", methods=["GET"])
-# @role_required("Contributor")
+@app.route("/api/analytics/get_frequent_words", methods=["GET"])
+@role_required("Contributor")
 def get_frequent_words():
     """
     @return schema {
@@ -250,4 +295,4 @@ def get_frequent_words():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)#, ssl_context=('cert.pem', 'key.pem')
+    app.run(port=8080, debug=True)

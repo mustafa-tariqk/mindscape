@@ -10,10 +10,10 @@ RUN npm install
 
 COPY . . 
 
-ENV PORT=3000 
+EXPOSE ${CLIENT_PORT}
 
-EXPOSE 3000
-
-CMD [ "npm", "build" ]
-
-CMD [ "npm", "start" ]
+CMD if [ "$TESTING" = "0" ]; then \
+    npm run start:https -- --port ${CLIENT_PORT}; \
+else \
+    npm start -- --port ${CLIENT_PORT}; \
+fi

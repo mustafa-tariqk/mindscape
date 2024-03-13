@@ -66,10 +66,10 @@
                 position: relative;
                 align-items: center;
                 justify-content: center;
-                left: 25%;
-                top: 15vh;
+                left: 12.5%;
+                top: 13vh;
                 height: 50%;
-                width: 50%;
+                width: 75%;
                 z-index: 1;
                 text-align: center;
                 padding: 10px; /* Add padding for better appearance */
@@ -86,6 +86,10 @@
                     color: #005670;
                     font-size: 30px;
                 }
+
+                p {
+                    font-size: 12px;
+                }
             }
           
             button {
@@ -95,7 +99,7 @@
                 border: none; /* Remove border */
                 border-radius: 5px; /* Optional: Add border radius for rounded corners */
                 cursor: pointer; /* Add cursor pointer on hover */
-                margin-top: 20%;
+                margin-top: 5%;
             }
         }
     }
@@ -104,6 +108,7 @@
 .resultsScreen {
     background-color: #FEF8F3;
     height: 100vh; //THIS MEANS 100% OF THE THING
+    width: 100%;
     margin-top: 10vh;
     display: flex;
     align-items: center; //Alighn Vertical
@@ -151,6 +156,7 @@
         height: 80vh;
         width: 100%;
         align-items: center;
+        background-color: #FEF8F3;
 
         .bigtitle{
             flex: 1;
@@ -166,9 +172,12 @@
         }
 
         .grid-container {
+            display: flex;
+            justify-content: row;
+            align-items: row;
             span{
-                margin-right: 12.5%;
-                margin-left: 12.5%;
+                margin-left: 12.5vw;
+                margin-right: 12.5vw;
             }
         }
 
@@ -298,9 +307,14 @@
     }
 }
 
+body {
+    background-color: #FEF8F3;
+}
+
 .home{
     background-color: #FEF8F3;
     height: 80vh; //THIS MEANS 100% OF THE THING
+    width: 100%;
     margin-top: 20vh;
     display: flex;
     align-items: center; //Alighn Vertical
@@ -347,10 +361,14 @@
     .container{
         border: 0px solid white;
         border-radius: 10px;
-        width: 65%;
+        width: 100%;
         height: 85%;
         display: flex;
         overflow: visible;
+
+        .bg{
+            width: 100%;
+        }
 
         .chat{
             flex: 2;
@@ -367,6 +385,7 @@
                     border: 2px solid black;
                     padding: 5px;
                     background-color: #13f085;
+                    cursor: pointer;
                 }
             }
 
@@ -486,7 +505,7 @@
                 border: 4px solid black;
 
                 .input-area{
-                    width: 35vw;
+                    width: 65vw;
                     display: flex;
                     input{
                         display: flex;
@@ -516,6 +535,7 @@
                 .send{
                     display: flex;
                     height: 100%;
+                    left: 50vw;
 
                     button{
                         display: flex;
@@ -531,7 +551,7 @@
                         font-weight: bolder;
                         font-size: 1vw;
                         text-align: center;
-                        margin-left: 150%;
+                        margin-left: 50%;
                         position: relative;
                         top: 50%;
                     }
