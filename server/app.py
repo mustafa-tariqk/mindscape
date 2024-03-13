@@ -166,7 +166,7 @@ def submit():
 
 
 @cross_origin()
-@app.route("api/get_trolls")
+@app.route("/api/get_trolls")
 @role_required("Administrator")
 def get_trolls():
     """
@@ -174,7 +174,7 @@ def get_trolls():
     """
     trolls = {}
     for chat in models.Chats.query.all():
-        user = models.User.query.get(chat.user)
+        user = models.User.query.filter_by(id=chat.user).first()
         if chat.flag:
             if user.email not in trolls:
                 trolls[user.email] = 0
@@ -183,34 +183,38 @@ def get_trolls():
 
 
 @cross_origin()
-@app.route("/api/delete_user/<user_id>")
+@app.route("/api/delete_user/<user_email>")
 @role_required("Administrator")
-def delete_user(user_id):
+def delete_user(user_email):
     """
     Deletes a user from the database
-    @user_id is the id of the user to be deleted
+    @user_email is the email of the user to be deleted
     """
-    user = models.User.query.get(user_id)
+    user = models.User.query.filter_by(email=user_email).first()
+    if user is None:
+        return {"error": "User not found"}, 404
     models.db.session.delete(user)
     models.db.session.commit()
-    return {"user_id": user.id, "status": "deleted" }
+    return {"user_email": user.email, "status": "deleted" }
 
 
 @cross_origin()
-@app.route("/api/change_permission/<user_id>/<role>")
+@app.route("/api/change_permission/<user_email>/<role>")
 @role_required("Administrator")
-def change_permission(user_id, role):
+def change_permission(user_email, role):
     """
     Changes the permission of a user
-    @user_id is the id of the user to be changed
+    @user_email is the email of the user to be changed
     @role is the new role of the user
     """
     if role not in ["Administrator", "Researcher", "Contributor"]:
         raise ValueError("Invalid role")
-    user = models.User.query.get(user_id)
+    user = models.User.query.filter_by(email=user_email).first()
+    if user is None:
+        return {"error": "User not found"}, 404
     user.user_type = role
     models.db.session.commit()
-    return {"user_id": user.id, "role": user.user_type}
+    return {"user_email": user.email, "role": user.user_type}
 
 
 @cross_origin()
@@ -221,7 +225,7 @@ def delete_chat(chat_id):
     Deletes a chat from the database
     @chat_id is the id of the chat to be deleted
     """
-    chat = models.Chats.query.get(chat_id)
+    chat = models.Chats.query.filter_by(id=chat_id).first()
     models.db.session.delete(chat)
     models.db.session.commit()
     return {"chat_id": chat.id, "status": "deleted"}
@@ -235,7 +239,7 @@ def flag_chat(chat_id):
     Flags a chat for review
     @chat_id is the id of the chat to be flagged
     """
-    chat = models.Chats.query.get(chat_id)
+    chat = models.Chats.query.filter_by(id=chat_id).first()
     chat.flag = True
     models.db.session.commit()
     return {"chat_id": chat.id, "status": "flagged"}

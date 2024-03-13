@@ -51,7 +51,7 @@ def test_change_permission(fake_client: FlaskClient):
     """
     Test the change permission route
     """
-    response = fake_client.get('api/change_permission/1/Administrator')
+    response = fake_client.get('api/change_permission/neuma.mindscape@gmail.com/Administrator')
     assert response.status_code == 200
     data = response.get_json()
     assert 'role' in data and data['role'] == 'Administrator'
@@ -71,7 +71,7 @@ def test_get_trolls(fake_client: FlaskClient):
     """
     Test the get trolls route
     """
-    response = fake_client.get('/get_trolls')
+    response = fake_client.get('api/get_trolls')
     assert response.status_code == 200
     data = response.get_json()
     assert isinstance(data, dict)
@@ -101,7 +101,7 @@ def test_delete_user(fake_client: FlaskClient):
     """
     Test the delete user route, has to be run last.
     """
-    response = fake_client.get('api/delete_user/1')
+    response = fake_client.get('api/delete_user/neuma.mindscape@gmail.com')
     assert response.status_code == 200
     data = response.get_json()
     assert 'status' in data and data['status'] == 'deleted'
