@@ -87,15 +87,44 @@ const Complete = ({chatId}) => {
     }
 
     const transformWordData = () => {
-        if(typeof wordCloudData != "string")
+        if(typeof wordCloudData != "string" || Object.keys(wordCloudData).length < 500)
         {
             console.log("BRUH")
             return tempdata
         }
         const modified = JSON.parse(wordCloudData);
+        // Find the biggest and smallest values
+        var biggestVal = -(Infinity)
+        var smallestVal = Infinity
+
+        for (const key1 in modified) {
+            if(modified[key1].weight > biggestVal) { biggestVal = modified[key1].weight; }
+            if(modified[key1].weight < smallestVal) { smallestVal = modified[key1].weight; }
+        }
+        console.log("Biggest val is " + biggestVal);
+        console.log("Smallest val is " + smallestVal);
+        // Normalize Values
+
+        var workingValues = structuredClone(modified)
+        const workingKeys = Object.keys(modified);
+
+        // Iterate over the keys using a regular for loop
+        const maxSize = 150;
+        var randoTick = maxSize;
+        const minSize = 25;
+        for (let i = 0; i < workingKeys.length; i++) {
+            if (i == 0) { workingValues[Object.keys(workingValues)[0]].weight = maxSize}
+            else {
+                var max = (maxSize / workingKeys.length) * 1.75;
+                var min = (maxSize / workingKeys.length) * 0.75;
+                randoTick = randoTick - (Math.floor(Math.random() * (max - min + 1)) + min);
+                workingValues[Object.keys(workingValues)[i]].weight = Math.max(minSize, randoTick);
+            }
+        }
+
         const newData = []
         for (const key in modified) {
-            const newObject = { text: key, value: (Math.max(parseInt(0.355 * (Math.pow(modified[key].weight, -4)) - 148244), 90) / 4) }
+            const newObject = { text: key, value: workingValues[key].weight }
             // Math.max(parseInt(0.355 * (Math.pow(modified[key].weight, -4)) - 148244), 10)
             // console.log(key);
             // console.log(modified[key].weight)
@@ -103,6 +132,28 @@ const Complete = ({chatId}) => {
         }
         console.log(newData)
         return newData;
+    }
+
+    const createClassificationData = () => {
+        const temp = [["HEIGHT:", "WEIGHT:", "SUBSTANCE:"]];
+        
+        if (experienceClassData.length == 0) {
+            return [["HEIGHT:", "WEIGHT:", "SUBSTANCE:"]];
+        }
+
+        const additions = []
+        for (const key in experienceClassData) {
+            additions.push(experienceClassData[key]['height in cm']);
+            additions.push(experienceClassData[key]['weight in kg']);
+            additions.push(experienceClassData[key]['substance']);
+        }
+        temp.push(additions);
+        return temp;
+    }
+
+    const openGoogleForm = () => {
+        const url = "https://forms.gle/orEBNU7GmVLKpmJe7";
+        window.open(url, "_blank")
     }
 
     return (
@@ -136,9 +187,7 @@ const Complete = ({chatId}) => {
                         </div>
                         <div className='experience'>
                             {/* First Grid is for Dosage Information*/}
-                            <GridList items={[["DOSE:", "UNIT:", "METHOD:", "SUBSTANCE:", "SHAPE:"], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]]}/>
-                            {/* Second Grid is for user information*/}
-                            <GridList items={[["INFO-","HEIGHT:", "RESULT", "WEIGHT:", "RESULT"], [0,0,0,0,0]]}/>
+                            <GridList items={createClassificationData()}/>
                         </div>
                     </div>
                     <div className="grid-container">
@@ -150,7 +199,7 @@ const Complete = ({chatId}) => {
                         <button onClick={printDebug}>Download Image</button>
                     </div>
                     <div className='feedbackbutton'>
-                        <button onClick={printDebug}>Submit Feedback</button>
+                        <button onClick={openGoogleForm}>Submit Feedback</button>
                     </div>
                 </div>
             </div>
