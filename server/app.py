@@ -159,7 +159,7 @@ def submit():
     request_body = request.get_json()
     chatId = request_body['chatId']
     test = request_body['test']
-    if not test or test == "null": # could it be null
+    if test: # could it be null
         return jsonify({"weight in kg":75, "height in cm":178, "substance":"Lean"})
     result = {}
     with app.app_context():
@@ -275,8 +275,41 @@ def get_frequent_words():
     chat_id = request.args.get("chat_id")
     k = request.args.get("k", type=int)
     test = request.args.get("test", default=False, type=bool)
+    if test:
+        chat_id = None
     with app.app_context():
         return jsonify(get_k_weighted_frequency(k, chat_id))
+    
+
+@app.route("/api/analytics/experience", methods=["GET"])
+@role_required("Contributor")
+def get_frequent_words():
+    """
+    @return schema {
+        "experiences": [{
+            "name": "",
+            "similarity": 0.0 // float 
+            "percentage": 0 // int in range [0, 100], percentage of submission with this experience
+        }]
+    }
+    """
+    test = request.args.get("test", default=False, type=bool)
+    if test:
+        return jsonify({
+            "experiences": [{
+                "name": "Infinite Power",
+                "similarity": 300.0,
+                "percentage": 20
+            }, {
+                "name": "Signature Look of Authority",
+                "similarity": 100.0,
+                "percentage": 30
+            }, {
+                "name": "I am your father",
+                "similarity": 50.0,
+                "percentage": 50
+            }]
+        })
 
 
 if __name__ == "__main__":
