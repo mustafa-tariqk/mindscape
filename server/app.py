@@ -170,16 +170,18 @@ def converse():
 def submit():
     """
     Handles submission of the chat
-    @request: {chat_id: int}
+    @request: {chat_id: int, test: bool}
     @return schema: {weight: int, height: int, substance: string}
     schema could change on request, but it's an object fs
     """
     request_body = request.get_json()
     chatId = request_body['chatId']
+    test = request_body['test']
+    if test: # could it be null
+        return jsonify({"weight in kg":75, "height in cm":178, "substance":"Lean"})
     result = {}
     with app.app_context():
         result = handle_submission(chatId)
-    #result = {"weight in kg":155, "height in cm":191, "substance":"Lean"}, 
     return jsonify(result)
 
 
@@ -277,6 +279,7 @@ def get_all_chats():
     return chat_dict
 
 
+@cross_origin()
 @app.route("/api/analytics/get_frequent_words", methods=["GET"])
 @role_required("Contributor")
 def get_frequent_words():
@@ -289,9 +292,44 @@ def get_frequent_words():
     }
     """
     chat_id = request.args.get("chat_id")
-    k = int(request.args.get("k"))
+    k = request.args.get("k", type=int)
+    test = request.args.get("test", default=False, type=bool)
+    if test:
+        chat_id = None
     with app.app_context():
         return jsonify(get_k_weighted_frequency(k, chat_id))
+    
+
+@cross_origin()
+@app.route("/api/analytics/experience", methods=["GET"])
+@role_required("Contributor")
+def experience():
+    """
+    @return schema {
+        "experiences": [{
+            "name": "",
+            "similarity": 0.0 // float 
+            "percentage": 0 // int in range [0, 100], percentage of submission with this experience
+        }]
+    }
+    """
+    test = request.args.get("test", default=False, type=bool)
+    if test:
+        return jsonify({
+            "experiences": [{
+                "name": "Infinite Power",
+                "similarity": 300.0,
+                "percentage": 20
+            }, {
+                "name": "Signature Look of Authority",
+                "similarity": 100.0,
+                "percentage": 30
+            }, {
+                "name": "I am your father",
+                "similarity": 50.0,
+                "percentage": 50
+            }]
+        })
 
 
 if __name__ == "__main__":

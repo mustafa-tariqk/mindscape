@@ -49,17 +49,33 @@ def get_all_experiences():
 def get_stringify_chat(chat_id, exclude_ai_messages:bool=False, prune_stop_words:bool=False, lowercase: bool=False):
     """
     Returns all messages in the specified chat as a single string.
-    @chat_id: the id of the chat
+    @chat_id: the id of the chat. If set to None
     @exclude_ai_messages: defaults to true. whether to exclude meessages sent by the chatbot
     @return: A string containing the entire correspondence.
     """
-    language = get_chat_language(chat_id)
-    chat_log = ""
+    if not chat_id:
+        language = 'english'
+        chat_log = "Did you ever hear the tragedy of Darth Plagueis the Wise?\
+                    I thought not. It's not a story the Jedi would tell you. \
+                    It's a Sith legend. Darth Plagueis was a Dark Lord of the Sith, \
+                    so powerful and so wise he could use the Force to influence \
+                    the midichlorians to create life... \
+                    He had such a knowledge of the dark side that he could even \
+                    keep the ones he cared about from dying. \
+                    The dark side of the Force is a pathway to many abilities \
+                    some consider to be unnatural. He became so powerful... \
+                    the only thing he was afraid of was losing his power, \
+                    which eventually, of course, he did. \
+                    Unfortunately, he taught his apprentice everything he knew, \
+                    then his apprentice killed him in his sleep. \
+                    Ironic, he could save others from death, but not himself."
+    else:
+        language = get_chat_language(chat_id)
+        chat_log = ' '.join([message.text for message in get_all_chat_messages(chat_id) if (not exclude_ai_messages or message.chat_type == 'Human')])
+        
     stop_words = [] # Only loaded if prune_stop_words is true
     if prune_stop_words:
         stop_words = nltk.corpus.stopwords.words(language)
-
-    chat_log = ' '.join([message.text for message in get_all_chat_messages(chat_id) if (not exclude_ai_messages or message.chat_type == 'Human')])
 
     tokens = nltk.tokenize.word_tokenize(chat_log)
 
