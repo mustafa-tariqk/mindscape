@@ -262,7 +262,7 @@ def get_all_chats():
 
 
 @cross_origin()
-@app.route("/api/analytics/wordcloud", methods=["GET"])
+@app.route("/api/analytics/get_frequent_words", methods=["GET"])
 @role_required("Contributor")
 def get_frequent_words():
     """
@@ -285,7 +285,7 @@ def get_frequent_words():
 @cross_origin()
 @app.route("/api/analytics/experience", methods=["GET"])
 @role_required("Contributor")
-def get_frequent_words():
+def experience():
     """
     @return schema {
         "experiences": [{
