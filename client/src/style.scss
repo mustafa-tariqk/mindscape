@@ -343,11 +343,14 @@ body {
                 margin-right: 15%;
                 font-size: 20px;
             }
-
-            img {
-                max-width: 10%;
+            button {
+                margin-right: 15%;
+                max-width: 100%;
                 max-height: auto;
-                border-radius: 50%;
+                background-color: #005670;
+                color: white;
+                border-radius: 10px;
+                padding: 10px;
                 cursor: pointer;
             }
         }
