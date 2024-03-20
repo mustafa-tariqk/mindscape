@@ -2,6 +2,7 @@ import Neuma from '../img/Logo_with_subtext_upscaled.png'
 import User from '../img/userprofile.png'
 import Wellness from '../img/wellness_background.png'
 import React from 'react'
+import YourComponent from '../components/YourComponent.jsx'
 
 const SERVER_URL = process.env.SERVER_URL;
 
@@ -126,7 +127,9 @@ const Login = () => {
                             our website.
 
                         </p>
-                        <button>Sign in with Google</button>
+                        <div className='yourcomponent'>
+                            <YourComponent/>
+                        </div>
                     </div>
                 </div>
             </div>

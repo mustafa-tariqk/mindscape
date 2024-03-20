@@ -1,24 +1,15 @@
 import React, { useState } from 'react';
 import image1 from '../img/Logo_with_subtext_upscaled.png';
 import image2 from '../img/userprofile.png';
-import { useNavigate } from 'react-router-dom'; // Make sure to import useNavigate
-
-const SERVER_URL = process.env.SERVER_URL;
+import YourComponentLogout from '../components/YourComponenentLogout.jsx';
 
 const Topbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const navigate = useNavigate(); // Use the useNavigate hook
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-  
-    const handleLogout = () => {
-        // Instead of manipulating the DOM, use navigate to change the route
-      navigate(SERVER_URL + '/logout'); // Assuming '/logout' is a route that handles your logout logic
-      console.log("Logging out");
-    };
 
     return (
         <div className="topbar">
@@ -33,7 +24,9 @@ const Topbar = () => {
                     <img src={image2} alt="User Profile" onClick={toggleDropdown} style={{cursor: 'pointer'}} />
                     {isDropdownOpen && (
                         <div className="dropdown-content">
-                            <button onClick={handleLogout}>Logout</button>
+                            <div className='yourcomponentlogout'>
+                            <YourComponentLogout/>
+                            </div>
                         </div>
                     )}
                 </div>
