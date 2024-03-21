@@ -8,6 +8,9 @@ import nltk
 import json
 import os
 
+from langchain_core.embeddings import Embeddings
+from langchain_community.vectorstores import FAISS as faiss # I don't like capitals
+
 db = SQLAlchemy()  # Database object
 
 
@@ -94,11 +97,10 @@ class Experiences(db.Model): # pylint: disable=too-few-public-methods
     Represents the different experience clusters.
     """
     __tablename__ = 'experiences'
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, db.ForeignKey('chats.id'), nullable = False, primary_key = True) # the chat that is set as the centroid
     name = db.Column(db.Text, nullable = False) # name of the experience in English (default language)
-    centroid = db.Column(db.Integer, db.ForeignKey('chats.id'), nullable = False) # the chat that is set as the centroid
     count = db.Column(db.Integer, nullable = False, default = 1) # how many in cluster
-    db.ForeignKeyConstraint(['centroid'], ['chats.id'], ondelete='NULL') # must be replaced if the centroid is deleted
+    db.ForeignKeyConstraint(['centroid'], ['chats.id'], ondelete='CASCADE') # must be replaced if the centroid is deleted
 
 class Chats_Categories(db.Model): # pylint: disable=too-few-public-methods
     """

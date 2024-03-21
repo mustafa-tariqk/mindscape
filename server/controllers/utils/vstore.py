@@ -8,8 +8,6 @@ from langchain_community.vectorstores import FAISS as faiss # I don't like capit
 # typing
 from langchain_core.embeddings import Embeddings
 
-import controllers.utils.database as database
-
 def get_messages_as_documents(messages: list) -> list[Document]:
     """
     Return the messages stored in sql as Documents to be loaded into vectorstore
@@ -31,18 +29,18 @@ def get_chats_as_documents(chats: list) -> list[Document]:
         "chat_id": chat.id, # for clustering
     }) for chat in chats]
 
-def create_exp_vectorstore(experiences: list, llm_embedder:Embeddings):
+def create_exp_vectorstore(exps: list, llm_embedder:Embeddings):
     """
-    Load the experience vectorstore with experience.
-    @experiences: the list of experiences db objects.
+    Load the chat vectorstore with exp.
+    @exps: the list of exp db objects.
     @return 
     """
-    # Set up experiences for embedding
-    id_embedding_tuple = [(exp.id, llm_embedder.embed_query(database.get_message(exp.centroid))) for exp in experiences]
+    # Set up exp for embedding, maybe not embed using name but using the centroid chat
+    id_embedding_tuple = [(exp.id, llm_embedder.embed_query(exp.name)) for exp in exps]
 
-    # Vector store will return the id of the matched experience
-    exp_vectorstore = faiss.from_embeddings(id_embedding_tuple, llm_embedder)
-    return exp_vectorstore
+    # Vector store will return the id of the matched chat
+    chat_vectorstore = faiss.from_embeddings(id_embedding_tuple, llm_embedder)
+    return chat_vectorstore
 
 def create_chats_vectorstore(chats: list, llm_embedder:Embeddings):
     """

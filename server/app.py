@@ -14,8 +14,10 @@ from flask_cors import CORS, cross_origin
 import models
 import controllers.analytics as analytics
 import controllers.utils.database as database
-from controllers.utils.vstore import create_exp_vectorstore, cluster_new_chat
+import controllers.utils.vstore as vstore
 from controllers.utils.ai import ai_message, llm_embedder, categorize_submission, summarize_submission
+
+import faiss
 
 load_dotenv()
 
@@ -40,10 +42,6 @@ app.config["TESTING"] = True
 CORS(app, supports_credentials=True)
 
 SIMILARITY_THRESHOLD = 0.8 # threshold of similarity that, if surpassed, will result in a new cluster with this chat as centre
-
-# Initialize vectorstores
-# with app.app_context():
-#     exp_vstore = create_exp_vectorstore(database.get_experience(), llm_embedder)
 
 
 # decorator to check user type
@@ -180,9 +178,10 @@ def submit():
         summary = summarize_submission(chat_id)
         database.update_chat_summary(chat_id, summary)
 
-        # closest_exp_doc, similarity_score = cluster_new_chat(chat_id, exp_vstore)
-        # exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
-        # database.update_chat_exp(chat_id, exp_id) 
+        exp_vstore = vstore.create_exp_vectorstore(models.Experiences.query.all(), llm_embedder)
+        closest_exp_doc, _ = vstore.cluster_new_chat(chat_id, exp_vstore)
+        exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
+        database.update_chat_exp(chat_id, exp_id) 
         print(f"""Chat {chat_id} summary is: {summary}.""")
 
     return jsonify(result)
@@ -337,6 +336,42 @@ def experience():
     else:
         chat_id = request.args.get("chat_id")
         return jsonify(analytics.get_experience_data(chat_id))
+    
+@cross_origin()
+@app.route("/api/analytics/cluster_chats", methods=["POST"])
+@role_required("Administrator")
+def cluster_all_chats(k=5):
+    """
+    Clusters all chats into experiences. Using k-means clustering.
+    Will rewrite the entire experience table as well as reassign the experience field in the chat table.
+    @param k: The number of clusters to create
+    """
+    models.Experiences.query.delete() # clear the table
+    models.db.session.commit() # experience field in chat table will be set to null
+
+    chats = models.Chats.query.filter_by(flag=False).all() # get all the chats, potentially not a good idea, consider just using id
+    chats_vstore = vstore.create_chats_vectorstore(chats, llm_embedder)
+
+    embeddings = [llm_embedder.embed_query(chat.summary) for chat in chats] # RAM intensive, also may waste tokens
+
+    # cluster using faiss.KMeans
+    kmeans = faiss.KMeans(llm_embedder.get_embedding_size(), k, niter=20, verbose=True)
+    kmeans.train(embeddings)
+
+    # assign the closest chat to the centroid as the centroid
+    for i in range(kmeans.centroids):
+        closest_chat = vstore.get_k_nearest_by_vector(kmeans.centroids[i], chats_vstore, 1)[0]
+        # assign closest chat as a experience, maybe give it a name
+        models.db.session.add(models.Experiences(name=closest_chat.summary, id=closest_chat.id))
+        models.db.session.commit()
+
+    # assign the chat to the closest experience
+    experiences = models.Experiences.query.all()
+    exp_vstore = vstore.create_exp_vectorstore(experiences, llm_embedder)
+    for chat in chats:
+        closest_exp = vstore.get_k_nearest_by_vector(llm_embedder.embed_query(chat.summary), exp_vstore, 1)[0]
+        chat.experience = closest_exp.id
+        models.db.session.commit()
 
 
 if __name__ == "__main__":
