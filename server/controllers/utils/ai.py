@@ -16,7 +16,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 
-from server.controllers.utils.database import get_all_chat_messages, get_stringify_chat
+from controllers.utils.database import get_all_chat_messages, get_stringify_chat
 
 # Load in the template
 with open("data/template.txt", encoding="utf-8") as file:
@@ -24,7 +24,6 @@ with open("data/template.txt", encoding="utf-8") as file:
 
 try: # Setup LLM
     load_dotenv()
-    #llm = OpenAI()
     llm_embedder = OpenAIEmbeddings()
     llm = ChatOpenAI(
         model_name='gpt-3.5-turbo-16k',

@@ -12,10 +12,10 @@ from flask_dance.contrib.google import google, make_google_blueprint
 from flask_cors import CORS, cross_origin
 
 import models
-import server.controllers.analytics as analytics
-import server.controllers.utils.database as database
-from server.controllers.utils.vstore import create_exp_vectorstore, cluster_new_chat
-from server.controllers.utils.ai import ai_message, llm_embedder, categorize_submission
+import controllers.analytics as analytics
+import controllers.utils.database as database
+from controllers.utils.vstore import create_exp_vectorstore, cluster_new_chat
+from controllers.utils.ai import ai_message, llm_embedder, categorize_submission, summarize_submission
 
 load_dotenv()
 
@@ -37,13 +37,13 @@ app.register_blueprint(blueprint, url_prefix="/login")
 
 # uncomment line below to skip auth
 app.config["TESTING"] = True
-CORS(app)
+CORS(app, supports_credentials=True)
 
 SIMILARITY_THRESHOLD = 0.8 # threshold of similarity that, if surpassed, will result in a new cluster with this chat as centre
 
 # Initialize vectorstores
-with app.app_context():
-    exp_vstore = create_exp_vectorstore(database.get_all_experiences(), llm_embedder)
+# with app.app_context():
+#     exp_vstore = create_exp_vectorstore(database.get_experience(), llm_embedder)
 
 
 # decorator to check user type
@@ -167,20 +167,23 @@ def submit():
     schema could change on request, but it's an object fs
     """
     request_body = request.get_json()
-    chat_id = request_body['chatId']
-    test = request_body['test']
+    chat_id = int(request_body['chatId'])
+    if "test" in request_body:
+        test = request_body['test']
 
-    if test: # could it be null
-        return jsonify({"weight in kg":75, "height in cm":178, "substance":"Lean"})
+        if test: # could it be null
+            return jsonify({"weight in kg":75, "height in cm":178, "substance":"Lean"})
     
     result = {}
     with app.app_context():
         result = categorize_submission(chat_id)
+        summary = summarize_submission(chat_id)
+        database.update_chat_summary(chat_id, summary)
 
-    closest_exp_doc, similarity_score = cluster_new_chat(chat_id, exp_vstore)
-    exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
-    database.update_chat_exp(chat_id, exp_id) 
-    print(f"""Chat {chat_id} has been categorized as {exp_id} with a similarity score of {similarity_score}""")
+        # closest_exp_doc, similarity_score = cluster_new_chat(chat_id, exp_vstore)
+        # exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
+        # database.update_chat_exp(chat_id, exp_id) 
+        print(f"""Chat {chat_id} summary is: {summary}.""")
 
     return jsonify(result)
 
@@ -291,13 +294,13 @@ def get_frequent_words():
         'weight': attributed weight
     }
     """
-    chat_id = request.args.get("chat_id")
+    chat_id = request.args.get("chat_id", type=int)
     k = request.args.get("k", type=int)
     test = request.args.get("test", default=False, type=bool)
     if test:
         chat_id = None
     with app.app_context():
-        return analytics.get_wordcloud_data(chat_id, k)
+        return jsonify(analytics.get_k_weighted_frequency(chat_id, k))
     
 
 @cross_origin()
@@ -319,21 +322,21 @@ def experience():
             "experiences": [{
                 "name": "Infinite Power",
                 "similarity": 300.0,
-                "percentage": 20
+                "percentage": 20.0
             }, {
                 "name": "Signature Look of Authority",
                 "similarity": 100.0,
-                "percentage": 30
+                "percentage": 30.0
             }, {
                 "name": "I am your father",
                 "similarity": 50.0,
-                "percentage": 50
+                "percentage": 50.0
             }]
         })
     
     else:
         chat_id = request.args.get("chat_id")
-        return analytics.get_experience_data(chat_id)
+        return jsonify(analytics.get_experience_data(chat_id))
 
 
 if __name__ == "__main__":

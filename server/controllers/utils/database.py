@@ -4,14 +4,6 @@ Utilities functions. Most require app context to be called
 import models
 import nltk
 
-def get_chat_language(chat_id):
-    """
-    Does exactly as the name implies
-    @chat_id: the id of the chat
-    @return: The language associated with the chat
-    """
-    return models.Chats.query.get(chat_id).language
-
 def get_chat_count():
     """
     Get the number of chats in the database
@@ -40,6 +32,28 @@ def get_chat(chat_id=None):
         return models.Chats.query.all()
     else:
         return models.Chats.query.get(chat_id)
+    
+def get_language(language_id=None):
+    """
+    Get the language database object
+    @language_id: the id of the language. If None will return everything
+    @return: the associated database object
+    """
+    if not language_id:
+        return models.Languages.query.all()
+    else:
+        return models.Languages.query.get(language_id)
+    
+def get_word(word_id=None):
+    """
+    Get the word database object
+    @word_id: the id of the word. If None will return everything
+    @return: the associated database object
+    """
+    if not word_id:
+        return models.Words.query.all()
+    else:
+        return models.Words.query.get(word_id)
 
 def update_chat_exp(chat_id, exp_id):
     """
@@ -101,7 +115,7 @@ def get_stringify_chat(chat_id, exclude_ai_messages:bool=False, prune_stop_words
                     then his apprentice killed him in his sleep. \
                     Ironic, he could save others from death, but not himself."
     else:
-        language = get_chat_language(chat_id)
+        language = get_chat(chat_id).language
         chat_log = ' '.join([message.text for message in get_all_chat_messages(chat_id) if (not exclude_ai_messages or message.chat_type == 'Human')])
         
     stop_words = [] # Only loaded if prune_stop_words is true

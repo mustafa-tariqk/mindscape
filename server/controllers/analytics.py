@@ -1,19 +1,72 @@
-from server.controllers.utils import wordcloud, database, ai, vstore
+import json
 
+from controllers.utils import database, ai, vstore
 
-def get_wordcloud_data(chat_id, k):
+def get_k_weighted_frequency(chat_id, k, exclude_ai_messages:bool=True):
     """
-    Get the wordcloud data for the chat
-    @chat_id: the id of the chat
-    @k: the number of words to return
-    @return schema {
-        'global_count': frequency in language distribution,
-        'local_count': frequency in chat,
-        'global_max - global_count': difference from the most used word,
-        'weight': attributed weight
-    }
+    Return the top k frequently seen words from a Chat session.
+    Weights frequency based on established word distribution.
+    @k: number of words to return
+    @chat_id: id of chat session
+    @exclude_ai_messages: defaults to true. whether to exclude meessages sent by the chatbot
+    @return: dictionary formatted as {word: word_frequency}
     """
-    return wordcloud.get_k_weighted_frequency(k, chat_id)
+    print("Chat ID: ", chat_id)
+    word_frequency = {}
+    chat_log = database.get_stringify_chat(chat_id, exclude_ai_messages, True, True)
+    if not chat_id:
+        language = 'english'
+    else:
+        language = database.get_chat(chat_id).language
+
+    language_data = database.get_language(language)
+
+    sample_size = 0
+    for word in chat_log.split(" "):
+        sample_size += 1
+        if word not in word_frequency:  # potential performance hog
+            word_frequency[word] = 1
+        else:
+            word_frequency[word] += 1
+
+    def weighted_freq(x):
+        """Calculate the weights associated with the word's frequency"""
+        word_data = database.get_word(x)
+        # may need some tuning.
+        if not word_data:  # Very very rare words, possibly names
+            count_diff = language_data.max_count-language_data.min_count
+        else:  # Detect rare descriptors
+            count_diff = language_data.max_count - word_data.count
+
+        freq_diff = count_diff/language_data.sample_size
+        return freq_diff
+
+    # Maybe ensure both
+    def display(x):
+        word_data = database.get_word(x)
+        global_count = 0
+        weight = 0
+
+        if not word_data:  # Very very rare words, possibly names
+            global_count = language_data.min_count
+        else:  # Detect rare descriptors
+            global_count = word_data.count
+
+        weight = (language_data.max_count - global_count)/language_data.sample_size
+
+        data = {
+            'global_count': global_count,
+            'local_count': word_frequency[x],
+            'global_max - global_count': language_data.max_count - global_count,
+            'weight': weight
+        }
+        return data
+
+    unique_words = list(word_frequency.keys())
+    # sort in descending order based on weighted frequency
+    unique_words.sort(reverse=True, key=weighted_freq)
+    # Return the top k
+    return json.dumps({x: display(x) for x in unique_words[0:k]}, indent=4)
 
 def get_experience_data(chat_id, exp_vectorstore, k):
     """
@@ -30,7 +83,7 @@ def get_experience_data(chat_id, exp_vectorstore, k):
     }
     """
     chat = database.get_chat(chat_id)
-    chat_vector = ai.embed_query(chat.summary)
+    chat_vector = exp_vectorstore.embedding_function.embed_query(chat.summary)
     global_chat_count = database.get_chat_count()
     exp_docs, similarity_score = vstore.get_k_nearest_by_vector(chat_vector, exp_vectorstore, k)
     similarity_dict = {exp_docs[i].page_content: similarity_score[i] for i in range(len(exp_docs))}

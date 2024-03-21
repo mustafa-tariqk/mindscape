@@ -3,12 +3,12 @@ Defines controllers and utilities for experience/sentiment analysis.
 Also handles vectorstores.
 """
 from langchain_core.documents import Document
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS as faiss # I don't like capitals
 
 # typing
 from langchain_core.embeddings import Embeddings
 
-import server.controllers.utils.database as database
+import controllers.utils.database as database
 
 def get_messages_as_documents(messages: list) -> list[Document]:
     """
@@ -41,7 +41,7 @@ def create_exp_vectorstore(experiences: list, llm_embedder:Embeddings):
     id_embedding_tuple = [(exp.id, llm_embedder.embed_query(database.get_message(exp.centroid))) for exp in experiences]
 
     # Vector store will return the id of the matched experience
-    exp_vectorstore = FAISS.from_embeddings(id_embedding_tuple, llm_embedder)
+    exp_vectorstore = faiss.from_embeddings(id_embedding_tuple, llm_embedder)
     return exp_vectorstore
 
 def create_chats_vectorstore(chats: list, llm_embedder:Embeddings):
@@ -54,7 +54,7 @@ def create_chats_vectorstore(chats: list, llm_embedder:Embeddings):
     id_embedding_tuple = [(chat.id, llm_embedder.embed_query(chat.summary)) for chat in chats]
 
     # Vector store will return the id of the matched chat
-    chat_vectorstore = FAISS.from_embeddings(id_embedding_tuple, llm_embedder)
+    chat_vectorstore = faiss.from_embeddings(id_embedding_tuple, llm_embedder)
     return chat_vectorstore
 
 def get_k_nearest_by_vector(embedding_vector, vectorstore, k) -> list[tuple[Document, float]]:
@@ -69,7 +69,7 @@ def get_k_nearest_by_vector(embedding_vector, vectorstore, k) -> list[tuple[Docu
     results = vectorstore.similarity_search_with_score_by_vector(embedding_vector, k)
     return results
 
-def cluster_new_chat(chat, exp_vstore: FAISS):
+def cluster_new_chat(chat, exp_vstore: faiss):
     """
     Handle the addition of a new chat
 

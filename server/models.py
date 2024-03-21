@@ -32,7 +32,7 @@ class Chats(db.Model):  # pylint: disable=too-few-public-methods
     user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     flag = db.Column(db.Boolean, nullable=False)
     language = db.Column(db.Text, db.ForeignKey('languages.id'), nullable=False, default='english')
-    experience = db.Column(db.Integer, db.ForeignKey('experiences.id'), nullable=True) # flagged submissions will have null here
+    experience = db.Column(db.Integer, db.ForeignKey('experiences.id'), nullable=True, default=None) # flagged submissions will have null here
     summary = db.Column(db.Text, nullable=True) # this will be used to embed the chat
 
     db.ForeignKeyConstraint(['user'], ['users.id'], ondelete='CASCADE')
