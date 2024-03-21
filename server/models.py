@@ -32,9 +32,13 @@ class Chats(db.Model):  # pylint: disable=too-few-public-methods
     user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     flag = db.Column(db.Boolean, nullable=False)
     language = db.Column(db.Text, db.ForeignKey('languages.id'), nullable=False, default='english')
+    experience = db.Column(db.Integer, db.ForeignKey('experiences.id'), nullable=True) # flagged submissions will have null here
+    summary = db.Column(db.Text, nullable=True) # this will be used to embed the chat
+
     db.ForeignKeyConstraint(['user'], ['users.id'], ondelete='CASCADE')
     # should the chats be deleted if languages are not supported?
     db.ForeignKeyConstraint(['language'], ['languages.id'], ondelete='CASCADE')
+    db.ForeignKeyConstraint(['experience'], ['experiences.id'], ondelete='NULL')
 
 
 class Messages(db.Model):  # pylint: disable=too-few-public-methods
@@ -48,11 +52,11 @@ class Messages(db.Model):  # pylint: disable=too-few-public-methods
     chat_type = db.Column(db.Enum('Human', 'AI'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
-    embedding = db.Column(db.Text, nullable=True, default=None) # contains the id of the corresponding doc in vectorstore
-    experience = db.Column(db.Integer, db.ForeignKey('experiences.id'), nullable=True) # flagged submissions will have null here
-    centroid = db.Column(db.Boolean, nullable = False, default=False) # if this message is a centroid replacement
+    # embedding = db.Column(db.Text, nullable=True, default=None) # contains the id of the corresponding doc in vectorstore
+    # experience = db.Column(db.Integer, db.ForeignKey('experiences.id'), nullable=True) # flagged submissions will have null here
+    # centroid = db.Column(db.Boolean, nullable = False, default=False) # if this message is a centroid replacement
     db.ForeignKeyConstraint(['chat'], ['chats.id'], ondelete='CASCADE')
-    db.ForeignKeyConstraint(['experience'], ['experiences.id'], ondelete='NULL') # primed for reclustering
+    # db.ForeignKeyConstraint(['experience'], ['experiences.id'], ondelete='NULL') # primed for reclustering
 
 
 class Languages(db.Model):  # pylint: disable=too-few-public-methods
@@ -90,9 +94,9 @@ class Experiences(db.Model): # pylint: disable=too-few-public-methods
     __tablename__ = 'experiences'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.Text, nullable = False) # name of the experience in English (default language)
-    centroid = db.Column(db.Integer, db.ForeignKey('messages.id'), nullable = False) # the centroid id in vectorstore
+    centroid = db.Column(db.Integer, db.ForeignKey('chats.id'), nullable = False) # the chat that is set as the centroid
     count = db.Column(db.Integer, nullable = False, default = 1) # how many in cluster
-    db.ForeignKeyConstraint(['centroid'], ['messages.id'], ondelete='CASCADE') # dependency
+    db.ForeignKeyConstraint(['centroid'], ['chats.id'], ondelete='NULL') # must be replaced if the centroid is deleted
 
 class Chats_Categories(db.Model): # pylint: disable=too-few-public-methods
     """

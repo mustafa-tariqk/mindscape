@@ -12,7 +12,7 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 
-from utils import get_all_chat_messages, get_stringify_chat
+from server.controllers.utils.database import get_all_chat_messages, get_stringify_chat
 
 # Load in the template
 with open("data/template.txt", encoding="utf-8") as file:
@@ -73,7 +73,7 @@ def get_common_experience(documents: list[Document]) -> str:
     # TODO: make a prompt template
 
 
-def handle_submission(chat_id):
+def categorize_submission(chat_id):
     """
     Verifies that there is enough information for submission and categorize accordingly.
     Flag submissions without enough information. 

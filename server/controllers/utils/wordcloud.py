@@ -4,7 +4,7 @@ Uses the frequency files in data. This frequency file will also determine the la
 """
 import json
 
-import utils
+import server.controllers.utils.database as database
 import models
 
 
@@ -18,11 +18,11 @@ def get_k_weighted_frequency(k, chat_id, exclude_ai_messages:bool=True):
     @return: dictionary formatted as {word: word_frequency}
     """
     word_frequency = {}
-    chat_log = utils.get_stringify_chat(chat_id, exclude_ai_messages, True, True)
+    chat_log = database.get_stringify_chat(chat_id, exclude_ai_messages, True, True)
     if not chat_id:
         language = 'english'
     else:
-        language = utils.get_chat_language(chat_id)
+        language = database.get_chat_language(chat_id)
     language_data = models.Languages.query.get(language)
 
     sample_size = 0

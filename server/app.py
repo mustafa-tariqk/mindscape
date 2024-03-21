@@ -12,10 +12,10 @@ from flask_dance.contrib.google import google, make_google_blueprint
 from flask_cors import CORS, cross_origin
 
 import models
-import utils
-from analytics.wordcloud import get_k_weighted_frequency
-from analytics.vstore_handler import create_vectorstores, cluster_new_message, new_experience
-from ai import ai_message, llm_embedder, handle_submission
+import server.controllers.analytics as analytics
+import server.controllers.utils.database as database
+from server.controllers.utils.vstore import create_exp_vectorstore, cluster_new_chat
+from server.controllers.utils.ai import ai_message, llm_embedder, categorize_submission
 
 load_dotenv()
 
@@ -39,9 +39,11 @@ app.register_blueprint(blueprint, url_prefix="/login")
 app.config["TESTING"] = True
 CORS(app)
 
+SIMILARITY_THRESHOLD = 0.8 # threshold of similarity that, if surpassed, will result in a new cluster with this chat as centre
+
 # Initialize vectorstores
 with app.app_context():
-    message_vstore, exp_vstore = create_vectorstores(utils.get_all_chat_messages(), llm_embedder, utils.get_all_experiences())
+    exp_vstore = create_exp_vectorstore(database.get_all_experiences(), llm_embedder)
 
 
 # decorator to check user type
@@ -151,16 +153,6 @@ def converse():
     models.db.session.add(ai)
     models.db.session.commit()
 
-    # vectorstore shenanigans
-    message, new = cluster_new_message(human, message_vstore, exp_vstore, 100) # Arbitrary threshold for now
-    if new: # new cluster
-        exp = models.Experiences() # TODO: prompt the model to name the experience
-    else: # increment cluster count
-        exp = models.Experiences.query.get(message.experience)
-        exp.count += 1
-
-    models.db.session.commit()
-
     return {"ai_response": ai_text}
 
 
@@ -175,13 +167,21 @@ def submit():
     schema could change on request, but it's an object fs
     """
     request_body = request.get_json()
-    chatId = request_body['chatId']
+    chat_id = request_body['chatId']
     test = request_body['test']
+
     if test: # could it be null
         return jsonify({"weight in kg":75, "height in cm":178, "substance":"Lean"})
+    
     result = {}
     with app.app_context():
-        result = handle_submission(chatId)
+        result = categorize_submission(chat_id)
+
+    closest_exp_doc, similarity_score = cluster_new_chat(chat_id, exp_vstore)
+    exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
+    database.update_chat_exp(chat_id, exp_id) 
+    print(f"""Chat {chat_id} has been categorized as {exp_id} with a similarity score of {similarity_score}""")
+
     return jsonify(result)
 
 
@@ -274,7 +274,7 @@ def get_all_chats():
     """
     chat_dict = {}
     for chat in models.Chats.query.all():
-        messages = utils.get_all_chat_messages(chat.id)
+        messages = database.get_all_chat_messages(chat.id)
         chat_dict[chat.id] = [message.text for message in messages]
     return chat_dict
 
@@ -297,7 +297,7 @@ def get_frequent_words():
     if test:
         chat_id = None
     with app.app_context():
-        return jsonify(get_k_weighted_frequency(k, chat_id))
+        return analytics.get_wordcloud_data(chat_id, k)
     
 
 @cross_origin()
@@ -330,6 +330,10 @@ def experience():
                 "percentage": 50
             }]
         })
+    
+    else:
+        chat_id = request.args.get("chat_id")
+        return analytics.get_experience_data(chat_id)
 
 
 if __name__ == "__main__":

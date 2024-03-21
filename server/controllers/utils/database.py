@@ -20,6 +20,24 @@ def get_experience(exp_id):
     """
     return models.Experiences.query.get(exp_id)
 
+def get_chat(chat_id):
+    """
+    Get the chat database object
+    @chat_id: the id of the chat
+    @return: the associated database object
+    """
+    return models.Chats.query.get(chat_id)
+
+def update_chat_exp(chat_id, exp_id):
+    """
+    Get the chat database object
+    @chat_id: the id of the chat
+    @exo_id: the id of the experience
+    """
+    chat = models.Chats.query.get(chat_id)
+    chat.experience = exp_id
+    models.db.session.commit() # makes the update
+
 def get_message(message_id):
     """
     Get the message database object
