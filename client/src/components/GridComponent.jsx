@@ -1,10 +1,10 @@
 import React from 'react';
 const gridData = [
     {
-      email: 'connnor@gmail.com',
-      name: 'Connor Killingbeck',
+      email: 'adminemail@gmail.com',
+      name: 'Admi Ntester',
       role: 'Admin',
-      startDate: '12.3.2023',
+      startDate: '12.3.1987',
       endDate: '12.1.2023',
     },
     // ... You can add more user data here
