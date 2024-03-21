@@ -19,7 +19,10 @@ def get_k_weighted_frequency(k, chat_id, exclude_ai_messages:bool=True):
     """
     word_frequency = {}
     chat_log = utils.get_stringify_chat(chat_id, exclude_ai_messages, True, True)
-    language = utils.get_chat_language(chat_id)
+    if not chat_id:
+        language = 'english'
+    else:
+        language = utils.get_chat_language(chat_id)
     language_data = models.Languages.query.get(language)
 
     sample_size = 0
