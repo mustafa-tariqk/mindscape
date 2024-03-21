@@ -192,37 +192,39 @@ def create_app():
             # Get the path to the data directory
             data_dir = os.path.join(os.path.dirname(__file__), 'data', 'erowid')
 
-            # Iterate over the files in the data directory
-            for filename in os.listdir(data_dir):
-                # Check if the file is a JSON file
-                if filename.endswith('.json'):
-                    # Construct the full path to the JSON file
-                    file_path = os.path.join(data_dir, filename)
-                    id = int(filename.split('.')[0]) # the part before .json
-                    
-                    # Open the JSON file and load the data
-                    with open(file_path, 'r') as file:
-                        data = json.load(file)
+            # Check if data directory exists
+            if os.path.exists(data_dir):
+                # Iterate over the files in the data directory
+                for filename in os.listdir(data_dir):
+                    # Check if the file is a JSON file
+                    if filename.endswith('.json'):
+                        # Construct the full path to the JSON file
+                        file_path = os.path.join(data_dir, filename)
+                        id = int(filename.split('.')[0]) # the part before .json
                         
-                        # Set up user 
-                        user = User(email=data['meta'][0]['Author'], user_type="Contributor")
-                        db.session.add(user)
-                        db.session.commit()
-
-                        # Set up chat
-                        chat = Chats(id=id, user=user.id, flag=False, language="english", summary=data['experience'])
-                        db.session.add(chat)
-                        db.session.commit()
-
-                        # Set up categories
-                        for substance in data['substances']:
-                            chat_category = Chats_Categories(chat=chat.id, 
-                                                             dose=substance['Dose'], 
-                                                             method=substance['Method'], 
-                                                             substance=substance['Substance'], 
-                                                             weight=data['meta'][0]['Body Weight'])
-                            db.session.add(chat_category)
+                        # Open the JSON file and load the data
+                        with open(file_path, 'r') as file:
+                            data = json.load(file)
+                            
+                            # Set up user 
+                            user = User(email=data['meta'][0]['Author'], user_type="Contributor")
+                            db.session.add(user)
                             db.session.commit()
+
+                            # Set up chat
+                            chat = Chats(id=id, user=user.id, flag=False, language="english", summary=data['experience'])
+                            db.session.add(chat)
+                            db.session.commit()
+
+                            # Set up categories
+                            for substance in data['substances']:
+                                chat_category = Chats_Categories(chat=chat.id, 
+                                                                dose=substance['Dose'], 
+                                                                method=substance['Method'], 
+                                                                substance=substance['Substance'], 
+                                                                weight=data['meta'][0]['Body Weight'])
+                                db.session.add(chat_category)
+                                db.session.commit()
                         
             db.session.commit()
 
