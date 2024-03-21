@@ -135,6 +135,7 @@ def create_app():
     with app.app_context():
         db.create_all()  # Create database and tables if they don't exist
         # seed language
+        print("Seeding Language")
         language = Languages.query.filter_by(id="english").first()
         if not language:
             language = Languages(id="english", sample_size=0, mean_count=0)
@@ -149,6 +150,7 @@ def create_app():
             db.session.commit()
 
         # seed words
+        print("Seeding Words")
         language = Languages.query.filter_by(id="english").first()
         if not language:
             language = Languages(id="english", sample_size=0, mean_count=0)
@@ -185,6 +187,7 @@ def create_app():
             db.session.commit()
 
         # Seeding Erowid's chat
+        print("Seeding Erowid")
         if not Chats.query.filter_by(id=1).first():
             # Get the path to the data directory
             data_dir = os.path.join(os.path.dirname(__file__), 'data', 'erowid')
