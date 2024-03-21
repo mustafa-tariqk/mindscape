@@ -120,7 +120,7 @@ def start_chat(user_id):
     @user_id is the id of the user starting the chat
     @return the id of the new chat
     """
-    chat = models.Chats(user=user_id, flag=False)
+    chat = models.Chats(user=user_id)
     models.db.session.add(chat)
     models.db.session.commit()
     return {"chat_id": chat.id}
@@ -177,6 +177,7 @@ def submit():
         result = categorize_submission(chat_id)
         summary = summarize_submission(chat_id)
         database.update_chat_summary(chat_id, summary)
+        database.update_chat_flag(chat_id, False) # unflag only on submission, could add additional logic
 
         exp_vstore = vstore.create_exp_vectorstore(models.Experiences.query.all(), llm_embedder)
         closest_exp_doc, _ = vstore.cluster_new_chat(chat_id, exp_vstore)

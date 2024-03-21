@@ -65,6 +65,16 @@ def update_chat_exp(chat_id, exp_id):
     chat.experience = exp_id
     models.db.session.commit() # makes the update
 
+def update_chat_flag(chat_id, flag: bool):
+    """
+    Update the chat flag
+    @chat_id: the id of the chat
+    @flag: the new flag
+    """
+    chat = models.Chats.query.get(chat_id)
+    chat.flag = flag
+    models.db.session.commit() # makes the update
+
 def update_chat_summary(chat_id, summary):
     """
     Update the chat summary
