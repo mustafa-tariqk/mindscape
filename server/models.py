@@ -5,6 +5,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import csv
 import nltk
+import json
+import os
 
 db = SQLAlchemy()  # Database object
 
@@ -107,6 +109,8 @@ class Chats_Categories(db.Model): # pylint: disable=too-few-public-methods
     """
     __tablename__ = 'chats_categories'
     chat = db.Column(db.Integer, db.ForeignKey('chats.id'), nullable=False, primary_key=True)
+    dose = db.Column(db.Text, nullable=False, primary_key=True)
+    method = db.Column(db.Text, nullable=False, primary_key=True)
     substance = db.Column(db.Text, nullable=False, primary_key=True)
     age = db.Column(db.Integer, nullable=True)
     weight = db.Column(db.Integer, nullable=True)
@@ -176,6 +180,45 @@ def create_app():
             language.mean_count = sample_size // word_count
             language.max_count = max
             language.min_count = min
+            db.session.commit()
+
+        # Seeding Erowid's chat
+        if not Chats.query.filter_by(id=1).first():
+            # Get the path to the data directory
+            data_dir = os.path.join(os.path.dirname(__file__), 'data', 'erowid')
+
+            # Iterate over the files in the data directory
+            for filename in os.listdir(data_dir):
+                # Check if the file is a JSON file
+                if filename.endswith('.json'):
+                    # Construct the full path to the JSON file
+                    file_path = os.path.join(data_dir, filename)
+                    id = int(filename.split('.')[0]) # the part before .json
+                    
+                    # Open the JSON file and load the data
+                    with open(file_path, 'r') as file:
+                        data = json.load(file)
+                        
+                        # Set up user 
+                        user = User(email=data['meta'][0]['Author'], user_type="Contributor")
+                        db.session.add(user)
+                        db.session.commit()
+
+                        # Set up chat
+                        chat = Chats(id=id, user=user.id, flag=False, language="english", summary=data['experience'])
+                        db.session.add(chat)
+                        db.session.commit()
+
+                        # Set up categories
+                        for substance in data['substances']:
+                            chat_category = Chats_Categories(chat=chat.id, 
+                                                             dose=substance['Dose'], 
+                                                             method=substance['Method'], 
+                                                             substance=substance['Substance'], 
+                                                             weight=data['meta'][0]['Body Weight'])
+                            db.session.add(chat_category)
+                            db.session.commit()
+                        
             db.session.commit()
 
     return app
