@@ -12,30 +12,53 @@ def get_chat_language(chat_id):
     """
     return models.Chats.query.get(chat_id).language
 
-def get_experience(exp_id):
+def get_chat_count():
+    """
+    Get the number of chats in the database
+    @return: the number of chats
+    """
+    return models.Chats.query.count()
+
+def get_experience(exp_id=None):
     """
     Get the experience database object
-    @exp_id: the id of the experience
+    @exp_id: the id of the experience. If None will return everything.
     @return: the associated database object
     """
-    return models.Experiences.query.get(exp_id)
+    if not exp_id:
+        return models.Experiences.query.all()
+    else:
+        return models.Experiences.query.get(exp_id)
 
-def get_chat(chat_id):
+def get_chat(chat_id=None):
     """
     Get the chat database object
-    @chat_id: the id of the chat
+    @chat_id: the id of the chat. If None will return everything
     @return: the associated database object
     """
-    return models.Chats.query.get(chat_id)
+    if not chat_id:
+        return models.Chats.query.all()
+    else:
+        return models.Chats.query.get(chat_id)
 
 def update_chat_exp(chat_id, exp_id):
     """
-    Get the chat database object
+    Update the chat experience
     @chat_id: the id of the chat
-    @exo_id: the id of the experience
+    @exp_id: the id of the experience
     """
     chat = models.Chats.query.get(chat_id)
     chat.experience = exp_id
+    models.db.session.commit() # makes the update
+
+def update_chat_summary(chat_id, summary):
+    """
+    Update the chat summary
+    @chat_id: the id of the chat
+    @summary: the new summary
+    """
+    chat = models.Chats.query.get(chat_id)
+    chat.summary = summary
     models.db.session.commit() # makes the update
 
 def get_message(message_id):
@@ -46,23 +69,13 @@ def get_message(message_id):
     """
     return models.Messages.query.get(message_id)
 
-def get_all_chat_messages(chat_id=None):
+def get_all_chat_messages(chat_id):
     """
     Does exactly as the name implies
-    @chat_id: the id of the chat. Defaults to None. If not provided, get all messages.
+    @chat_id: the id of the chat.
     @return: A list of messages from the requested chat
     """
-    if not chat_id:
-        return models.Messages.query.order_by(models.Messages.time).all()
-    else:
-        return models.Messages.query.filter_by(chat=chat_id).order_by(models.Messages.time).all()
-
-def get_all_experiences():
-    """
-    Does exactly as the name implies
-    @returns: A list of experiences
-    """
-    return models.Experiences.query.all()
+    return models.Messages.query.filter_by(chat=chat_id).order_by(models.Messages.time).all()
 
 def get_stringify_chat(chat_id, exclude_ai_messages:bool=False, prune_stop_words:bool=False, lowercase: bool=False):
     """

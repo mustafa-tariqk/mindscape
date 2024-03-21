@@ -7,6 +7,10 @@ from langchain_core.documents import Document
 from langchain.chains import ConversationChain, create_structured_output_runnable
 from langchain.memory import ConversationKGMemory, ChatMessageHistory
 from langchain.prompts.prompt import PromptTemplate
+from langchain.chains.llm import LLMChain
+from langchain.chains.combine_documents.stuff import StuffDocumentsChain
+from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # new stuff
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -72,7 +76,6 @@ def get_common_experience(documents: list[Document]) -> str:
     """
     # TODO: make a prompt template
 
-
 def categorize_submission(chat_id):
     """
     Verifies that there is enough information for submission and categorize accordingly.
@@ -98,3 +101,68 @@ def categorize_submission(chat_id):
     submission_info = runnable.invoke(chat_log)
 
     return submission_info
+
+def summarize_submission(chat_id):
+    """
+    Summarizes the chat.
+    @chat_id: the id of the chat
+    @return: the summary
+    """
+    # Fetch chat as document
+    chat_log = Document(get_stringify_chat(chat_id, True))
+
+
+    # Split into chunks of 2000
+    splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=2000, chunk_overlap=0
+    )
+
+    splits = splitter.split_documents([chat_log])
+
+    # Map
+    map_template = """The following is a set of documents
+    {docs}
+    Based on this list of docs, please identify the experiences being described. 
+    Helpful Answer:"""
+    map_prompt = PromptTemplate.from_template(map_template)
+    map_chain = LLMChain(llm=llm, prompt=map_prompt)
+
+    # Reduce, avoids clustering because of the substance name
+    reduce_template = """The following is set of summaries:
+    {docs}
+    Take these and distill it into a final, consolidated summary of the experience being described.
+    Do not mention the name of the substance being used. 
+    Helpful Answer:"""
+    reduce_prompt = PromptTemplate.from_template(reduce_template)
+    # Run chain
+    reduce_chain = LLMChain(llm=llm, prompt=reduce_prompt)
+
+    # Takes a list of documents, combines them into a single string, and passes this to an LLMChain
+    combine_documents_chain = StuffDocumentsChain(
+        llm_chain=reduce_chain, document_variable_name="docs"
+    )
+
+    # Combines and iteratively reduces the mapped documents
+    reduce_documents_chain = ReduceDocumentsChain(
+        # This is final chain that is called.
+        combine_documents_chain=combine_documents_chain,
+        # If documents exceed context for `StuffDocumentsChain`
+        collapse_documents_chain=combine_documents_chain,
+        # The maximum number of tokens to group documents into.
+        token_max=4000,
+    )   
+
+    # Combining documents by mapping a chain over them, then combining results
+    map_reduce_chain = MapReduceDocumentsChain(
+        # Map chain
+        llm_chain=map_chain,
+        # Reduce chain
+        reduce_documents_chain=reduce_documents_chain,
+        # The variable name in the llm_chain to put the documents in
+        document_variable_name="docs",
+        # Return the results of the map steps in the output
+        return_intermediate_steps=False,
+    )
+
+    # Run chain
+    return map_reduce_chain.invoke(splits)["output_text"]
