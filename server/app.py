@@ -53,6 +53,8 @@ def cluster_all_chats(k=5):
     models.db.session.commit() # experience field in chat table will be set to null
 
     chats = models.Chats.query.filter_by(flag=False).all() # get all the chats, potentially not a good idea, consider just using id
+    if len(chats) == 0:
+        return # no chats to cluster
     chats_vstore = vstore.create_chats_vectorstore(chats, llm_embedder)
 
     embeddings = [llm_embedder.embed_query(chat.summary) for chat in chats] # RAM intensive, also may waste tokens
