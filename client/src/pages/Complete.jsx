@@ -2,11 +2,12 @@ import React from 'react';
 import WordCloud from 'react-d3-cloud';
 import GridList from '../components/GridList.jsx';
 import PieChart from '../components/PieChart.jsx';
-import {Chart, ArcElement, Tooltip, Legend} from 'chart.js'
+import {Chart, ArcElement, Tooltip, Legend} from 'chart.js';
 Chart.register(ArcElement);
 Chart.register(Tooltip);
 Chart.register(Legend);
 import { useState, useEffect } from 'react';
+import simScale from "../img/simScale.png";
 
 const SERVER_URL = process.env.SERVER_URL;
 
@@ -19,7 +20,7 @@ const piechartData = {
     datasets: [
       {
         label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
+        data: [100],
         backgroundColor: [
           'red',
           'blue',
@@ -33,8 +34,6 @@ const piechartData = {
     ],
 };
 
-const experienceClassData = null
-
 const Complete = ({chatId}) => {
 
     // PRIORITY 1
@@ -45,6 +44,7 @@ const Complete = ({chatId}) => {
 
     const [experienceClassData, setExperienceClassData] = useState([]);
     const [wordCloudData, setWordCloudData] = useState([]);
+    const [emotionalExperienceData, setEmotionalExperienceData] = useState([]);
 
     useEffect(() => {
         //Experience Data
@@ -56,6 +56,7 @@ const Complete = ({chatId}) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({chatId})
+            // body: JSON.stringify({chatId, test: true})
         })
         .then(response => response.json())
         .then(data => {
@@ -77,12 +78,27 @@ const Complete = ({chatId}) => {
         .then(data => {
             setWordCloudData(data)
         });
+        //Emotional Data
+        fetch(SERVER_URL + "/api/analytics/experience?" + new URLSearchParams({
+            //test: true,
+        }), {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            setEmotionalExperienceData(data)
+        });
     }, [chatId]);
 
     function printDebug() {
         //console.log(experienceClassData)
-        console.log(wordCloudData)
-        const type = typeof wordCloudData
+        console.log(emotionalExperienceData)
+        const type = typeof emotionalExperienceData
         console.log('Data is of type:', type);
     }
 
@@ -135,17 +151,16 @@ const Complete = ({chatId}) => {
     }
 
     const createClassificationData = () => {
-        const temp = [["HEIGHT:", "WEIGHT:", "SUBSTANCE:"]];
+        const temp = [["HEIGHT(CM):", "SUBSTANCE:", "WEIGHT(KG):"]];
         
         if (experienceClassData.length == 0) {
-            return [["HEIGHT:", "WEIGHT:", "SUBSTANCE:"]];
+            return [["HEIGHT:", "SUBSTANCE:", "WEIGHT:"]];
         }
 
         const additions = []
         for (const key in experienceClassData) {
-            additions.push(experienceClassData[key]['height in cm']);
-            additions.push(experienceClassData[key]['weight in kg']);
-            additions.push(experienceClassData[key]['substance']);
+            //console.log(key);
+            additions.push(experienceClassData[key]);
         }
         temp.push(additions);
         return temp;
@@ -154,6 +169,53 @@ const Complete = ({chatId}) => {
     const openGoogleForm = () => {
         const url = "https://forms.gle/orEBNU7GmVLKpmJe7";
         window.open(url, "_blank")
+    }
+
+    const createPieChartData = () => {
+        if (emotionalExperienceData == null) {
+            return piechartData;
+        }
+
+        var tempNames = []
+        var tempValues = []
+        var tempSim = []
+        //Get the names and values of the passed
+        for (const key in emotionalExperienceData['experiences']) {
+            tempNames.push(emotionalExperienceData['experiences'][key]['name']);
+            tempValues.push(emotionalExperienceData['experiences'][key]['percentage']);
+            tempSim.push(emotionalExperienceData['experiences'][key]['similarity']);
+        }
+        
+        var colors = []
+        var counter = 1;
+        //make a list of colors using the simularity as the vibrance.
+        for (const key in tempSim) {
+            var simSat = Math.min(Math.floor(tempSim[key] / 1.25 - 15, 250));
+            var rand = Math.floor(Math.random() * 360);
+            colors.push(`hsl(${simSat}, 100%, 50%)`);
+        }
+
+        console.log(colors);
+
+        const newChart = {
+            type: 'doughnut',
+            labels: tempNames,
+            borderColor: '#000000',
+            datasets: [
+              {
+                label: 'Appears in X% of Submissions',
+                data: tempValues,
+                backgroundColor: colors,
+                borderWidth: 4,
+                borderColor: '#000000',
+                hoverOffset: 10,
+                hoverBorderWidth: 10,
+                cutout: 50,
+              },
+            ],
+        };
+
+        return newChart;
     }
 
     return (
@@ -181,8 +243,10 @@ const Complete = ({chatId}) => {
                             />
                         </div>
                         <div className='similarity'>
+                            <div className='pieChartInfo'>See similarity range below!</div>
+                            <img src={simScale}></img>
                             <div className='pieChartStyle'>
-                                <PieChart data={piechartData} />
+                                <PieChart data={createPieChartData()} />
                             </div>
                         </div>
                         <div className='experience'>
@@ -193,10 +257,10 @@ const Complete = ({chatId}) => {
                     <div className="grid-container">
                     <span>Word Cloud</span>
                     <span>Experience Similarity</span>
-                    <span>Experience Class</span>
+                    <span>Constributor Info</span>
                     </div>
                     <div className='imagebutton'>
-                        <button onClick={printDebug}>Download Image</button>
+                        {/* <button onClick={printDebug}>Download Image</button> */}
                     </div>
                     <div className='feedbackbutton'>
                         <button onClick={openGoogleForm}>Submit Feedback</button>
