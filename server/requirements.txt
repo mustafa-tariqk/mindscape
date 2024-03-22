@@ -11,3 +11,5 @@ pytest
 networkx
 nltk
 gunicorn
+faiss-cpu # change to gpu if available?
+tiktoken

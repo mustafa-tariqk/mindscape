@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module analytics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>analytics</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/khoa/Documents/School/CISC498/shroomjack/server/controllers/analytics.py">/home/khoa/Documents/School/CISC498/shroomjack/server/controllers/analytics.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="controllers.utils.ai.html">controllers.utils.ai</a><br>
+</td><td width="25%" valign=top><a href="controllers.utils.database.html">controllers.utils.database</a><br>
+</td><td width="25%" valign=top><a href="json.html">json</a><br>
+</td><td width="25%" valign=top><a href="controllers.utils.vstore.html">controllers.utils.vstore</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-get_experience_data"><strong>get_experience_data</strong></a>(chat_id, exp_vectorstore, k)</dt><dd><tt>Get&nbsp;the&nbsp;global&nbsp;experience&nbsp;data&nbsp;with&nbsp;similarity<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
+@exp_vectorstore:&nbsp;the&nbsp;experience&nbsp;vectorstore<br>
+@k:&nbsp;the&nbsp;number&nbsp;of&nbsp;experiences&nbsp;to&nbsp;return&nbsp;similarity&nbsp;for<br>
+@return&nbsp;schema&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"experiences":&nbsp;[{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":&nbsp;"",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"similarity":&nbsp;0.0&nbsp;//&nbsp;float,&nbsp;defaults&nbsp;to&nbsp;0.0&nbsp;if&nbsp;outside&nbsp;of&nbsp;top&nbsp;k<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"percentage":&nbsp;0&nbsp;//&nbsp;int&nbsp;in&nbsp;range&nbsp;[0,&nbsp;100],&nbsp;percentage&nbsp;of&nbsp;submission&nbsp;with&nbsp;this&nbsp;experience<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}]<br>
+}</tt></dd></dl>
+ <dl><dt><a name="-get_k_weighted_frequency"><strong>get_k_weighted_frequency</strong></a>(chat_id, k, exclude_ai_messages: bool = True)</dt><dd><tt>Return&nbsp;the&nbsp;top&nbsp;k&nbsp;frequently&nbsp;seen&nbsp;words&nbsp;from&nbsp;a&nbsp;Chat&nbsp;session.<br>
+Weights&nbsp;frequency&nbsp;based&nbsp;on&nbsp;established&nbsp;word&nbsp;distribution.<br>
+@k:&nbsp;number&nbsp;of&nbsp;words&nbsp;to&nbsp;return<br>
+@chat_id:&nbsp;id&nbsp;of&nbsp;chat&nbsp;session<br>
+@exclude_ai_messages:&nbsp;defaults&nbsp;to&nbsp;true.&nbsp;whether&nbsp;to&nbsp;exclude&nbsp;meessages&nbsp;sent&nbsp;by&nbsp;the&nbsp;chatbot<br>
+@return:&nbsp;dictionary&nbsp;formatted&nbsp;as&nbsp;{word:&nbsp;word_frequency}</tt></dd></dl>
+</td></tr></table>
+</body></html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module database</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>database</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/khoa/Documents/School/CISC498/shroomjack/server/controllers/utils/database.py">/home/khoa/Documents/School/CISC498/shroomjack/server/controllers/utils/database.py</a></font></td></tr></table>
+    <p><tt>Utilities&nbsp;functions.&nbsp;Most&nbsp;require&nbsp;app&nbsp;context&nbsp;to&nbsp;be&nbsp;called</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="models.html">models</a><br>
+</td><td width="25%" valign=top><a href="nltk.html">nltk</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-get_all_chat_messages"><strong>get_all_chat_messages</strong></a>(chat_id)</dt><dd><tt>Does&nbsp;exactly&nbsp;as&nbsp;the&nbsp;name&nbsp;implies<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat.<br>
+@return:&nbsp;A&nbsp;list&nbsp;of&nbsp;messages&nbsp;from&nbsp;the&nbsp;requested&nbsp;chat</tt></dd></dl>
+ <dl><dt><a name="-get_chat"><strong>get_chat</strong></a>(chat_id=None)</dt><dd><tt>Get&nbsp;the&nbsp;chat&nbsp;database&nbsp;object<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat.&nbsp;If&nbsp;None&nbsp;will&nbsp;return&nbsp;everything<br>
+@return:&nbsp;the&nbsp;associated&nbsp;database&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-get_chat_count"><strong>get_chat_count</strong></a>()</dt><dd><tt>Get&nbsp;the&nbsp;number&nbsp;of&nbsp;chats&nbsp;in&nbsp;the&nbsp;database<br>
+@return:&nbsp;the&nbsp;number&nbsp;of&nbsp;chats</tt></dd></dl>
+ <dl><dt><a name="-get_experience"><strong>get_experience</strong></a>(exp_id=None)</dt><dd><tt>Get&nbsp;the&nbsp;experience&nbsp;database&nbsp;object<br>
+@exp_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;experience.&nbsp;If&nbsp;None&nbsp;will&nbsp;return&nbsp;everything.<br>
+@return:&nbsp;the&nbsp;associated&nbsp;database&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-get_language"><strong>get_language</strong></a>(language_id=None)</dt><dd><tt>Get&nbsp;the&nbsp;language&nbsp;database&nbsp;object<br>
+@language_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;language.&nbsp;If&nbsp;None&nbsp;will&nbsp;return&nbsp;everything<br>
+@return:&nbsp;the&nbsp;associated&nbsp;database&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-get_message"><strong>get_message</strong></a>(message_id)</dt><dd><tt>Get&nbsp;the&nbsp;message&nbsp;database&nbsp;object<br>
+@message_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;message<br>
+@return:&nbsp;the&nbsp;associated&nbsp;database&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-get_stringify_chat"><strong>get_stringify_chat</strong></a>(chat_id, exclude_ai_messages: bool = False, prune_stop_words: bool = False, lowercase: bool = False)</dt><dd><tt>Returns&nbsp;all&nbsp;messages&nbsp;in&nbsp;the&nbsp;specified&nbsp;chat&nbsp;as&nbsp;a&nbsp;single&nbsp;string.<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat.&nbsp;If&nbsp;set&nbsp;to&nbsp;None<br>
+@exclude_ai_messages:&nbsp;defaults&nbsp;to&nbsp;true.&nbsp;whether&nbsp;to&nbsp;exclude&nbsp;meessages&nbsp;sent&nbsp;by&nbsp;the&nbsp;chatbot<br>
+@return:&nbsp;A&nbsp;string&nbsp;containing&nbsp;the&nbsp;entire&nbsp;correspondence.</tt></dd></dl>
+ <dl><dt><a name="-get_word"><strong>get_word</strong></a>(word_id=None)</dt><dd><tt>Get&nbsp;the&nbsp;word&nbsp;database&nbsp;object<br>
+@word_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;word.&nbsp;If&nbsp;None&nbsp;will&nbsp;return&nbsp;everything<br>
+@return:&nbsp;the&nbsp;associated&nbsp;database&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-get_word_weight"><strong>get_word_weight</strong></a>(word, language='english')</dt><dd><tt>Calculate&nbsp;the&nbsp;weights&nbsp;for&nbsp;the&nbsp;given&nbsp;word<br>
+@word:&nbsp;word&nbsp;to&nbsp;calculate&nbsp;weight&nbsp;for.&nbsp;Must&nbsp;be&nbsp;lowercase&nbsp;and&nbsp;does&nbsp;not&nbsp;contain&nbsp;special&nbsp;characters&nbsp;(language&nbsp;specific)&nbsp;or&nbsp;numbers<br>
+@return:&nbsp;weight&nbsp;attributed&nbsp;to&nbsp;the&nbsp;word</tt></dd></dl>
+ <dl><dt><a name="-update_chat_exp"><strong>update_chat_exp</strong></a>(chat_id, exp_id)</dt><dd><tt>Update&nbsp;the&nbsp;chat&nbsp;experience<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
+@exp_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;experience</tt></dd></dl>
+ <dl><dt><a name="-update_chat_flag"><strong>update_chat_flag</strong></a>(chat_id, flag: bool)</dt><dd><tt>Update&nbsp;the&nbsp;chat&nbsp;flag<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
+@flag:&nbsp;the&nbsp;new&nbsp;flag</tt></dd></dl>
+ <dl><dt><a name="-update_chat_summary"><strong>update_chat_summary</strong></a>(chat_id, summary)</dt><dd><tt>Update&nbsp;the&nbsp;chat&nbsp;summary<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
+@summary:&nbsp;the&nbsp;new&nbsp;summary</tt></dd></dl>
+</td></tr></table>
+</body></html>

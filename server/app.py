@@ -12,9 +12,12 @@ from flask_dance.contrib.google import google, make_google_blueprint
 from flask_cors import CORS, cross_origin
 
 import models
-import utils
-from analytics.wordcloud import get_k_weighted_frequency
-from ai import ai_message, handle_submission
+import controllers.analytics as analytics
+import controllers.utils.database as database
+import controllers.utils.vstore as vstore
+from controllers.utils.ai import ai_message, llm_embedder, categorize_submission, summarize_submission
+
+import faiss
 
 load_dotenv()
 
@@ -33,11 +36,57 @@ blueprint = make_google_blueprint(
 app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
-CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
-app.config["TESTING"] = bool(int(environ.get("TESTING", 1)))
 
+# uncomment line below to skip auth
+app.config["TESTING"] = True
+CORS(app, supports_credentials=True)
 
+SIMILARITY_THRESHOLD = 0.8 # threshold of similarity that, if surpassed, will result in a new cluster with this chat as centre
 
+def cluster_all_chats(k=5):
+    """
+    Clusters all chats into experiences. Using k-means clustering.
+    Will rewrite the entire experience table as well as reassign the experience field in the chat table.
+    @param k: The number of clusters to create
+    """
+    models.Experiences.query.delete() # clear the table
+    models.db.session.commit() # experience field in chat table will be set to null
+
+    chats = models.Chats.query.filter_by(flag=False).all() # get all the chats, potentially not a good idea, consider just using id
+    if len(chats) == 0:
+        return # no chats to cluster
+    chats_vstore = vstore.create_chats_vectorstore(chats, llm_embedder)
+
+    embeddings = [llm_embedder.embed_query(chat.summary) for chat in chats] # RAM intensive, also may waste tokens
+
+    # cluster using faiss.KMeans
+    kmeans = faiss.Kmeans(len(embeddings[0]), k, niter=20, verbose=True)
+    kmeans.train(embeddings)
+
+    # assign the closest chat to the centroid as the centroid
+    for i in range(k):
+        closest_chat_doc, _ = vstore.get_k_nearest_by_vector(kmeans.centroids[i], chats_vstore, 1)[0]
+        # assign closest chat as a experience, maybe give it a name
+        closest_chat = models.Chats.query.get(closest_chat_doc.page_content)
+        models.db.session.add(models.Experiences(name=closest_chat.summary, id=closest_chat.id))
+        models.db.session.commit()
+
+    # assign the chat to the closest experience
+    experiences = models.Experiences.query.all()
+    exp_vstore = vstore.create_exp_vectorstore(experiences, llm_embedder)
+    for chat in chats:
+        closest_exp_docs, _ = vstore.get_k_nearest_by_vector(llm_embedder.embed_query(chat.summary), exp_vstore, 1)[0]
+        closest_exp = models.Experiences.query.get(closest_exp_docs.page_content)
+        chat.experience = closest_exp.id
+        models.db.session.commit()
+
+print("Clustering all chats")
+with app.app_context():
+    cluster_all_chats(5) # Cluster on first start
+
+print("Clustering complete")
+
+# decorator to check user type
 def role_required(*roles):
     """
     This decorator checks if the user is authorized with Google. If not, it
@@ -113,7 +162,7 @@ def start_chat(user_id):
     @user_id is the id of the user starting the chat
     @return the id of the new chat
     """
-    chat = models.Chats(user=user_id, flag=False)
+    chat = models.Chats(user=user_id)
     models.db.session.add(chat)
     models.db.session.commit()
     return {"chat_id": chat.id}
@@ -143,6 +192,7 @@ def converse():
     models.db.session.add(human)
     models.db.session.add(ai)
     models.db.session.commit()
+
     return {"ai_response": ai_text}
 
 
@@ -157,13 +207,32 @@ def submit():
     schema could change on request, but it's an object fs
     """
     request_body = request.get_json()
-    chatId = request_body['chatId']
-    test = request_body['test']
-    if test: # could it be null
-        return jsonify({"weight in kg":75, "height in cm":178, "substance":"Lean"})
+    chat_id = int(request_body['chatId'])
+    if "test" in request_body:
+        test = request_body['test']
+
+        if test: # could it be null
+            return jsonify({"weight in kg":75, "height in cm":178, "substance":"Lean"})
+    
     result = {}
     with app.app_context():
-        result = handle_submission(chatId)
+        result = categorize_submission(chat_id)
+        summary = summarize_submission(chat_id)
+        database.update_chat_summary(chat_id, summary)
+        database.update_chat_flag(chat_id, False) # unflag only on submission, could add additional logic
+
+        exp_vstore = vstore.create_exp_vectorstore(models.Experiences.query.all(), llm_embedder)
+        closest_exp_doc, similarity_score = vstore.cluster_new_chat(database.get_chat(chat_id), exp_vstore)
+        if similarity_score <= SIMILARITY_THRESHOLD:
+            exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
+            database.update_chat_exp(chat_id, exp_id) 
+
+        else: # create new experience
+            new_exp = models.Experiences(name=summary, id=chat_id)
+            models.db.session.add(new_exp)
+            models.db.session.commit()
+            database.update_chat_exp(chat_id, chat_id)
+
     return jsonify(result)
 
 
@@ -256,7 +325,7 @@ def get_all_chats():
     """
     chat_dict = {}
     for chat in models.Chats.query.all():
-        messages = utils.get_all_chat_messages(chat.id)
+        messages = database.get_all_chat_messages(chat.id)
         chat_dict[chat.id] = [message.text for message in messages]
     return chat_dict
 
@@ -273,13 +342,13 @@ def get_frequent_words():
         'weight': attributed weight
     }
     """
-    chat_id = request.args.get("chat_id")
+    chat_id = request.args.get("chat_id", type=int)
     k = request.args.get("k", type=int)
     test = request.args.get("test", default=False, type=bool)
     if test:
         chat_id = None
     with app.app_context():
-        return jsonify(get_k_weighted_frequency(k, chat_id))
+        return jsonify(analytics.get_k_weighted_frequency(chat_id, k))
     
 
 @cross_origin()
@@ -301,17 +370,35 @@ def experience():
             "experiences": [{
                 "name": "Infinite Power",
                 "similarity": 300.0,
-                "percentage": 20
+                "percentage": 20.0
             }, {
                 "name": "Signature Look of Authority",
                 "similarity": 100.0,
-                "percentage": 30
+                "percentage": 30.0
             }, {
                 "name": "I am your father",
                 "similarity": 50.0,
-                "percentage": 50
+                "percentage": 50.0
             }]
         })
+    
+    else:
+        chat_id = request.args.get("chat_id")
+        return jsonify(analytics.get_experience_data(chat_id))
+    
+@cross_origin()
+@app.route("/api/analytics/cluster_chats", methods=["POST"])
+@role_required("Administrator")
+def cluster_chats():
+    """
+    Clusters all chats into experiences. Using k-means clustering.
+    Will rewrite the entire experience table as well as reassign the experience field in the chat table.
+    @return the id of the new chat
+    """
+    request_body = request.get_json()
+    k = request_body['k']
+    cluster_all_chats(k)
+    return {"status": "success"}
 
 
 if __name__ == "__main__":

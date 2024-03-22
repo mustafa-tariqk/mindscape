@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module vstore</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>vstore</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/khoa/Documents/School/CISC498/shroomjack/server/controllers/utils/vstore.py">/home/khoa/Documents/School/CISC498/shroomjack/server/controllers/utils/vstore.py</a></font></td></tr></table>
+    <p><tt>Defines&nbsp;controllers&nbsp;and&nbsp;utilities&nbsp;for&nbsp;experience/sentiment&nbsp;analysis.<br>
+Also&nbsp;handles&nbsp;vectorstores.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-cluster_new_chat"><strong>cluster_new_chat</strong></a>(chat, exp_vstore: langchain_community.vectorstores.faiss.FAISS)</dt><dd><tt>Handle&nbsp;the&nbsp;addition&nbsp;of&nbsp;a&nbsp;new&nbsp;chat<br>
+&nbsp;<br>
+@chat:&nbsp;the&nbsp;chat&nbsp;object.&nbsp;Must&nbsp;already&nbsp;be&nbsp;committed&nbsp;to&nbsp;have&nbsp;a&nbsp;valid&nbsp;id<br>
+@exp_vstore:&nbsp;the&nbsp;vectorstore&nbsp;that&nbsp;handles&nbsp;experiences<br>
+@similarity_threshold:&nbsp;the&nbsp;threshold&nbsp;of&nbsp;similarity&nbsp;that,&nbsp;if&nbsp;surpassed,&nbsp;will&nbsp;result&nbsp;in&nbsp;a&nbsp;new&nbsp;cluster&nbsp;with&nbsp;this&nbsp;chat&nbsp;as&nbsp;centre<br>
+@returns:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;cluster&nbsp;that&nbsp;the&nbsp;chat&nbsp;was&nbsp;added&nbsp;to,&nbsp;as&nbsp;well&nbsp;as&nbsp;similarity</tt></dd></dl>
+ <dl><dt><a name="-create_chats_vectorstore"><strong>create_chats_vectorstore</strong></a>(chats: list, llm_embedder: langchain_core.embeddings.Embeddings)</dt><dd><tt>Load&nbsp;the&nbsp;chat&nbsp;vectorstore&nbsp;with&nbsp;chats.<br>
+@chats:&nbsp;the&nbsp;list&nbsp;of&nbsp;chats&nbsp;db&nbsp;objects.<br>
+@return</tt></dd></dl>
+ <dl><dt><a name="-create_exp_vectorstore"><strong>create_exp_vectorstore</strong></a>(exps: list, llm_embedder: langchain_core.embeddings.Embeddings)</dt><dd><tt>Load&nbsp;the&nbsp;chat&nbsp;vectorstore&nbsp;with&nbsp;exp.<br>
+@exps:&nbsp;the&nbsp;list&nbsp;of&nbsp;exp&nbsp;db&nbsp;objects.<br>
+@return</tt></dd></dl>
+ <dl><dt><a name="-get_chats_as_documents"><strong>get_chats_as_documents</strong></a>(chats: list) -&gt; list[langchain_core.documents.base.Document]</dt><dd><tt>Return&nbsp;the&nbsp;chats&nbsp;stored&nbsp;in&nbsp;sql&nbsp;as&nbsp;Documents&nbsp;to&nbsp;be&nbsp;loaded&nbsp;into&nbsp;vectorstore<br>
+@chats:&nbsp;list&nbsp;of&nbsp;objects&nbsp;returned&nbsp;by&nbsp;Chats.query<br>
+@return:&nbsp;list&nbsp;of&nbsp;langchain&nbsp;Document</tt></dd></dl>
+ <dl><dt><a name="-get_k_nearest_by_vector"><strong>get_k_nearest_by_vector</strong></a>(embedding_vector, vectorstore, k) -&gt; list[tuple[langchain_core.documents.base.Document, float]]</dt><dd><tt>Query&nbsp;the&nbsp;k&nbsp;nearest&nbsp;documents&nbsp;to&nbsp;the&nbsp;embedding&nbsp;vector.&nbsp;Theoretically,&nbsp;messages&nbsp;that&nbsp;are&nbsp;similar&nbsp;will&nbsp;be&nbsp;clustered&nbsp;together.<br>
+&nbsp;<br>
+@embedding_vector:&nbsp;the&nbsp;ouput&nbsp;of&nbsp;llm_embedder.embed_query()<br>
+@vectorstore:&nbsp;the&nbsp;vectorstore&nbsp;object.&nbsp;Designed&nbsp;to&nbsp;work&nbsp;with&nbsp;both&nbsp;message&nbsp;and&nbsp;experiences<br>
+@k:&nbsp;the&nbsp;number&nbsp;of&nbsp;results<br>
+@returns:&nbsp;a&nbsp;list&nbsp;of&nbsp;tuples&nbsp;of&nbsp;the&nbsp;form&nbsp;(Document,&nbsp;similarity&nbsp;score)</tt></dd></dl>
+ <dl><dt><a name="-get_messages_as_documents"><strong>get_messages_as_documents</strong></a>(messages: list) -&gt; list[langchain_core.documents.base.Document]</dt><dd><tt>Return&nbsp;the&nbsp;messages&nbsp;stored&nbsp;in&nbsp;sql&nbsp;as&nbsp;Documents&nbsp;to&nbsp;be&nbsp;loaded&nbsp;into&nbsp;vectorstore<br>
+@messages:&nbsp;list&nbsp;of&nbsp;objects&nbsp;returned&nbsp;by&nbsp;Messages.query<br>
+@return:&nbsp;list&nbsp;of&nbsp;langchain&nbsp;Document</tt></dd></dl>
+</td></tr></table>
+</body></html>
