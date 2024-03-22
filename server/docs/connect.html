@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module connect</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>connect</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/khoa/Documents/School/CISC498/shroomjack/server/.venv/lib/python3.10/site-packages/ipykernel/connect.py">/home/khoa/Documents/School/CISC498/shroomjack/server/.venv/lib/python3.10/site-packages/ipykernel/connect.py</a></font></td></tr></table>
+    <p><tt>Connection&nbsp;file-related&nbsp;utilities&nbsp;for&nbsp;the&nbsp;kernel</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="json.html">json</a><br>
+</td><td width="25%" valign=top><a href="jupyter_client.html">jupyter_client</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-connect_qtconsole"><strong>connect_qtconsole</strong></a>(connection_file: 'str | None' = None, argv: 'list[str] | None' = None) -&gt; 'Popen[Any]'</dt><dd><tt>Connect&nbsp;a&nbsp;qtconsole&nbsp;to&nbsp;the&nbsp;current&nbsp;kernel.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;connecting&nbsp;a&nbsp;second&nbsp;qtconsole&nbsp;to&nbsp;a&nbsp;kernel,&nbsp;or&nbsp;to&nbsp;a<br>
+local&nbsp;notebook.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+connection_file&nbsp;:&nbsp;str&nbsp;[optional]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;connection&nbsp;file&nbsp;to&nbsp;be&nbsp;used.&nbsp;Can&nbsp;be&nbsp;given&nbsp;by&nbsp;absolute&nbsp;path,&nbsp;or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;IPython&nbsp;will&nbsp;search&nbsp;in&nbsp;the&nbsp;security&nbsp;directory.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;run&nbsp;from&nbsp;IPython,<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;unspecified,&nbsp;the&nbsp;connection&nbsp;file&nbsp;for&nbsp;the&nbsp;currently&nbsp;running<br>
+&nbsp;&nbsp;&nbsp;&nbsp;IPython&nbsp;Kernel&nbsp;will&nbsp;be&nbsp;used,&nbsp;which&nbsp;is&nbsp;only&nbsp;allowed&nbsp;from&nbsp;inside&nbsp;a&nbsp;kernel.<br>
+&nbsp;<br>
+argv&nbsp;:&nbsp;list&nbsp;[optional]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Any&nbsp;extra&nbsp;args&nbsp;to&nbsp;be&nbsp;passed&nbsp;to&nbsp;the&nbsp;console.<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+:class:`subprocess.Popen`&nbsp;instance&nbsp;running&nbsp;the&nbsp;qtconsole&nbsp;frontend</tt></dd></dl>
+ <dl><dt><a name="-get_connection_file"><strong>get_connection_file</strong></a>(app: 'IPKernelApp | None' = None) -&gt; 'str'</dt><dd><tt>Return&nbsp;the&nbsp;path&nbsp;to&nbsp;the&nbsp;connection&nbsp;file&nbsp;of&nbsp;an&nbsp;app<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+app&nbsp;:&nbsp;IPKernelApp&nbsp;instance&nbsp;[optional]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;unspecified,&nbsp;the&nbsp;currently&nbsp;running&nbsp;app&nbsp;will&nbsp;be&nbsp;used</tt></dd></dl>
+ <dl><dt><a name="-get_connection_info"><strong>get_connection_info</strong></a>(connection_file: 'str | None' = None, unpack: 'bool' = False) -&gt; 'str | dict[str, Any]'</dt><dd><tt>Return&nbsp;the&nbsp;connection&nbsp;information&nbsp;for&nbsp;the&nbsp;current&nbsp;Kernel.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+connection_file&nbsp;:&nbsp;str&nbsp;[optional]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;connection&nbsp;file&nbsp;to&nbsp;be&nbsp;used.&nbsp;Can&nbsp;be&nbsp;given&nbsp;by&nbsp;absolute&nbsp;path,&nbsp;or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;IPython&nbsp;will&nbsp;search&nbsp;in&nbsp;the&nbsp;security&nbsp;directory.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;run&nbsp;from&nbsp;IPython,<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;unspecified,&nbsp;the&nbsp;connection&nbsp;file&nbsp;for&nbsp;the&nbsp;currently&nbsp;running<br>
+&nbsp;&nbsp;&nbsp;&nbsp;IPython&nbsp;Kernel&nbsp;will&nbsp;be&nbsp;used,&nbsp;which&nbsp;is&nbsp;only&nbsp;allowed&nbsp;from&nbsp;inside&nbsp;a&nbsp;kernel.<br>
+&nbsp;<br>
+unpack&nbsp;:&nbsp;bool&nbsp;[default:&nbsp;False]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;True,&nbsp;return&nbsp;the&nbsp;unpacked&nbsp;dict,&nbsp;otherwise&nbsp;just&nbsp;the&nbsp;string&nbsp;contents<br>
+&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;the&nbsp;file.<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+The&nbsp;connection&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;current&nbsp;kernel,&nbsp;as&nbsp;string&nbsp;or&nbsp;dict,<br>
+depending&nbsp;on&nbsp;`unpack`.</tt></dd></dl>
+ <dl><dt><a name="-write_connection_file"><strong>write_connection_file</strong></a>(fname: 'str | None' = None, shell_port: 'int' = 0, iopub_port: 'int' = 0, stdin_port: 'int' = 0, hb_port: 'int' = 0, control_port: 'int' = 0, ip: 'str' = '', key: 'bytes' = b'', transport: 'str' = 'tcp', signature_scheme: 'str' = 'hmac-sha256', kernel_name: 'str' = '', **kwargs: 'Any') -&gt; 'tuple[str, KernelConnectionInfo]'</dt><dd><tt>Generates&nbsp;a&nbsp;JSON&nbsp;config&nbsp;file,&nbsp;including&nbsp;the&nbsp;selection&nbsp;of&nbsp;random&nbsp;ports.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+&nbsp;<br>
+fname&nbsp;:&nbsp;unicode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;path&nbsp;to&nbsp;the&nbsp;file&nbsp;to&nbsp;write<br>
+&nbsp;<br>
+shell_port&nbsp;:&nbsp;int,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;port&nbsp;to&nbsp;use&nbsp;for&nbsp;ROUTER&nbsp;(shell)&nbsp;channel.<br>
+&nbsp;<br>
+iopub_port&nbsp;:&nbsp;int,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;port&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;SUB&nbsp;channel.<br>
+&nbsp;<br>
+stdin_port&nbsp;:&nbsp;int,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;port&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;ROUTER&nbsp;(raw&nbsp;input)&nbsp;channel.<br>
+&nbsp;<br>
+control_port&nbsp;:&nbsp;int,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;port&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;ROUTER&nbsp;(control)&nbsp;channel.<br>
+&nbsp;<br>
+hb_port&nbsp;:&nbsp;int,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;port&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;heartbeat&nbsp;REP&nbsp;channel.<br>
+&nbsp;<br>
+ip&nbsp;&nbsp;:&nbsp;str,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;ip&nbsp;address&nbsp;the&nbsp;kernel&nbsp;will&nbsp;bind&nbsp;to.<br>
+&nbsp;<br>
+key&nbsp;:&nbsp;str,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;Session&nbsp;key&nbsp;used&nbsp;for&nbsp;message&nbsp;authentication.<br>
+&nbsp;<br>
+signature_scheme&nbsp;:&nbsp;str,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;scheme&nbsp;used&nbsp;for&nbsp;message&nbsp;authentication.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;has&nbsp;the&nbsp;form&nbsp;'digest-hash',&nbsp;where&nbsp;'digest'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;the&nbsp;scheme&nbsp;used&nbsp;for&nbsp;digests,&nbsp;and&nbsp;'hash'&nbsp;is&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;hash&nbsp;function<br>
+&nbsp;&nbsp;&nbsp;&nbsp;used&nbsp;by&nbsp;the&nbsp;digest&nbsp;scheme.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Currently,&nbsp;'hmac'&nbsp;is&nbsp;the&nbsp;only&nbsp;supported&nbsp;digest&nbsp;scheme,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;'sha256'&nbsp;is&nbsp;the&nbsp;default&nbsp;hash&nbsp;function.<br>
+&nbsp;<br>
+kernel_name&nbsp;:&nbsp;str,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;kernel&nbsp;currently&nbsp;connected&nbsp;to.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['write_connection_file', 'get_connection_file', 'get_connection_info', 'connect_qtconsole']</td></tr></table>
+</body></html>

@@ -1,37 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Python: module ai</title>
-</head><body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module ai</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
 
-<table class="heading">
-<tr class="heading-text decor">
-<td class="title">&nbsp;<br><strong class="title">ai</strong></td>
-<td class="extra"><a href=".">index</a><br><a href="file:/Users/mustafa/Documents/mindscape/server/ai.py">/Users/mustafa/Documents/mindscape/server/ai.py</a></td></tr></table>
-    <p><span class="code">This&nbsp;file&nbsp;contains&nbsp;the&nbsp;AI&nbsp;logic&nbsp;for&nbsp;the&nbsp;chatbot.&nbsp;<br>
-It&nbsp;is&nbsp;responsible&nbsp;for&nbsp;generating&nbsp;responses&nbsp;to&nbsp;user&nbsp;messages.</span></p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>ai</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/khoa/Documents/School/CISC498/shroomjack/server/controllers/utils/ai.py">/home/khoa/Documents/School/CISC498/shroomjack/server/controllers/utils/ai.py</a></font></td></tr></table>
+    <p><tt>This&nbsp;file&nbsp;contains&nbsp;the&nbsp;AI&nbsp;logic&nbsp;for&nbsp;the&nbsp;chatbot.&nbsp;<br>
+It&nbsp;is&nbsp;responsible&nbsp;for&nbsp;generating&nbsp;responses&nbsp;to&nbsp;user&nbsp;messages.</tt></p>
 <p>
-<table class="section">
-<tr class="decor functions-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
-<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-ai_message"><strong>ai_message</strong></a>(chat_id, human_message)</dt><dd><span class="code">@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-ai_message"><strong>ai_message</strong></a>(chat_id, human_message)</dt><dd><tt>@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
 @message:&nbsp;the&nbsp;message&nbsp;to&nbsp;the&nbsp;AI<br>
-@return:&nbsp;the&nbsp;response&nbsp;from&nbsp;the&nbsp;AI</span></dd></dl>
- <dl><dt><a name="-handle_submission"><strong>handle_submission</strong></a>(chat_id)</dt><dd><span class="code">Verifies&nbsp;that&nbsp;there&nbsp;is&nbsp;enough&nbsp;information&nbsp;for&nbsp;submission&nbsp;and&nbsp;categorize&nbsp;accordingly.<br>
+@return:&nbsp;the&nbsp;response&nbsp;from&nbsp;the&nbsp;AI</tt></dd></dl>
+ <dl><dt><a name="-categorize_submission"><strong>categorize_submission</strong></a>(chat_id)</dt><dd><tt>Verifies&nbsp;that&nbsp;there&nbsp;is&nbsp;enough&nbsp;information&nbsp;for&nbsp;submission&nbsp;and&nbsp;categorize&nbsp;accordingly.<br>
 Flag&nbsp;submissions&nbsp;without&nbsp;enough&nbsp;information.&nbsp;<br>
 @chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
-@app:&nbsp;the&nbsp;flask&nbsp;app&nbsp;to&nbsp;get&nbsp;the&nbsp;app&nbsp;context</span></dd></dl>
+@app:&nbsp;the&nbsp;flask&nbsp;app&nbsp;to&nbsp;get&nbsp;the&nbsp;app&nbsp;context</tt></dd></dl>
+ <dl><dt><a name="-get_common_experience"><strong>get_common_experience</strong></a>(documents: list[langchain_core.documents.base.Document]) -&gt; str</dt><dd><tt>From&nbsp;a&nbsp;list&nbsp;of&nbsp;messages&nbsp;that&nbsp;should&nbsp;contain&nbsp;common&nbsp;experiences,&nbsp;find&nbsp;the&nbsp;commonality&nbsp;between&nbsp;them.<br>
+@documents:&nbsp;list&nbsp;of&nbsp;messages&nbsp;as&nbsp;Document<br>
+@return:&nbsp;AI&nbsp;response</tt></dd></dl>
+ <dl><dt><a name="-summarize_submission"><strong>summarize_submission</strong></a>(chat_id)</dt><dd><tt>Summarizes&nbsp;the&nbsp;chat.<br>
+@chat_id:&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;chat<br>
+@return:&nbsp;the&nbsp;summary</tt></dd></dl>
 </td></tr></table><p>
-<table class="section">
-<tr class="decor data-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
-<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>file</strong> = &lt;_io.TextIOWrapper name='data/template.txt' mode='r' encoding='utf-8'&gt;<br>
-<strong>llm</strong> = ChatOpenAI(client=&lt;openai.resources.chat.complet...='org-HmGSdYi8wyzPTHO4NhsqCYew', openai_proxy='')<br>
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>file</strong> = &lt;_io.TextIOWrapper name='data/template.txt' mode='r' encoding='utf-8'&gt;<br>
+<strong>llm</strong> = ChatOpenAI(client=&lt;openai.resources.chat.complet...api_key=SecretStr('**********'), openai_proxy='')<br>
+<strong>llm_embedder</strong> = OpenAIEmbeddings(client=&lt;openai.resources.embedd...econds=4, retry_max_seconds=20, http_client=None)<br>
 <strong>prompt</strong> = PromptTemplate(input_variables=['history', 'inpu...istory}\n\nConversation:\nHuman: {input}\nAI:\n')<br>
-<strong>template</strong> = 'The following is a friendly conversation between...on:<span class="repr">\n\n</span>{history}<span class="repr">\n\n</span>Conversation:<span class="repr">\n</span>Human: {input}<span class="repr">\n</span>AI:<span class="repr">\n</span>'</td></tr></table>
+<strong>template</strong> = 'The following is a friendly conversation between...on:<font color="#c040c0">\n\n</font>{history}<font color="#c040c0">\n\n</font>Conversation:<font color="#c040c0">\n</font>Human: {input}<font color="#c040c0">\n</font>AI:<font color="#c040c0">\n</font>'</td></tr></table>
 </body></html>
