@@ -297,3 +297,6 @@ dist
 
 # client
 /client/package-lock.json
+
+#server
+/server/data/erowid/*
