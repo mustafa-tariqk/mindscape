@@ -55,7 +55,7 @@ const Complete = ({chatId}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({chatId})
+            body: JSON.stringify({chatId, test: true})
             // body: JSON.stringify({chatId, test: true})
         })
         .then(response => response.json())
@@ -80,7 +80,7 @@ const Complete = ({chatId}) => {
         });
         //Emotional Data
         fetch(SERVER_URL + "/api/analytics/experience?" + new URLSearchParams({
-            //test: true,
+            test: true,
         }), {
             method: 'GET',
             mode: 'cors',
@@ -151,15 +151,25 @@ const Complete = ({chatId}) => {
     }
 
     const createClassificationData = () => {
-        const temp = [["HEIGHT(CM):", "SUBSTANCE:", "WEIGHT(KG):"]];
-        
+        //Default Value
+        var temp = [["HEIGHT(CM):", "SUBSTANCE:", "WEIGHT(KG):"]];
+
+        const catNames = [];
+        for (const key in experienceClassData) {
+            catNames.push(key);
+        }
+
+        if (catNames != []) {
+            temp = [catNames]
+        } 
+
         if (experienceClassData.length == 0) {
             return [["HEIGHT:", "SUBSTANCE:", "WEIGHT:"]];
         }
 
         const additions = []
         for (const key in experienceClassData) {
-            //console.log(key);
+            console.log(key);
             additions.push(experienceClassData[key]);
         }
         temp.push(additions);
@@ -187,11 +197,11 @@ const Complete = ({chatId}) => {
         }
         
         var colors = []
-        var counter = 1;
+        //var counter = 1;
         //make a list of colors using the simularity as the vibrance.
         for (const key in tempSim) {
-            var simSat = Math.min(Math.floor(tempSim[key] / 1.25 - 15, 250));
-            var rand = Math.floor(Math.random() * 360);
+            var simSat = 250 - (Math.min(Math.floor(tempSim[key] / 1.25 - 15, 250)));
+            //var rand = Math.floor(Math.random() * 360);
             colors.push(`hsl(${simSat}, 100%, 50%)`);
         }
 
