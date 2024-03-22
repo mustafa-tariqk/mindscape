@@ -5,41 +5,24 @@ import PeopleIcon from '../img/people.png'
 import RobotIcon from '../img/robot.png'
 import ShieldIcon from '../img/shield.png'
 import StatisticsIcon from '../img/statistics.png'
+import React, { useState } from 'react'
+import Sidebar from '../components/Sidebar.jsx'
+import GridList from '../components/GridList.jsx'
+import GridComponent from '../components/GridComponent.jsx'
+import './AdminHome.scss'
+import Topbar from '../components/Topbar.jsx'
+
 
 const AdminHome = () => {
     return (
         <div className='adminhome'>
-            <div className="sidebar">
-                <div className="logoBox">
-                    <img src={Neuma} alt="Image 1" className="item-image" />
-                </div>
-                <div className="item">
-                    <img src={KeyboardIcon} alt="Image 1" className="item-image" />
-                    <span className="item-text">Submissions</span>
-                </div>
-                <div className="item">
-                    <img src={PeopleIcon} alt="Image 1" className="item-image" />
-                    <span className="item-text">Users</span>
-                </div>
-                <div className="item">
-                    <img src={StatisticsIcon} alt="Image 1" className="item-image" />
-                    <span className="item-text">Analytics</span>
-                </div>
-                <div className="item">
-                    <img src={RobotIcon} alt="Image 1" className="item-image" />
-                    <span className="item-text">Chatbot Management</span>
-                </div>
-                <div className="item">
-                    <img src={GearIcon} alt="Image 1" className="item-image" />
-                    <span className="item-text">Settings</span>
-                </div>
-                <div className="item">
-                    <img src={ShieldIcon} alt="Image 1" className="item-image" />
-                    <span className="item-text">FAQ</span>
-                </div>
+            <div className='sidebar'>
+                <Sidebar />
             </div>
-            <div className='infoSide'>
+            <div className='gridcomponent'>
+                <GridComponent />
             </div>
+         
         </div>
     )
 }

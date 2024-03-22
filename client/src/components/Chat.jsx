@@ -1,7 +1,7 @@
 // Desc: This file contains the chat component which is the main component for the chat feature. 
 // It contains the chat info, messages, and input components.
 // It also contains the state for the messages and the function to set the messages.
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Message from "./Message.jsx";
 import Input from "./Input.jsx";
 import { Link, useNavigate } from "react-router-dom"
@@ -63,6 +63,12 @@ function Chat({chatId, setChatId}) {
         navigate("/complete")
     }
 
+    const AlwaysScrollToBottom = () => {
+        const elementRef = useRef();
+        useEffect(() => elementRef.current.scrollIntoView());
+        return <div ref={elementRef} />;
+    };
+
     return (
         <div className="chat">
             {/*
@@ -77,6 +83,7 @@ function Chat({chatId, setChatId}) {
                 {messages.map((mess, index) => (
                     <Message key={index} whoIsIt={mess.origin} passedMessage={mess.content} /> 
                 ))}
+                <AlwaysScrollToBottom />
             </div>
             <Input onSendMessage={handleSendMessage}/>
             <div className="submit-convo">

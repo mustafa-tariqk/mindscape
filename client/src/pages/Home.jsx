@@ -23,7 +23,8 @@ function Home() {
                 <div className='container'>
                     <Routes>
                         <Route path="/" element={<Chat chatId={chatId} setChatId={setChatId}/>} />
-                        <Route path="/complete" element={<Complete chatId={chatId}/>}/>
+                        <Route path="/complete" element={<Complete chatId={chatId} />} />
+                        <Route path="/logout" element={<handleLogout />} />
                     </Routes>
                 </div>
             </Router>
