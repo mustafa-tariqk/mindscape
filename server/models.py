@@ -204,12 +204,15 @@ def create_app():
                         
                         # Open the JSON file and load the data
                         with open(file_path, 'r') as file:
+                            print(id)
                             data = json.load(file)
                             
                             # Set up user 
-                            user = User(email=data['meta'][0]['Author'], user_type="Contributor")
-                            db.session.add(user)
-                            db.session.commit()
+                            user = User.query.filter_by(email=data['meta'][0]['Author']).first()
+                            if not user:
+                                user = User(email=data['meta'][0]['Author'], user_type="Contributor")
+                                db.session.add(user)
+                                db.session.commit()
 
                             # Set up chat
                             chat = Chats(id=id, user=user.id, flag=False, language="english", summary=data['experience'])

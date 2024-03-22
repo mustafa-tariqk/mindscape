@@ -222,7 +222,7 @@ def submit():
         database.update_chat_flag(chat_id, False) # unflag only on submission, could add additional logic
 
         exp_vstore = vstore.create_exp_vectorstore(models.Experiences.query.all(), llm_embedder)
-        closest_exp_doc, similarity_score = vstore.cluster_new_chat(chat_id, exp_vstore)
+        closest_exp_doc, similarity_score = vstore.cluster_new_chat(database.get_chat(chat_id), exp_vstore)
         if similarity_score <= SIMILARITY_THRESHOLD:
             exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
             database.update_chat_exp(chat_id, exp_id) 
