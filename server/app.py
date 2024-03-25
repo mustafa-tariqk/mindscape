@@ -143,14 +143,14 @@ def logout():
 @role_required("Administrator", "Researcher", "Contributor")
 def index():
     """
-    This function returns the user's email and user_id
+    This function returns the user's email, user_id, and role.
     """
     if app.config["TESTING"]:
         email = "neuma.mindscape@gmail.com"
     else:
         email = session["google_auth"]["email"]
     user = models.User.query.filter_by(email=email).first()
-    return {"email": user.email, "user_id": user.id}
+    return {"email": user.email, "user_id": user.id, "role": user.user_type}
 
 
 @cross_origin()
