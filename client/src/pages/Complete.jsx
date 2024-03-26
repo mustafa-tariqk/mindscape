@@ -55,7 +55,7 @@ const Complete = ({chatId}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({chatId, test: true})
+            body: JSON.stringify({chatId})
             // body: JSON.stringify({chatId, test: true})
         })
         .then(response => response.json())
@@ -80,7 +80,7 @@ const Complete = ({chatId}) => {
         });
         //Emotional Data
         fetch(SERVER_URL + "/api/analytics/experience?" + new URLSearchParams({
-            test: true,
+            //test: true,
         }), {
             method: 'GET',
             mode: 'cors',
@@ -105,7 +105,6 @@ const Complete = ({chatId}) => {
     const transformWordData = () => {
         if(typeof wordCloudData != "string" || Object.keys(wordCloudData).length < 500)
         {
-            console.log("BRUH")
             return tempdata
         }
         const modified = JSON.parse(wordCloudData);
