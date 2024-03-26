@@ -383,8 +383,9 @@ def experience():
         })
     
     else:
-        chat_id = request.args.get("chat_id")
-        return jsonify(analytics.get_experience_data(chat_id))
+        chat_id = request.args.get("chat_id", type=int)
+        k = request.args.get("k", type=int)
+        return jsonify(analytics.get_experience_data(chat_id, k))
     
 @cross_origin()
 @app.route("/api/analytics/cluster_chats", methods=["POST"])
