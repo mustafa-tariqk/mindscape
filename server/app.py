@@ -80,11 +80,11 @@ def cluster_all_chats(k=5):
         chat.experience = closest_exp.id
         models.db.session.commit()
 
-print("Clustering all chats")
-with app.app_context():
-    cluster_all_chats(5) # Cluster on first start
+# print("Clustering all chats")
+# with app.app_context():
+#     cluster_all_chats(7) # Cluster on first start
 
-print("Clustering complete")
+# print("Clustering complete")
 
 # decorator to check user type
 def role_required(*roles):

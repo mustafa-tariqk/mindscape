@@ -204,7 +204,7 @@ def create_app():
                         
                         # Open the JSON file and load the data
                         with open(file_path, 'r') as file:
-                            print(id)
+                            # print(id)
                             data = json.load(file)
                             
                             # Set up user 
