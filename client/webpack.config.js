@@ -66,6 +66,9 @@ module.exports = {
     }),
   ],
   devServer: {
+    client: {
+      reconnect: true,
+    },
     port: process.env.CLIENT_PORT, 
     allowedHosts: 'all',
     https: checkForCertificates() ? { // Use HTTPS conditionally
