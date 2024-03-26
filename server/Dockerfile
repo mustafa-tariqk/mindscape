@@ -2,7 +2,7 @@ FROM python:3.10
 
 COPY requirements.txt ./
 
-COPY *.db ./instance/
+COPY ./instance/*.db ./instance/
 
 RUN pip install -r requirements.txt
 
