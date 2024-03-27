@@ -16,10 +16,7 @@ const Topbar = () => {
             <div className="left">
                 <img src={image1} alt="Image 1" />
             </div>
-            <div className="gap"></div>
             <div className="right">
-                <a href="#">Explore Experiences</a>
-                <a href="#">FAQ</a>
                 <div className="dropdown">
                     <img src={image2} alt="User Profile" onClick={toggleDropdown} style={{cursor: 'pointer'}} />
                     {isDropdownOpen && (

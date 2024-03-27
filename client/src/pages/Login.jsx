@@ -27,8 +27,6 @@ const Login = () => {
                 </div>
                 <div className='middle'></div>
                 <div className='right'>
-                    <a href="#">Explore Experiences</a>
-                    <a href="#">FAQ</a>
                     <img src={User} alt="Image" />
                 </div>
             </div>

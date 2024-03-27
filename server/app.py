@@ -32,14 +32,11 @@ blueprint = make_google_blueprint(
     redirect_url="/login",
 )
 
-# Initialize the Flask app
 app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
-
-# uncomment line below to skip auth
-app.config["TESTING"] = True
-CORS(app, supports_credentials=True)
+CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
+app.config["TESTING"] = bool(int(environ.get("TESTING", 1)))
 
 SIMILARITY_THRESHOLD = 0.8 # threshold of similarity that, if surpassed, will result in a new cluster with this chat as centre
 
