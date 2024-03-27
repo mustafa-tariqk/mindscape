@@ -99,7 +99,7 @@ class Experiences(db.Model): # pylint: disable=too-few-public-methods
     __tablename__ = 'experiences'
     id = db.Column(db.Integer, db.ForeignKey('chats.id'), nullable = False, primary_key = True) # the chat that is set as the centroid
     name = db.Column(db.Text, nullable = False) # name of the experience in English (default language)
-    count = db.Column(db.Integer, nullable = False, default = 1) # how many in cluster
+    count = db.Column(db.Integer, nullable = False, default = 0) # how many in cluster
     db.ForeignKeyConstraint(['centroid'], ['chats.id'], ondelete='CASCADE') # must be replaced if the centroid is deleted
 
 class Chats_Categories(db.Model): # pylint: disable=too-few-public-methods
