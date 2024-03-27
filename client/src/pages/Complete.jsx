@@ -227,7 +227,7 @@ const Complete = ({chatId}) => {
 
         const newChart = {
             type: 'doughnut',
-            labels: [],
+            labels: tempNames,
             borderColor: '#000000',
             datasets: [
               {
@@ -236,14 +236,25 @@ const Complete = ({chatId}) => {
                 backgroundColor: colors,
                 borderWidth: 4,
                 borderColor: '#000000',
-                hoverOffset: 10,
+                hoverOffset: 50,
                 hoverBorderWidth: 10,
+                radius: '70%',
               },
             ],
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
         };
 
         return newChart;
     }
+
+    Chart.overrides["doughnut"].plugins.legend.display = false;
+    Chart.overrides["pie"].plugins.legend.display = false;
 
     return (
         <div className='bg'>
@@ -276,7 +287,7 @@ const Complete = ({chatId}) => {
                             <div className='pieChartInfo'>See similarity range below!</div>
                             <img src={simScale}></img>
                             <div className='pieChartStyle'>
-                                <PieChart data={createPieChartData()} />
+                                <PieChart data={createPieChartData()}/>
                             </div>
                         </div>
                         <div className='experience'>
