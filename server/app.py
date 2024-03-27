@@ -32,14 +32,11 @@ blueprint = make_google_blueprint(
     redirect_url="/login",
 )
 
-# Initialize the Flask app
 app = models.create_app()
 app.secret_key = environ.get("FLASK_SECRET_KEY")
 app.register_blueprint(blueprint, url_prefix="/login")
-
-# uncomment line below to skip auth
-app.config["TESTING"] = True
-CORS(app, supports_credentials=True)
+CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
+app.config["TESTING"] = bool(int(environ.get("TESTING", 1)))
 
 SIMILARITY_THRESHOLD = 0.8 # threshold of similarity that, if surpassed, will result in a new cluster with this chat as centre
 
@@ -78,13 +75,14 @@ def cluster_all_chats(k=5):
         closest_exp_docs, _ = vstore.get_k_nearest_by_vector(llm_embedder.embed_query(chat.summary), exp_vstore, 1)[0]
         closest_exp = models.Experiences.query.get(closest_exp_docs.page_content)
         chat.experience = closest_exp.id
+        closest_exp.count += 1
         models.db.session.commit()
 
-print("Clustering all chats")
-with app.app_context():
-    cluster_all_chats(5) # Cluster on first start
+# print("Clustering all chats")
+# with app.app_context():
+#     cluster_all_chats(7) # Cluster on first start
 
-print("Clustering complete")
+# print("Clustering complete")
 
 # decorator to check user type
 def role_required(*roles):
@@ -369,22 +367,23 @@ def experience():
         return jsonify({
             "experiences": [{
                 "name": "Infinite Power",
-                "similarity": 300.0,
+                "similarity": 0.3,
                 "percentage": 20.0
             }, {
                 "name": "Signature Look of Authority",
-                "similarity": 100.0,
+                "similarity": 0.1,
                 "percentage": 30.0
             }, {
                 "name": "I am your father",
-                "similarity": 50.0,
+                "similarity": 0.05,
                 "percentage": 50.0
             }]
         })
     
     else:
-        chat_id = request.args.get("chat_id")
-        return jsonify(analytics.get_experience_data(chat_id))
+        chat_id = request.args.get("chat_id", type=int)
+        k = request.args.get("k", type=int)
+        return jsonify(analytics.get_experience_data(chat_id, k))
     
 @cross_origin()
 @app.route("/api/analytics/cluster_chats", methods=["POST"])

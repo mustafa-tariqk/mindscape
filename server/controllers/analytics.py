@@ -1,6 +1,6 @@
 import json
 
-from controllers.utils import database, ai, vstore
+from controllers.utils import database, vstore, ai
 
 def get_k_weighted_frequency(chat_id, k, exclude_ai_messages:bool=True):
     """
@@ -68,11 +68,10 @@ def get_k_weighted_frequency(chat_id, k, exclude_ai_messages:bool=True):
     # Return the top k
     return json.dumps({x: display(x) for x in unique_words[0:k]}, indent=4)
 
-def get_experience_data(chat_id, exp_vectorstore, k):
+def get_experience_data(chat_id, k):
     """
     Get the global experience data with similarity
     @chat_id: the id of the chat
-    @exp_vectorstore: the experience vectorstore
     @k: the number of experiences to return similarity for
     @return schema {
         "experiences": [{
@@ -83,10 +82,14 @@ def get_experience_data(chat_id, exp_vectorstore, k):
     }
     """
     chat = database.get_chat(chat_id)
+    exp_list = database.get_experience()
+    exp_vectorstore = vstore.create_exp_vectorstore(exp_list, ai.llm_embedder)
     chat_vector = exp_vectorstore.embedding_function.embed_query(chat.summary)
     global_chat_count = database.get_chat_count()
-    exp_docs, similarity_score = vstore.get_k_nearest_by_vector(chat_vector, exp_vectorstore, k)
-    similarity_dict = {exp_docs[i].page_content: similarity_score[i] for i in range(len(exp_docs))}
+    results = vstore.get_k_nearest_by_vector(chat_vector, exp_vectorstore, k)
+    exp_docs = [results[i][0] for i in range(len(results))]
+    similarity_scores = [float(results[i][1]) for i in range(len(results))]
+    similarity_dict = {exp_docs[i].page_content: similarity_scores[i] for i in range(len(exp_docs))}
 
     results = {
         "experiences": [

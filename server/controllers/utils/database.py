@@ -62,6 +62,12 @@ def update_chat_exp(chat_id, exp_id):
     @exp_id: the id of the experience
     """
     chat = models.Chats.query.get(chat_id)
+    old_exp = models.Experiences.query.get(chat.experience)
+    if old_exp is not None:
+        old_exp.count -= 1
+        
+    exp = models.Experiences.query.get(exp_id)
+    exp.count += 1
     chat.experience = exp_id
     models.db.session.commit() # makes the update
 

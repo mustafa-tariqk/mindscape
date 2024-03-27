@@ -47,9 +47,10 @@ const Complete = ({chatId}) => {
     const [emotionalExperienceData, setEmotionalExperienceData] = useState([]);
 
     useEffect(() => {
-        //Experience Data
+        // handle submission. required for some later calls
         fetch(SERVER_URL+'/api/submit', {
             method: 'POST',
+            timeout: 0,
             mode: 'cors',
             credentials: 'include',
             headers: {
@@ -62,12 +63,18 @@ const Complete = ({chatId}) => {
         .then(data => {
             setExperienceClassData(data)
         });
-        //WordCloud data
+    }, [chatId]);
+
+    useEffect(() => {
+        if (experienceClassData.length == 0) { return; }
+        // Only happens once submit has been completed
+        // wordCloud data
         fetch(SERVER_URL + "/api/analytics/get_frequent_words?" + new URLSearchParams({
             chat_id: chatId,
             k: 25,
         }), {
             method: 'GET',
+            timeout: 0,
             mode: 'cors',
             credentials: 'include',
             headers: {
@@ -78,11 +85,14 @@ const Complete = ({chatId}) => {
         .then(data => {
             setWordCloudData(data)
         });
-        //Emotional Data
+        // experience Data
         fetch(SERVER_URL + "/api/analytics/experience?" + new URLSearchParams({
             //test: true,
+            chat_id: chatId,
+            k: 3,
         }), {
             method: 'GET',
+            timeout: 0,
             mode: 'cors',
             credentials: 'include',
             headers: {
@@ -93,7 +103,7 @@ const Complete = ({chatId}) => {
         .then(data => {
             setEmotionalExperienceData(data)
         });
-    }, [chatId]);
+    }, [experienceClassData])
 
     function printDebug() {
         //console.log(experienceClassData)

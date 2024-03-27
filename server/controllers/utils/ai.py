@@ -89,7 +89,8 @@ def categorize_submission(chat_id):
             "weight in kg": {"type": "integer"},
             "height in cm": {"type": "integer"},
             "substance": {"type": "string"}, # Possibly multiple
-        }
+        },
+        "required": ["weight in kg", "height in cm", "substance"]
     }
     # Define extractor
     runnable = create_structured_output_runnable(submission_schema, llm)
