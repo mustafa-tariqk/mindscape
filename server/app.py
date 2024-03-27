@@ -78,6 +78,7 @@ def cluster_all_chats(k=5):
         closest_exp_docs, _ = vstore.get_k_nearest_by_vector(llm_embedder.embed_query(chat.summary), exp_vstore, 1)[0]
         closest_exp = models.Experiences.query.get(closest_exp_docs.page_content)
         chat.experience = closest_exp.id
+        closest_exp.count += 1
         models.db.session.commit()
 
 # print("Clustering all chats")
@@ -369,15 +370,15 @@ def experience():
         return jsonify({
             "experiences": [{
                 "name": "Infinite Power",
-                "similarity": 300.0,
+                "similarity": 0.3,
                 "percentage": 20.0
             }, {
                 "name": "Signature Look of Authority",
-                "similarity": 100.0,
+                "similarity": 0.1,
                 "percentage": 30.0
             }, {
                 "name": "I am your father",
-                "similarity": 50.0,
+                "similarity": 0.05,
                 "percentage": 50.0
             }]
         })
