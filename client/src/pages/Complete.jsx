@@ -50,6 +50,7 @@ const Complete = ({chatId}) => {
         // handle submission. required for some later calls
         fetch(SERVER_URL+'/api/submit', {
             method: 'POST',
+            timeout: 0,
             mode: 'cors',
             credentials: 'include',
             headers: {
@@ -73,6 +74,7 @@ const Complete = ({chatId}) => {
             k: 25,
         }), {
             method: 'GET',
+            timeout: 0,
             mode: 'cors',
             credentials: 'include',
             headers: {
@@ -90,6 +92,7 @@ const Complete = ({chatId}) => {
             k: 3,
         }), {
             method: 'GET',
+            timeout: 0,
             mode: 'cors',
             credentials: 'include',
             headers: {
