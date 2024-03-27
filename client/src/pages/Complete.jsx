@@ -224,9 +224,10 @@ const Complete = ({chatId}) => {
 
         console.log(colors);
 
+
         const newChart = {
             type: 'doughnut',
-            labels: tempNames,
+            labels: [],
             borderColor: '#000000',
             datasets: [
               {
@@ -237,7 +238,6 @@ const Complete = ({chatId}) => {
                 borderColor: '#000000',
                 hoverOffset: 10,
                 hoverBorderWidth: 10,
-                cutout: 50,
               },
             ],
         };
