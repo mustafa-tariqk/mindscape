@@ -133,21 +133,25 @@
         }
 
         .right {
+            align-items: right;
             a {
                 margin-right: 15%;
                 font-size: 20px;
             }
 
-            img {
-                max-width: 10%;
-                max-height: auto;
-                border-radius: 50%;
-                cursor: pointer;
+            .dropdown {
+                img {
+                    max-width: 10%;
+                    max-height: auto;
+                    border-radius: 50%;
+                    margin-left: 80%;
+                    cursor: pointer;
+                }
             }
         }
           
         .gap {
-            width: 5px; /* Set your desired gap width */
+            width: 10vw; /* Set your desired gap width */
         }
     }
 
@@ -227,11 +231,22 @@
             .wordCloud {
                 flex: 1;
                 margin-top: 5%;
+                z-index: 1;
+            }
+
+            .loadingtext {
+                position: absolute;
+                top: 70%;
+                left: 47.5%;
+                font-weight: bolder;
+                font-size: 20;
+                z-index: 0;
             }
 
             .similarity {
                 flex: 1;
                 max-width: 33%;
+                z-index: 1;
 
                 img {
                     align-content: center;
@@ -367,11 +382,14 @@ body {
                 margin-right: 15%;
                 font-size: 20px;
             }
-            img {
-                max-width: 10%;
-                max-height: auto;
-                border-radius: 50%;
-                cursor: pointer;
+            .dropdown {
+                img {
+                    max-width: 10%;
+                    max-height: auto;
+                    border-radius: 50%;
+                    margin-left: 80%;
+                    cursor: pointer;
+                }
             }
             button {
                 margin-right: 15%;

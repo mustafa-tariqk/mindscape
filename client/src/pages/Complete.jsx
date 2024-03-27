@@ -208,9 +208,17 @@ const Complete = ({chatId}) => {
         var colors = []
         //var counter = 1;
         //make a list of colors using the simularity as the vibrance.
+
+        //Get the sum so we can normalize
+        var totalSum = 0;
+        for (const col in tempSim) {
+            totalSum += tempSim[col];
+        }
+
         for (const key in tempSim) {
-            var simSat = 250 - (Math.min(Math.floor(tempSim[key] / 1.25 - 15, 250)));
+            //var simSat = 250 - (Math.min(Math.floor(tempSim[key] / 1.25 - 15, 250)));
             //var rand = Math.floor(Math.random() * 360);
+            var simSat = (tempSim[key] / totalSum * 250);
             colors.push(`hsl(${simSat}, 100%, 50%)`);
         }
 
@@ -222,7 +230,7 @@ const Complete = ({chatId}) => {
             borderColor: '#000000',
             datasets: [
               {
-                label: 'Appears in X% of Submissions',
+                label: "Found in X% of Submissions",
                 data: tempValues,
                 backgroundColor: colors,
                 borderWidth: 4,
@@ -260,6 +268,9 @@ const Complete = ({chatId}) => {
                             padding={5}
                             random={Math.random}
                             />
+                        </div>
+                        <div className='loadingtext'>
+                            LOADING
                         </div>
                         <div className='similarity'>
                             <div className='pieChartInfo'>See similarity range below!</div>
