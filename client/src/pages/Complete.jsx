@@ -11,10 +11,12 @@ import simScale from "../img/simScale.png";
 
 const SERVER_URL = process.env.SERVER_URL;
 
+//Temporary Data for the word cloud, loaded when the wordcloud recieves no data
 const tempdata = [
     { text: '  ', value: 1000 }
 ];
 
+//Temporary pie chart data, loaded when pie chart recieves nothing
 const piechartData = {
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
     datasets: [
@@ -33,7 +35,12 @@ const piechartData = {
       },
     ],
 };
-
+/*
+Name: Complete
+Functionality: Complete loads rewards data and draws it accordingly
+Intake: chatId
+Returns: Formatted Page
+*/
 const Complete = ({chatId}) => {
 
     // PRIORITY 1
@@ -42,6 +49,7 @@ const Complete = ({chatId}) => {
         return;
     }
 
+    //Initialize reward data
     const [experienceClassData, setExperienceClassData] = useState([]);
     const [wordCloudData, setWordCloudData] = useState([]);
     const [emotionalExperienceData, setEmotionalExperienceData] = useState([]);
@@ -65,6 +73,7 @@ const Complete = ({chatId}) => {
         });
     }, [chatId]);
 
+    //Use Effect calls the data from the server when the chatID is updated/passed. (On load)
     useEffect(() => {
         if (experienceClassData.length == 0) { return; }
         // Only happens once submit has been completed
@@ -105,6 +114,13 @@ const Complete = ({chatId}) => {
         });
     }, [experienceClassData])
 
+
+    /*
+    Name: printDebug
+    Functionality: Used for testing, prints data types and values
+    Intake: --
+    Returns: --
+    */
     function printDebug() {
         //console.log(experienceClassData)
         console.log(emotionalExperienceData)
@@ -112,6 +128,12 @@ const Complete = ({chatId}) => {
         console.log('Data is of type:', type);
     }
 
+    /*
+    Name: transformWordData
+    Functionality: Gets the wordcloud data from analtics, and determines the size of words using said data.
+    Intake: --
+    Returns: A list of words along with their sizes, to be used on chart initialization
+    */
     const transformWordData = () => {
         if(typeof wordCloudData != "string" || Object.keys(wordCloudData).length < 500)
         {
@@ -159,6 +181,12 @@ const Complete = ({chatId}) => {
         return newData;
     }
 
+    /*
+    Name: createClassificationData
+    Functionality: Creates the data for the user information table, scales with table size
+    Intake: --
+    Returns: A list of lists of strings
+    */
     const createClassificationData = () => {
         //Default Value
         var temp = [["HEIGHT(CM):", "SUBSTANCE:", "WEIGHT(KG):"]];
@@ -185,11 +213,23 @@ const Complete = ({chatId}) => {
         return temp;
     }
 
+    /*
+    Name: openGoogleForm
+    Functionality: Opens up the google form for feedback. called when feedback button is pressed
+    Intake: --
+    Returns: --
+    */
     const openGoogleForm = () => {
         const url = "https://forms.gle/orEBNU7GmVLKpmJe7";
         window.open(url, "_blank")
     }
 
+    /*
+    Name: createPieChartData
+    Functionality: creates the data or the piechart. calculates the colors for the chart from passed similarity values
+    Intake: --
+    Returns: Fully ready to be drawn chart with all required data
+    */
     const createPieChartData = () => {
         if (emotionalExperienceData == null) {
             return piechartData;
@@ -222,7 +262,7 @@ const Complete = ({chatId}) => {
             colors.push(`hsl(${simSat}, 100%, 50%)`);
         }
 
-        console.log(colors);
+        //console.log(colors);
 
 
         const newChart = {
@@ -253,9 +293,11 @@ const Complete = ({chatId}) => {
         return newChart;
     }
 
+    //Black magic deep dark manipulations
     Chart.overrides["doughnut"].plugins.legend.display = false;
     Chart.overrides["pie"].plugins.legend.display = false;
 
+    //Final return statement
     return (
         <div className='bg'>
             <div className='resultsScreen'>
