@@ -96,7 +96,7 @@ const Complete = ({chatId}) => {
                     params: {
                     chat_id: chatId,
                     k: 25,
-                    // test: true,
+                    //test: true,
                     },
                     timeout: 0,
                     mode: 'cors',
@@ -122,7 +122,7 @@ const Complete = ({chatId}) => {
                   params: {
                     chat_id: chatId,
                     k: 3,
-                    // test: true,
+                    //test: true,
                   },
                   timeout: 0,
                   mode: 'cors',
@@ -292,7 +292,7 @@ const Complete = ({chatId}) => {
 
         //console.log(colors);
 
-
+        // Create new chart using data and return it
         const newChart = {
             type: 'doughnut',
             labels: tempNames,
@@ -307,6 +307,7 @@ const Complete = ({chatId}) => {
                 hoverOffset: 50,
                 hoverBorderWidth: 10,
                 radius: '70%',
+                cutout: '35%',
               },
             ],
             options: {

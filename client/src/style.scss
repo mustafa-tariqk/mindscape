@@ -230,10 +230,8 @@
             flex-direction: row;
             .wordCloud {
 
-                .textcomponent {
-                    display: flex;
-                    justify-content: center; /* Center horizontally */
-                    align-items: center; /* Center vertically */
+                p {
+                    text-align: center;
                 }
 
                 flex: 1;
@@ -253,10 +251,8 @@
 
             .similarity {
 
-                .textcomponent {
-                    display: flex;
-                    justify-content: center; /* Center horizontally */
-                    align-items: center; /* Center vertically */
+                p {
+                    text-align: center;
                 }
 
                 flex: 1;
@@ -283,6 +279,7 @@
                     display: flex;
                     height: 100%;
                     width: 100%;
+                    flex-direction: column;
                     justify-content: center;
                     margin-top: 5%;
                     margin-bottom: 5%;
@@ -299,10 +296,8 @@
                 flex: 1;
                 margin-top: 10%;
 
-                .textcomponent {
-                    display: flex;
-                    justify-content: center; /* Center horizontally */
-                    align-items: center; /* Center vertically */
+                p {
+                    text-align: center;
                 }
 
                 .grid-item {
