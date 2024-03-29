@@ -383,7 +383,7 @@ const Complete = ({chatId}) => {
                     <div className="grid-container">
                     <span>Word Cloud</span>
                     <span>Experience Similarity</span>
-                    <span>Constributor Info</span>
+                    <span>Contributor Info</span>
                     </div>
                     <div className='imagebutton'>
                         {/* <button onClick={printDebug}>Download Image</button> */}
