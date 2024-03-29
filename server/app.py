@@ -195,46 +195,6 @@ def converse():
 
 
 @cross_origin()
-@app.route("/api/submit", methods=["POST"])
-@role_required("Administrator", "Researcher", "Contributor")
-def submit():
-    """
-    Handles submission of the chat
-    @request: {chat_id: int, test: bool}
-    @return schema: {weight: int, height: int, substance: string}
-    schema could change on request, but it's an object fs
-    """
-    request_body = request.get_json()
-    chat_id = int(request_body['chatId'])
-    if "test" in request_body:
-        test = request_body['test']
-
-        if test: # could it be null
-            return jsonify({"weight in kg":75, "height in cm":178, "substance":"Lean"})
-    
-    result = {}
-    with app.app_context():
-        result = categorize_submission(chat_id)
-        summary = summarize_submission(chat_id)
-        database.update_chat_summary(chat_id, summary)
-        database.update_chat_flag(chat_id, False) # unflag only on submission, could add additional logic
-
-        exp_vstore = vstore.create_exp_vectorstore(models.Experiences.query.all(), llm_embedder)
-        closest_exp_doc, similarity_score = vstore.cluster_new_chat(database.get_chat(chat_id), exp_vstore)
-        if similarity_score <= SIMILARITY_THRESHOLD:
-            exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
-            database.update_chat_exp(chat_id, exp_id) 
-
-        else: # create new experience
-            new_exp = models.Experiences(name=summary, id=chat_id)
-            models.db.session.add(new_exp)
-            models.db.session.commit()
-            database.update_chat_exp(chat_id, chat_id)
-
-    return jsonify(result)
-
-
-@cross_origin()
 @app.route("/api/get_trolls")
 @role_required("Administrator")
 def get_trolls():
@@ -329,8 +289,56 @@ def get_all_chats():
 
 
 @cross_origin()
+@app.route("/api/submit", methods=["POST"])
+@role_required("Administrator", "Researcher", "Contributor")
+def submit():
+    """
+    Handles submission of the chat
+    @request: {chat_id: int, test: bool}
+    @return schema: {
+        "submitter_info": {"Weight": string, "Height": string, "Age": int},
+        "substance_info": list [{"Dose": string, "Method": string, "Substance": string}]
+    }
+    schema could change on request, but it's an object fs
+    """
+    request_body = request.get_json()
+    chat_id = int(request_body['chatId'])
+    if "test" in request_body:
+        test = request_body['test']
+
+        if test: # could it be null
+            return jsonify({
+                "submitter_info": {"Weight": "200 lbs", "Height": "200 cm", "Age": 25},
+                "substance_info": [{"Dose": "200 mg", "Method": "Oral", "Substance": "Caffeine"}]
+            })
+    
+    result = {}
+    with app.app_context():
+        result = categorize_submission(chat_id)
+
+        # write to database
+        summary = summarize_submission(chat_id)
+        database.update_chat_summary(chat_id, summary)
+        database.update_chat_flag(chat_id, False) # unflag only on submission, could add additional logic
+
+        exp_vstore = vstore.create_exp_vectorstore(models.Experiences.query.all(), llm_embedder)
+        closest_exp_doc, similarity_score = vstore.cluster_new_chat(database.get_chat(chat_id), exp_vstore)
+        if similarity_score <= SIMILARITY_THRESHOLD:
+            exp_id = int(closest_exp_doc.page_content) # remember, page content is always the id
+            database.update_chat_exp(chat_id, exp_id) 
+
+        else: # create new experience
+            new_exp = models.Experiences(name=summary, id=chat_id)
+            models.db.session.add(new_exp)
+            models.db.session.commit()
+            database.update_chat_exp(chat_id, chat_id)
+
+    return jsonify(result)
+
+
+@cross_origin()
 @app.route("/api/analytics/get_frequent_words", methods=["GET"])
-@role_required("Contributor")
+@role_required("Administrator", "Researcher", "Contributor")
 def get_frequent_words():
     """
     @return schema {
@@ -351,7 +359,7 @@ def get_frequent_words():
 
 @cross_origin()
 @app.route("/api/analytics/experience", methods=["GET"])
-@role_required("Contributor")
+@role_required("Administrator", "Researcher", "Contributor")
 def experience():
     """
     @return schema {

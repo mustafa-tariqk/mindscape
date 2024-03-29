@@ -4,7 +4,7 @@ It is responsible for generating responses to user messages.
 """
 from dotenv import load_dotenv
 from langchain_core.documents import Document
-from langchain.chains import ConversationChain, create_structured_output_runnable
+from langchain.chains import ConversationChain, create_extraction_chain
 from langchain.memory import ConversationKGMemory, ChatMessageHistory
 from langchain.prompts.prompt import PromptTemplate
 from langchain.chains.llm import LLMChain
@@ -67,14 +67,6 @@ def ai_message(chat_id, human_message):
         memory=ConversationKGMemory(llm=llm, chat_memory=chat_memory)
     ).predict(input=human_message)
 
-def get_common_experience(documents: list[Document]) -> str:
-    """
-    From a list of messages that should contain common experiences, find the commonality between them.
-    @documents: list of messages as Document
-    @return: AI response
-    """
-    # TODO: make a prompt template
-
 def categorize_submission(chat_id):
     """
     Verifies that there is enough information for submission and categorize accordingly.
@@ -83,24 +75,38 @@ def categorize_submission(chat_id):
     @app: the flask app to get the app context
     """
     # Defines schema for extraction, add more in template
-    submission_schema = {
-        "type": "object",
+    submitter_schema = {
         "properties": {
-            "weight in kg": {"type": "integer"},
-            "height in cm": {"type": "integer"},
-            "substance": {"type": "string"}, # Possibly multiple
+            "Weight": {"type": "string"},
+            "Height": {"type": "string"},
+            "Age": {"type": "integer"},
         },
-        "required": ["weight in kg", "height in cm", "substance"]
+        "required": ["Weight", "Height"]
+    }
+
+    substance_schema = { # Multiple per page (should only appear in first split)
+        "properties": {
+            "Dose": {"type": "string"},
+            "Method": {"type": "string"},
+            "Substance": {"type": "string"},
+        },
+        "required": ["Substance"],
     }
     # Define extractor
-    runnable = create_structured_output_runnable(submission_schema, llm)
+    submitter_extractor = create_extraction_chain(schema=submitter_schema, llm=llm)
+    substance_extractor = create_extraction_chain(schema=substance_schema, llm=llm)
+
     # Fetch chat
     chat_log = get_stringify_chat(chat_id, True)
 
     # Extract from chat
-    submission_info = runnable.invoke(chat_log)
+    submitter_info = submitter_extractor.invoke(chat_log)["text"] # should only be 1
+    substance_info = substance_extractor.invoke(chat_log)["text"] # could be multiple
 
-    return submission_info
+    return {
+        "submitter_info": submitter_info,
+        "substance_info": substance_info
+    }
 
 def summarize_submission(chat_id):
     """
