@@ -51,96 +51,83 @@ const Complete = ({chatId}) => {
     }
 
     //Initialize reward data
-    const [experienceClassData, setExperienceClassData] = useState([]);
+    const [categoryData, setCategoryData] = useState([]);
     const [wordCloudData, setWordCloudData] = useState([]);
-    const [emotionalExperienceData, setEmotionalExperienceData] = useState([]);
-    const [isToggled, setIsToggled] = useState(false);
-    const [isInfo, setIsInfo] = useState(false);
-    const [isWords, setIsWords] = useState(false);
+    const [experienceData, setExperienceData] = useState([]);
+    const [categoriesLoading, setCategoriesLoading] = useState(true);
+    const [wordCloudLoading, setWordCloudLoading] = useState(true);
+    const [experienceLoading, setExperienceLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await axios.post(
-              SERVER_URL + '/api/submit',
-              { chatId /*, test: true */ },
-              {
+        axios.post(
+            SERVER_URL + '/api/submit',
+            { chatId /*, test: true */ },
+            {
                 timeout: 0,
                 mode: 'cors',
                 withCredentials: true,
                 headers: {
-                  'Content-Type': 'application/json'
+                    'Content-Type': 'application/json'
                 }
-              }
-            );
-            setExperienceClassData(response.data);
-            setIsInfo(true);
-          } catch (error) {
+            }
+        ).then((response) => {
+            setCategoryData(response.data);
+            setCategoriesLoading(false);
+        }).catch((error) => {
             console.error('Error:', error.message);
-          }
-        };
-    
-        fetchData();
-      }, [chatId]);
+        })
+    }, [chatId]);
 
     //Use Effect calls the data from the server when the chatID is updated/passed. (On load)
     useEffect(() => {
-        if (experienceClassData.length == 0) { return; }
+        if (categoryData.length == 0) { return; }
         // Only happens once submit has been completed
         // wordCloud data
-        const fetchData2 = async () => {
-            try {
-                const response = await axios.get(
-                SERVER_URL + '/api/analytics/get_frequent_words',
-                {
-                    params: {
-                    chat_id: chatId,
-                    k: 25,
-                    //test: true,
-                    },
-                    timeout: 0,
-                    mode: 'cors',
-                    withCredentials: true,
-                    headers: {
-                    'Content-Type': 'application/json'
-                    }
+        axios.get(
+            SERVER_URL + '/api/analytics/get_frequent_words',
+            {
+                params: {
+                chat_id: chatId,
+                k: 25,
+                //test: true,
+                },
+                timeout: 0,
+                mode: 'cors',
+                withCredentials: true,
+                headers: {
+                'Content-Type': 'application/json'
                 }
-                );
-                setWordCloudData(response.data);
-                setIsWords(true);
-            } catch (error) {
-                console.error('Error:', error.message);
             }
-        };
-        fetchData2();
+        ).then((response) => { 
+            setWordCloudData(response.data);
+            setWordCloudLoading(false);
+        }).catch((error) => {
+            console.error('Error:', error.message);
+        });
+        
         // experience Data
-        const fetchData3 = async () => {
-            try {
-              const response = await axios.get(
-                `${SERVER_URL}/api/analytics/experience`,
-                {
-                  params: {
-                    chat_id: chatId,
-                    k: 3,
-                    //test: true,
-                  },
-                  timeout: 0,
-                  mode: 'cors',
-                  withCredentials: true,
-                  headers: {
-                    'Content-Type': 'application/json'
-                  }
-                }
-              );
-              setEmotionalExperienceData(response.data);
-              setIsToggled(true);
-            } catch (error) {
-              console.error('Error:', error.message);
+        axios.get(
+        `${SERVER_URL}/api/analytics/experience`,
+        {
+            params: {
+            chat_id: chatId,
+            k: 3,
+            //test: true,
+            },
+            timeout: 0,
+            mode: 'cors',
+            withCredentials: true,
+            headers: {
+            'Content-Type': 'application/json'
             }
-          };
-      
-          fetchData3();
-    }, [experienceClassData]);
+        }
+        ).then((response) => {
+        setExperienceData(response.data);
+        setExperienceLoading(false);
+        }).catch((error) => { 
+        console.error('Error:', error.message);
+        });
+    }, [categoryData]);
 
 
     /*
@@ -151,8 +138,8 @@ const Complete = ({chatId}) => {
     */
     function printDebug() {
         //console.log(experienceClassData)
-        console.log(emotionalExperienceData)
-        const type = typeof emotionalExperienceData
+        console.log(experienceData)
+        const type = typeof experienceData
         console.log('Data is of type:', type);
     }
 
@@ -220,7 +207,7 @@ const Complete = ({chatId}) => {
         var temp = [["HEIGHT(CM):", "SUBSTANCE:", "WEIGHT(KG):"]];
 
         const catNames = [];
-        for (const key in experienceClassData) {
+        for (const key in categoryData) {
             catNames.push(key);
         }
 
@@ -228,14 +215,14 @@ const Complete = ({chatId}) => {
             temp = [catNames]
         } 
 
-        if (experienceClassData.length == 0) {
+        if (categoryData.length == 0) {
             return [["HEIGHT:", "SUBSTANCE:", "WEIGHT:"]];
         }
 
         const additions = []
-        for (const key in experienceClassData) {
+        for (const key in categoryData) {
             console.log(key);
-            additions.push(experienceClassData[key]);
+            additions.push(categoryData[key]);
         }
         temp.push(additions);
         return temp;
@@ -259,7 +246,7 @@ const Complete = ({chatId}) => {
     Returns: Fully ready to be drawn chart with all required data
     */
     const createPieChartData = () => {
-        if (emotionalExperienceData == null) {
+        if (experienceData == null) {
             return piechartData;
         }
 
@@ -267,10 +254,10 @@ const Complete = ({chatId}) => {
         var tempValues = []
         var tempSim = []
         //Get the names and values of the passed
-        for (const key in emotionalExperienceData['experiences']) {
-            tempNames.push(emotionalExperienceData['experiences'][key]['name']);
-            tempValues.push(emotionalExperienceData['experiences'][key]['percentage']);
-            tempSim.push(emotionalExperienceData['experiences'][key]['similarity']);
+        for (const key in experienceData['experiences']) {
+            tempNames.push(experienceData['experiences'][key]['name']);
+            tempValues.push(experienceData['experiences'][key]['percentage']);
+            tempSim.push(experienceData['experiences'][key]['similarity']);
         }
         
         var colors = []
@@ -326,20 +313,6 @@ const Complete = ({chatId}) => {
     Chart.overrides["doughnut"].plugins.legend.display = false;
     Chart.overrides["pie"].plugins.legend.display = false;
 
-    /*
-    Name: TextComponent
-    Functionality: while loading, show loading, when done show nothing
-    Intake: takes in a boolean isToggled
-    Returns: --
-    */
-   const TextComponent = ({ isToggled }) => {
-    return (
-        <p>
-          {isToggled ? '             ' : 'LOADING...'}
-        </p>
-      );
-   }
-
     //Final return statement
     return (
         <div className='bg'>
@@ -350,7 +323,7 @@ const Complete = ({chatId}) => {
                     <div className='subtitle'>Below are your results</div>
                     <div className='graphs'>
                         <div className='wordCloud'>
-                            <TextComponent isToggled={isWords} />
+                            <p>{wordCloudLoading ? 'LOADING...' : null}</p>
                             <WordCloud
                             className="wordCloud"
                             data={transformWordData()}
@@ -370,13 +343,13 @@ const Complete = ({chatId}) => {
                             <div className='pieChartInfo'>See similarity range below!</div>
                             <img src={simScale}></img>
                             <div className='pieChartStyle'>
-                                <TextComponent isToggled={isToggled} />
+                            <p>{experienceLoading ? 'LOADING...' : null}</p>
                                 <PieChart data={createPieChartData()}/>
                             </div>
                         </div>
                         <div className='experience'>
                             {/* First Grid is for Dosage Information*/}
-                            <TextComponent isToggled={isInfo} />
+                            <p>{categoriesLoading ? 'LOADING...' : null}</p>
                             <GridList items={createClassificationData()}/>
                         </div>
                     </div>
