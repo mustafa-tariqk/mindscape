@@ -229,6 +229,13 @@
             display: flex;
             flex-direction: row;
             .wordCloud {
+
+                .textcomponent {
+                    display: flex;
+                    justify-content: center; /* Center horizontally */
+                    align-items: center; /* Center vertically */
+                }
+
                 flex: 1;
                 margin-top: 5%;
                 z-index: 1;
@@ -241,9 +248,17 @@
                 font-weight: bolder;
                 font-size: 20;
                 z-index: 0;
+                transform: translate('translate(-100%, -100%)')
             }
 
             .similarity {
+
+                .textcomponent {
+                    display: flex;
+                    justify-content: center; /* Center horizontally */
+                    align-items: center; /* Center vertically */
+                }
+
                 flex: 1;
                 max-width: 33%;
                 z-index: 1;
@@ -283,6 +298,12 @@
             .experience{
                 flex: 1;
                 margin-top: 10%;
+
+                .textcomponent {
+                    display: flex;
+                    justify-content: center; /* Center horizontally */
+                    align-items: center; /* Center vertically */
+                }
 
                 .grid-item {
                     display: flex;
