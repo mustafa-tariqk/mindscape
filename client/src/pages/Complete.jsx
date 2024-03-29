@@ -67,7 +67,7 @@ const Complete = ({chatId}) => {
               {
                 timeout: 0,
                 mode: 'cors',
-                credentials: true,
+                withCredentials: true,
                 headers: {
                   'Content-Type': 'application/json'
                 }
@@ -100,7 +100,7 @@ const Complete = ({chatId}) => {
                     },
                     timeout: 0,
                     mode: 'cors',
-                    credentials: true,
+                    withCredentials: true,
                     headers: {
                     'Content-Type': 'application/json'
                     }
@@ -126,7 +126,7 @@ const Complete = ({chatId}) => {
                   },
                   timeout: 0,
                   mode: 'cors',
-                  credentials: true,
+                  withCredentials: true,
                   headers: {
                     'Content-Type': 'application/json'
                   }
