@@ -8,10 +8,18 @@ import { Link, useNavigate } from "react-router-dom"
 
 const SERVER_URL = process.env.SERVER_URL;
 
+/*
+Name: Chat
+Functionality: Used to chat and converse with the bot
+Intake: chatId, setChatId
+Returns: --
+*/
 function Chat({chatId, setChatId}) {
+    //Initialize navigate and messages
     const [messages, setMessages] = useState([]);
     const navigate = useNavigate()
 
+    //Start a chat given the users id
     useEffect(() => {
         fetch(SERVER_URL+'/api/user', {
             mode: 'cors',
@@ -24,6 +32,12 @@ function Chat({chatId, setChatId}) {
         });
     }, []);
 
+    /*
+    Name: startChat
+    Functionality: Used for creating the chat
+    Intake: userId
+    Returns: --
+    */
     function startChat(userId) {
         fetch(SERVER_URL+'/api/start_chat/' + userId, {
             mode: 'cors',
@@ -35,6 +49,12 @@ function Chat({chatId, setChatId}) {
         });
     }
 
+    /*
+    Name: handleSendMessage
+    Functionality: Handles the sending and processing and updating of the messages and chat
+    Intake: userInput
+    Returns: --
+    */
     const handleSendMessage = (userInput) => {
         if (!chatId) {
             console.error("Chat ID is not set.");
@@ -59,16 +79,29 @@ function Chat({chatId, setChatId}) {
         setMessages(prevMessages => [...prevMessages, { origin: 'me', content: userInput }]);
     };
 
+    /*
+    Name: handleSubmit
+    Functionality: Redirects to the rewards page
+    Intake: --
+    Returns: --
+    */
     const handleSubmit = () => {
         navigate("/complete")
     }
 
+    /*
+    Name: alwaysScrollToBottom
+    Functionality: When a new message is sent or recieved, automatically scroll to the bottom.
+    Intake: --
+    Returns: --
+    */
     const AlwaysScrollToBottom = () => {
         const elementRef = useRef();
         useEffect(() => elementRef.current.scrollIntoView());
         return <div ref={elementRef} />;
     };
 
+    //Final Return Statement
     return (
         <div className="chat">
             {/*

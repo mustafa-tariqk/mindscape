@@ -8,13 +8,16 @@ Chart.register(Tooltip);
 Chart.register(Legend);
 import { useState, useEffect } from 'react';
 import simScale from "../img/simScale.png";
+import axios from 'axios'
 
 const SERVER_URL = process.env.SERVER_URL;
 
+//Temporary Data for the word cloud, loaded when the wordcloud recieves no data
 const tempdata = [
     { text: '  ', value: 1000 }
 ];
 
+//Temporary pie chart data, loaded when pie chart recieves nothing
 const piechartData = {
     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
     datasets: [
@@ -33,7 +36,12 @@ const piechartData = {
       },
     ],
 };
-
+/*
+Name: Complete
+Functionality: Complete loads rewards data and draws it accordingly
+Intake: chatId
+Returns: Formatted Page
+*/
 const Complete = ({chatId}) => {
 
     // PRIORITY 1
@@ -42,69 +50,105 @@ const Complete = ({chatId}) => {
         return;
     }
 
+    //Initialize reward data
     const [experienceClassData, setExperienceClassData] = useState([]);
     const [wordCloudData, setWordCloudData] = useState([]);
     const [emotionalExperienceData, setEmotionalExperienceData] = useState([]);
+    const [isToggled, setIsToggled] = useState(false);
+    const [isInfo, setIsInfo] = useState(false);
+    const [isWords, setIsWords] = useState(false);
 
     useEffect(() => {
-        // handle submission. required for some later calls
-        fetch(SERVER_URL+'/api/submit', {
-            method: 'POST',
-            timeout: 0,
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({chatId})
-            // body: JSON.stringify({chatId, test: true})
-        })
-        .then(response => response.json())
-        .then(data => {
-            setExperienceClassData(data)
-        });
-    }, [chatId]);
+        const fetchData = async () => {
+          try {
+            const response = await axios.post(
+              SERVER_URL + '/api/submit',
+              { chatId /*, test: true */ },
+              {
+                timeout: 0,
+                mode: 'cors',
+                credentials: true,
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              }
+            );
+            setExperienceClassData(response.data);
+            setIsInfo(true);
+          } catch (error) {
+            console.error('Error:', error.message);
+          }
+        };
+    
+        fetchData();
+      }, [chatId]);
 
+    //Use Effect calls the data from the server when the chatID is updated/passed. (On load)
     useEffect(() => {
         if (experienceClassData.length == 0) { return; }
         // Only happens once submit has been completed
         // wordCloud data
-        fetch(SERVER_URL + "/api/analytics/get_frequent_words?" + new URLSearchParams({
-            chat_id: chatId,
-            k: 25,
-        }), {
-            method: 'GET',
-            timeout: 0,
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
+        const fetchData2 = async () => {
+            try {
+                const response = await axios.get(
+                SERVER_URL + '/api/analytics/get_frequent_words',
+                {
+                    params: {
+                    chat_id: chatId,
+                    k: 25,
+                    //test: true,
+                    },
+                    timeout: 0,
+                    mode: 'cors',
+                    credentials: true,
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                }
+                );
+                setWordCloudData(response.data);
+                setIsWords(true);
+            } catch (error) {
+                console.error('Error:', error.message);
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            setWordCloudData(data)
-        });
+        };
+        fetchData2();
         // experience Data
-        fetch(SERVER_URL + "/api/analytics/experience?" + new URLSearchParams({
-            //test: true,
-            chat_id: chatId,
-            k: 3,
-        }), {
-            method: 'GET',
-            timeout: 0,
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
+        const fetchData3 = async () => {
+            try {
+              const response = await axios.get(
+                `${SERVER_URL}/api/analytics/experience`,
+                {
+                  params: {
+                    chat_id: chatId,
+                    k: 3,
+                    //test: true,
+                  },
+                  timeout: 0,
+                  mode: 'cors',
+                  credentials: true,
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                }
+              );
+              setEmotionalExperienceData(response.data);
+              setIsToggled(true);
+            } catch (error) {
+              console.error('Error:', error.message);
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            setEmotionalExperienceData(data)
-        });
-    }, [experienceClassData])
+          };
+      
+          fetchData3();
+    }, [experienceClassData]);
 
+
+    /*
+    Name: printDebug
+    Functionality: Used for testing, prints data types and values
+    Intake: --
+    Returns: --
+    */
     function printDebug() {
         //console.log(experienceClassData)
         console.log(emotionalExperienceData)
@@ -112,6 +156,12 @@ const Complete = ({chatId}) => {
         console.log('Data is of type:', type);
     }
 
+    /*
+    Name: transformWordData
+    Functionality: Gets the wordcloud data from analtics, and determines the size of words using said data.
+    Intake: --
+    Returns: A list of words along with their sizes, to be used on chart initialization
+    */
     const transformWordData = () => {
         if(typeof wordCloudData != "string" || Object.keys(wordCloudData).length < 500)
         {
@@ -159,6 +209,12 @@ const Complete = ({chatId}) => {
         return newData;
     }
 
+    /*
+    Name: createClassificationData
+    Functionality: Creates the data for the user information table, scales with table size
+    Intake: --
+    Returns: A list of lists of strings
+    */
     const createClassificationData = () => {
         //Default Value
         var temp = [["HEIGHT(CM):", "SUBSTANCE:", "WEIGHT(KG):"]];
@@ -185,11 +241,23 @@ const Complete = ({chatId}) => {
         return temp;
     }
 
+    /*
+    Name: openGoogleForm
+    Functionality: Opens up the google form for feedback. called when feedback button is pressed
+    Intake: --
+    Returns: --
+    */
     const openGoogleForm = () => {
         const url = "https://forms.gle/orEBNU7GmVLKpmJe7";
         window.open(url, "_blank")
     }
 
+    /*
+    Name: createPieChartData
+    Functionality: creates the data or the piechart. calculates the colors for the chart from passed similarity values
+    Intake: --
+    Returns: Fully ready to be drawn chart with all required data
+    */
     const createPieChartData = () => {
         if (emotionalExperienceData == null) {
             return piechartData;
@@ -208,35 +276,71 @@ const Complete = ({chatId}) => {
         var colors = []
         //var counter = 1;
         //make a list of colors using the simularity as the vibrance.
+
+        //Get the sum so we can normalize
+        var totalSum = 0;
+        for (const col in tempSim) {
+            totalSum += tempSim[col];
+        }
+
         for (const key in tempSim) {
-            var simSat = 250 - (Math.min(Math.floor(tempSim[key] / 1.25 - 15, 250)));
+            //var simSat = 250 - (Math.min(Math.floor(tempSim[key] / 1.25 - 15, 250)));
             //var rand = Math.floor(Math.random() * 360);
+            var simSat = (tempSim[key] / totalSum * 250);
             colors.push(`hsl(${simSat}, 100%, 50%)`);
         }
 
-        console.log(colors);
+        //console.log(colors);
 
+        // Create new chart using data and return it
         const newChart = {
             type: 'doughnut',
             labels: tempNames,
             borderColor: '#000000',
             datasets: [
               {
-                label: 'Appears in X% of Submissions',
+                label: "Found in X% of Submissions",
                 data: tempValues,
                 backgroundColor: colors,
                 borderWidth: 4,
                 borderColor: '#000000',
-                hoverOffset: 10,
+                hoverOffset: 50,
                 hoverBorderWidth: 10,
-                cutout: 50,
+                radius: '70%',
+                cutout: '35%',
               },
             ],
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
         };
 
         return newChart;
     }
 
+    //Black magic deep dark manipulations
+    Chart.overrides["doughnut"].plugins.legend.display = false;
+    Chart.overrides["pie"].plugins.legend.display = false;
+
+    /*
+    Name: TextComponent
+    Functionality: while loading, show loading, when done show nothing
+    Intake: takes in a boolean isToggled
+    Returns: --
+    */
+   const TextComponent = ({ isToggled }) => {
+    return (
+        <p>
+          {isToggled ? '             ' : 'LOADING...'}
+        </p>
+      );
+   }
+
+    //Final return statement
     return (
         <div className='bg'>
             <div className='resultsScreen'>
@@ -246,6 +350,7 @@ const Complete = ({chatId}) => {
                     <div className='subtitle'>Below are your results</div>
                     <div className='graphs'>
                         <div className='wordCloud'>
+                            <TextComponent isToggled={isWords} />
                             <WordCloud
                             className="wordCloud"
                             data={transformWordData()}
@@ -265,11 +370,13 @@ const Complete = ({chatId}) => {
                             <div className='pieChartInfo'>See similarity range below!</div>
                             <img src={simScale}></img>
                             <div className='pieChartStyle'>
-                                <PieChart data={createPieChartData()} />
+                                <TextComponent isToggled={isToggled} />
+                                <PieChart data={createPieChartData()}/>
                             </div>
                         </div>
                         <div className='experience'>
                             {/* First Grid is for Dosage Information*/}
+                            <TextComponent isToggled={isInfo} />
                             <GridList items={createClassificationData()}/>
                         </div>
                     </div>
