@@ -51,7 +51,7 @@ const Complete = ({chatId}) => {
     }
 
     //Initialize reward data
-    const [categoryData, setCategoryData] = useState([]);
+    const [categoryData, setCategoryData] = useState({});
     const [wordCloudData, setWordCloudData] = useState([]);
     const [experienceData, setExperienceData] = useState([]);
     const [categoriesLoading, setCategoriesLoading] = useState(true);
@@ -80,7 +80,7 @@ const Complete = ({chatId}) => {
 
     //Use Effect calls the data from the server when the chatID is updated/passed. (On load)
     useEffect(() => {
-        if (categoryData.length == 0) { return; }
+        if (Object.keys(categoryData).length == 0) { return; }
         // Only happens once submit has been completed
         // wordCloud data
         axios.get(
@@ -202,30 +202,41 @@ const Complete = ({chatId}) => {
     Intake: --
     Returns: A list of lists of strings
     */
-    const createClassificationData = () => {
-        //Default Value
-        var temp = [["HEIGHT(CM):", "SUBSTANCE:", "WEIGHT(KG):"]];
+    const createClassificationData = (data) => {
+        if (Object.keys(data).length == 0) { return [["No data found or still loading"]]}
+        // load headers
+        let result = [Object.keys(data["submitter_info"][0])]
 
-        const catNames = [];
-        for (const key in categoryData) {
-            catNames.push(key);
+        if (result[0].length == 0) {
+            return [["No data found or still loading"]]
         }
-
-        if (catNames != []) {
-            temp = [catNames]
-        } 
-
-        if (categoryData.length == 0) {
-            return [["HEIGHT:", "SUBSTANCE:", "WEIGHT:"]];
+        
+        // submitter's information
+        let row = []
+        for (const key of result[0]) {
+            if (key in data["submitter_info"]) {
+                row.push(data["submitter_info"][key])
+            } else {
+                row.push("N/A")
+            }
         }
+        result.push(row) // only 1 row
 
-        const additions = []
-        for (const key in categoryData) {
-            console.log(key);
-            additions.push(categoryData[key]);
+        // substance information, potential issue if the substances do not have the same keys
+        result.push(Object.keys(data["substance_info"][0]))
+        for (const substance of data["substance_info"]) {
+            row = []
+            for (const key in substance) {
+                if (key in substance) {
+                    row.push(substance[key])
+                } else {
+                    row.push("N/A")
+                }
+            }
+            result.push(row)
         }
-        temp.push(additions);
-        return temp;
+        console.log(result)
+        return result
     }
 
     /*
@@ -350,7 +361,7 @@ const Complete = ({chatId}) => {
                         <div className='experience'>
                             {/* First Grid is for Dosage Information*/}
                             <p>{categoriesLoading ? 'LOADING...' : null}</p>
-                            <GridList items={createClassificationData()}/>
+                            <GridList items={createClassificationData(categoryData)}/>
                         </div>
                     </div>
                     <div className="grid-container">

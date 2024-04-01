@@ -91,6 +91,32 @@ def update_chat_summary(chat_id, summary):
     chat.summary = summary
     models.db.session.commit() # makes the update
 
+def new_chat_category(chat_id, result):
+    """
+    Add the chat category to database.
+    @chat_id: the id of the chat
+    @result schema: {
+        "submitter_info": {"Weight": string, "Height": string, "Age": int},
+        "substance_info": list [{"Dose": string, "Method": string, "Substance": string}]
+    }
+    """
+    for substance in result["substance_info"]:
+        try:
+            # Does not look great, but for now it will do
+            models.db.session.add(models.Chats_Categories(
+                chat=chat_id,
+                dose = substance["Dose"] if "Dose" in substance else 'unknown',
+                method = substance["Method"] if "Method" in substance else 'unknown',
+                substance = substance["Substance"] if "Substance" in substance else 'unknown',
+                age = result["submitter_info"]["Age"] if "Age" in result["submitter_info"] else None,
+                weight = result["submitter_info"]["Weight"] if "Weight" in result["submitter_info"] else None,
+                # completely forgot about height in seeding
+            ))
+            models.db.session.commit() # makes the update
+        except Exception as e:
+            print(e) # prevent some issue with multiple of the same being added
+            # in later version, this needs to be handled explicitly
+
 def get_message(message_id):
     """
     Get the message database object
