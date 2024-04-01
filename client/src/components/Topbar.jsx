@@ -30,11 +30,11 @@ const Topbar = () => {
                     {isDropdownOpen && (
                         <div className="dropdown-content">
                             <div className='logout'>
-                                <button onClick={handleLogout}>Logout</button>
+                                <button onClick={handleLogout} className='logout-button'>Logout</button>
                             </div>
 
                             <div className='login'>
-                                <button onClick={handleLogin}>Login</button>
+                                <button onClick={handleLogin} className='login-button'>Login</button>
                             </div>
                         </div>
                     )}

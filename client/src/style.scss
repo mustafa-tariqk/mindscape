@@ -95,7 +95,7 @@
             button {
                 padding: 10px 20px; /* Add padding for better appearance */
                 background-color: #005670; /* Set your desired background color */
-                color: #fff; /* Set text color to white */
+                color: #fff; /* Set text color to #FEF8F3 */
                 border: none; /* Remove border */
                 border-radius: 5px; /* Optional: Add border radius for rounded corners */
                 cursor: pointer; /* Add cursor pointer on hover */
@@ -199,7 +199,7 @@
             
             button{
                 background-color: #005670;
-                color: white;
+                color: #FEF8F3;
                 width: 30%;
                 height: 100%;
                 border-radius: 10vw;
@@ -217,7 +217,7 @@
             
             button{
                 background-color: #005670;
-                color: white;
+                color: #FEF8F3;
                 width: 30%;
                 height: 100%;
                 border-radius: 10vw;
@@ -322,44 +322,270 @@
 }
 
 .adminhome {
-    
-    .sidebar {
+    .trollslist {
+        max-width: 800px;
+        margin: 2rem auto;
+        margin-top: 22vh;
+        padding: 1rem;
+        background-color: #FEF8F3;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      
+        button {
+          margin-bottom: 1rem;
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 4px;
+          background-color: #005670; // primary color from your theme
+          color: #FEF8F3;
+          font-size: 1rem;
+          cursor: pointer;
+      
+          &:hover {
+            background-color: darken(#005670, 10%);
+          }
+          
+        }
+      
+        h2 {
+          color: #2c3e50; // secondary color from your theme
+          border-bottom: 1px solid #ecf0f1;
+          padding-bottom: 0.5rem;
+        }
+      
+        ul {
+          list-style: none;
+          padding: 0;
+      
+          li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ecf0f1;
+      
+            &:last-child {
+              border-bottom: none;
+            }
+          }
+        }
+      
+        .delete-button {
+          padding: 0.3rem 0.6rem;
+          border: none;
+          border-radius: 4px;
+          background-color: #BB302C; // button color for delete action
+          color: #FEF8F3;
+          cursor: pointer;
+          
+          &:hover {
+            background-color: darken(#BB302C, 10%);
+          }
+        }
+      }
+      .change-permission {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+        background-color: #FEF8F3;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+        
+        button {
+          margin-bottom: 1rem;
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 4px;
+          background-color: #005670; // Primary color from your theme
+          color: #FEF8F3;
+          font-size: 1rem;
+          cursor: pointer;
+      
+          &:hover {
+            background-color: darken(#005670, 10%);
+          }
+        }
+
+        form {
+          display: flex;
+          flex-direction: column;
+          
+          label {
+            margin-bottom: 0.5rem;
+          }
+      
+          input[type='email'],
+          select {
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+      
+            &:focus {
+              outline: none;
+              border-color: #005670;
+              box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5); // Focus ring around the input
+            }
+          }
+      
+          button[type='submit'] {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #F78B2B; // Primary color from your theme
+            color: #FEF8F3;
+            font-size: 1rem;
+            cursor: pointer;
+      
+            &:hover {
+              background-color: darken(#005670, 10%);
+            }
+          }
+        }
+      }
+      
+      // Assuming this button is inside your .change-permission container
+      button.toggle-form-button {
+        margin-bottom: 1rem; // Separation from the top of the container
+        // Inherit styles from the .change-permission button
+      }
+      
+      .chat-action-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+        background-color: #FEF8F3;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        
+        button {
+          margin-bottom: 1rem;
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 4px;
+          background-color: #005670; // Primary color from your theme
+          color: #FEF8F3;
+          font-size: 1rem;
+          cursor: pointer;
+      
+          &:hover {
+            background-color: darken(#005670, 10%);
+          }
+        }
+      
+        form {
+          display: none; // Hide by default, will be shown when 'show' class is added
+          flex-direction: column;
+          align-items: flex-start;
+      
+          &.show {
+            display: flex; // Show the form
+          }
+      
+          label {
+            margin-bottom: 0.5rem;
+          }
+      
+          input[type="text"],
+          select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+      
+            &:focus {
+              outline: none;
+              border-color: #005670;
+              box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5);
+            }
+          }
+      
+          button[type='submit'] {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #BB302C; // A success color for submit buttons
+            color: #FEF8F3;
+            cursor: pointer;
+      
+            &:hover {
+              background-color: darken(#BB302C, 10%);
+            }
+          }
+        }
+      }
+      
+      .toggle-form-button {
+        margin-bottom: 1rem;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #005670; // Primary color from your theme
+        color: #FEF8F3;
+        font-size: 1rem;
+        cursor: pointer;
+      
+        &:hover {
+          background-color: darken(#005670, 10%);
+        }
+      }
+      
+
+      .topbar{
         display: flex;
-        flex-direction: column;
-        width: 20%; /* Set the width of the sidebar */
-        height: 100vh; /* Set the height of the sidebar to fill the viewport */
-        background-color: #f0f0f0; /* Background color for visualization */
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        width: 100vw;
+        height: 20vh;
+        background-color: #FEF8F3;
+        z-index: 1;
 
-        .logoBox {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #ccc; /* Add a border between items */
+        .left {
+            max-width: 30%;
             img {
-                width: 80%;
-                
+                max-width: 100%;
+                max-height: auto;
             }
         }
 
-        .item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #ccc; /* Add a border between items */
-            height: 5%;
-
-            img {
-                width: 30px; /* Set the width of the image */
-                height: 30px; /* Set the height of the image */
-                margin-right: 10px; /* Add spacing between image and text */
+        .right {
+            a {
+                margin-right: 15%;
+                font-size: 20px;
             }
-
-            span{
-                flex: 1; /* Allow text to take up remaining space */
+            .dropdown {
+                img {
+                    max-width: 10%;
+                    max-height: auto;
+                    border-radius: 50%;
+                    margin-left: 80%;
+                    cursor: pointer;
+                }
             }
-
+            button {
+                margin-right: 15%;
+                max-width: 100%;
+                max-height: auto;
+                background-color: #005670;
+                color: #FEF8F3;
+                border-radius: 10px;
+                padding: 10px;
+                cursor: pointer;
+            }
         }
+          
+        .gap {
+            width: 5px; /* Set your desired gap width */
+        }
+
     }
+
+      
 }
 
 body {
@@ -412,7 +638,7 @@ body {
                 max-width: 100%;
                 max-height: auto;
                 background-color: #005670;
-                color: white;
+                color: #FEF8F3;
                 border-radius: 10px;
                 padding: 10px;
                 cursor: pointer;
@@ -426,7 +652,7 @@ body {
     }
 
     .container{
-        border: 0px solid white;
+        border: 0px solid #FEF8F3;
         border-radius: 10px;
         width: 100%;
         height: 85%;
@@ -467,7 +693,7 @@ body {
 
                 .chatIcons{
                     img{
-                        background-color: white;
+                        background-color: #FEF8F3;
                         height: 24px;
                         width: 24px;
                         border-radius: 50%;
@@ -523,7 +749,7 @@ body {
                           background-color: #005670;
                           border-radius: 0px 10px 10px 10px;  
                           padding: 10px 20px;
-                          color: white;
+                          color: #FEF8F3;
                           max-width: max-content;
                         }
 

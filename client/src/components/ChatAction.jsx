@@ -5,6 +5,7 @@ const SERVER_URL = process.env.SERVER_URL;
 const ChatAction = () => {
   const [chatId, setChatId] = useState('');
   const [action, setAction] = useState('delete'); // 'delete' or 'flag'
+  const [showForm, setShowForm] = useState(false); // State to control the visibility of the form
 
   const handleChatIdChange = (e) => {
     setChatId(e.target.value);
@@ -14,22 +15,24 @@ const ChatAction = () => {
     setAction(e.target.value);
   };
 
+  const toggleFormVisibility = () => {
+    setShowForm(!showForm);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const endpoint = action === 'delete'
-      ? SERVER_URL + `/api/delete_chat/${chatId}`
-      : SERVER_URL + `/api/flag/${chatId}`;
+      ? `/api/delete_chat/${chatId}`
+      : `/api/flag/${chatId}`;
 
     try {
-      // Assuming you're using fetch for HTTP requests
-      const response = await fetch(endpoint, {
-          method: 'GET', // Adjust if your API uses a different method
-          mode: 'cors',
-          credentials: 'include',
+      const response = await fetch(SERVER_URL + endpoint, {
+        method: 'GET', // Adjust if your API uses a different method
+        mode: 'cors',
+        credentials: 'include',
         headers: {
-            'Content-Type': 'application/json',
-          // Include other headers as required
+          'Content-Type': 'application/json',
         },
       });
 
@@ -47,25 +50,30 @@ const ChatAction = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="chatId">Chat ID:</label>
-        <input
-          type="text"
-          id="chatId"
-          value={chatId}
-          onChange={handleChatIdChange}
-          required
-        />
+    <div className="chat-action-container">
+      <button onClick={toggleFormVisibility} className="toggle-form-button">
+        {showForm ? 'Hide Chat Action Form' : 'Show Chat Action Form'}
+      </button>
+      {showForm && (
+        <form onSubmit={handleSubmit} className={showForm ? 'show' : ''}>
+          <label htmlFor="chatId">Chat ID:</label>
+          <input
+            type="text"
+            id="chatId"
+            value={chatId}
+            onChange={handleChatIdChange}
+            required
+          />
 
-        <label htmlFor="action">Action:</label>
-        <select id="action" value={action} onChange={handleActionChange} required>
-          <option value="delete">Delete</option>
-          <option value="flag">Flag</option>
-        </select>
+          <label htmlFor="action">Action:</label>
+          <select id="action" value={action} onChange={handleActionChange} required>
+            <option value="delete">Delete</option>
+            <option value="flag">Flag</option>
+          </select>
 
-        <button type="submit">{action === 'delete' ? 'Delete Chat' : 'Flag Chat'}</button>
-      </form>
+          <button type="submit">{action === 'delete' ? 'Delete Chat' : 'Flag Chat'}</button>
+        </form>
+      )}
     </div>
   );
 };
