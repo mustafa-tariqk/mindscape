@@ -25,7 +25,7 @@ const Login = () => {
         })
         .then(response => {
             if (response.ok) {
-                navigate('/home');
+                navigate('/');
             }
         })
         

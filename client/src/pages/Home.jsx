@@ -8,7 +8,7 @@ import {
 import Complete from './Complete.jsx';
 import Chat from '../components/Chat.jsx'
 import Topbar from '../components/Topbar.jsx'
-// import Login from './Login.jsx'
+import Login from './Login.jsx'
 
 
 function Home() {
@@ -27,7 +27,7 @@ function Home() {
                     <Routes>
                         <Route path="/" element={<Chat chatId={chatId} userId={userId} setChatId={setChatId} setUserId={setUserId}/>}/>
                         <Route path="/complete" element={<Complete chatId={chatId} />} />
-                        {/* <Route path="/" element={<Login />} /> */}
+                        <Route path="/login" element={<Login />} />
                         <Route path="/logout" element={<handleLogout />} />
                     </Routes>
                 </div>

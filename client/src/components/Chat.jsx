@@ -89,7 +89,7 @@ function Chat({chatId, userId, setChatId, setUserId}) {
         })
         .catch(err => {
             console.error("Error getting user id: ", err, "...Redirecting to login page.");
-            // navigate("/");
+            navigate("/login");
         });
     }, []);
 
