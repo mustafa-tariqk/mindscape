@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import image1 from '../img/Logo_with_subtext_upscaled.png';
+import { useNavigate } from "react-router-dom"
 
 const SERVER_URL = process.env.SERVER_URL;
 
 const Topbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // You would replace this with a real check to your authentication system
@@ -37,11 +39,16 @@ const Topbar = () => {
         window.location.href = SERVER_URL + '/login';
     }
 
+    const handleAdmin = () => {
+        navigate("/admin")
+    }
+
     return (
         <div className="topbar">
             <div className="left">
                 <img src={image1} alt="Neuma logo" />
             </div>
+            <button onClick={handleAdmin} className='admin-button'>Admin/Researcher Window</button>
             <div className="right">
                 {isLoggedIn ? (
                     <button onClick={handleLogout} className='logout-button'>Logout</button>

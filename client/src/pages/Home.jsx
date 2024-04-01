@@ -9,6 +9,7 @@ import Complete from './Complete.jsx';
 import Chat from '../components/Chat.jsx'
 import Topbar from '../components/Topbar.jsx'
 import Login from './Login.jsx'
+import AdminHome from './AdminHome.jsx'
 
 
 function Home() {
@@ -29,6 +30,7 @@ function Home() {
                         <Route path="/complete" element={<Complete chatId={chatId} />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/logout" element={<handleLogout />} />
+                        <Route path="/admin" element={<AdminHome />} />
                     </Routes>
                 </div>
             </div>
