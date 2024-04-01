@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const SERVER_URL = process.env.SERVER_URL;
 
 function TrollList() {
   const [trolls, setTrolls] = useState([]);
-
-  useEffect(() => {
-    fetchTrolls();
-  }, []);
+  const [showTrolls, setShowTrolls] = useState(false); // State to control visibility of the trolls list
 
   const fetchTrolls = () => {
       fetch(SERVER_URL + '/api/get_trolls', {
@@ -23,13 +20,13 @@ function TrollList() {
         flag_count: data[email],
       }));
       setTrolls(trollsArray);
+      setShowTrolls(true); // Show the trolls list after fetching
     })
     .catch(error => console.error('Error fetching trolls:', error));
   };
 
   const deleteUser = (userEmail) => {
-    // Replace 'http://example.com/api/delete_user/' with your actual endpoint
-      fetch(SERVER_URL + `/api/delete_user/${(userEmail)}`, {
+      fetch(SERVER_URL + `/api/delete_user/${encodeURIComponent(userEmail)}`, {
           mode: 'cors',
           method: 'GET',
           credentials: 'include',
@@ -48,15 +45,20 @@ function TrollList() {
 
   return (
     <div>
-      <h2>Flagged Users</h2>
-      <ul>
-        {trolls.map((troll, index) => (
-          <li key={index}>
-            Email: {troll.email}, Flags: {troll.flag_count}
-            <button onClick={() => deleteUser(troll.email)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <button onClick={fetchTrolls}>Show Flagged Users</button>
+      {showTrolls && (
+        <div>
+          <h2>Flagged Users</h2>
+          <ul>
+            {trolls.map((troll, index) => (
+              <li key={index}>
+                Email: {troll.email}, Flags: {troll.flag_count}
+                <button onClick={() => deleteUser(troll.email)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

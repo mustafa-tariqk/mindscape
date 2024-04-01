@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import Sidebar from '../components/Sidebar.jsx'
 import GridList from '../components/GridList.jsx'
 import UserList from '../components/UserList.jsx'
 import './AdminHome.scss'
 import Topbar from '../components/Topbar.jsx'
-import TrollList from '../components/TrollsList.jsx'
+import TrollsList from '../components/TrollsList.jsx'
 
 
 const AdminHome = () => {
@@ -12,12 +11,9 @@ const AdminHome = () => {
 
     return (
         <div className='adminhome'>
-            <Sidebar />
-            {/* <div className='userlist'>
-                <UserList />
-            </div> */}
-            <div className='trolllist'>
-                <TrollList />
+            <Topbar />
+            <div className='trollslist'>
+                <TrollsList />
             </div>
          
         </div>

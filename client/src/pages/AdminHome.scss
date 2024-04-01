@@ -3,17 +3,6 @@
     height: 100vh; /* Adjust the height as needed */
   }
   
-.sidebar {
-    flex: 0 0 250px; /* Adjust the width as needed */
-    border-right: 1px solid #ccc;
-    /* Add other styles for your sidebar here */
-}
-  
-.gridcomponent {
-    flex-grow: 1; /* Takes up the remaining space */
-    overflow: auto; /* In case the content is too long */
-    /* Add other styles for your grid component here */
-}
 .topbar{
     display: flex;
     justify-content: space-between;
