@@ -96,8 +96,7 @@ def role_required(*roles):
         def decorated_function(*args, **kwargs):
             if not app.config["TESTING"]:
                 if not google.authorized or google.token["expires_at"] <= time.time():
-                    print("fucked up")
-                    return {"error": "Unauthorized"}, 401
+                    return {"error": "Unauthorized"}
                 email = session["google_auth"]["email"]
                 user = models.User.query.filter_by(email=email).first()
                 if user is None:
@@ -105,7 +104,7 @@ def role_required(*roles):
                     models.db.session.add(user)
                     models.db.session.commit()
                 if user.user_type not in roles:
-                    return {"error": "User does not have the required role"}, 403
+                    return {"error": "User does not have the required role"}
             return f(*args, **kwargs)
 
         return decorated_function
