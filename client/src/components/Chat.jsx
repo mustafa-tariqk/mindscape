@@ -79,7 +79,7 @@ function Chat({chatId, userId, setChatId, setUserId}) {
         })
         .then(response => {
             if (response.ok) {
-                response.json()
+                return response.json()
             } else {
                 console.error("Failed to get user id");
                 navigate('/login');
