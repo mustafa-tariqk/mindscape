@@ -81,16 +81,13 @@ function Chat({chatId, userId, setChatId, setUserId}) {
             if (response.ok) {
                 response.json()
             } else {
-                throw new Error("Failed to get user id");
+                console.error("Failed to get user id");
+                navigate('/login');
             }
         })
         .then(data => {
             setUserId(data.user_id);
         })
-        .catch(err => {
-            console.error("Error getting user id: ", err, "...Redirecting to login page.");
-            // navigate("/login");
-        });
     }, []);
 
     useEffect(() => {
