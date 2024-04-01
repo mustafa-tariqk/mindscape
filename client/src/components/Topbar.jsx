@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import image1 from '../img/Logo_with_subtext_upscaled.png';
 import image2 from '../img/userprofile.png';
-
-const SERVER_URL = process.env.SERVER_URL;
+import YourComponentLogout from '../components/YourComponenentLogout.jsx';
 
 const Topbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,13 +10,6 @@ const Topbar = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    const handleLogout = () => {
-        window.location.href = SERVER_URL + '/logout';
-    }
-
-    const handleLogin = () => {
-        window.location.href = SERVER_URL + '/login';
-    }
 
     return (
         <div className="topbar">
@@ -29,12 +21,8 @@ const Topbar = () => {
                     <img src={image2} alt="User Profile" onClick={toggleDropdown} style={{cursor: 'pointer'}} />
                     {isDropdownOpen && (
                         <div className="dropdown-content">
-                            <div className='logout'>
-                                <button onClick={handleLogout}>Logout</button>
-                            </div>
-
-                            <div className='login'>
-                                <button onClick={handleLogin}>Login</button>
+                            <div className='yourcomponentlogout'>
+                            <YourComponentLogout/>
                             </div>
                         </div>
                     )}
