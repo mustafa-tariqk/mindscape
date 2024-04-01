@@ -96,7 +96,6 @@ def role_required(*roles):
         def decorated_function(*args, **kwargs):
             if not app.config["TESTING"]:
                 if not google.authorized or google.token["expires_at"] <= time.time():
-                    print("fucked up")
                     return {"error": "Unauthorized"}, 401
                 email = session["google_auth"]["email"]
                 user = models.User.query.filter_by(email=email).first()
