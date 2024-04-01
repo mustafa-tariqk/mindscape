@@ -315,6 +315,7 @@ def submit():
     result = {}
     with app.app_context():
         result = categorize_submission(chat_id)
+        database.new_chat_category(chat_id, result)
 
         # write to database
         summary = summarize_submission(chat_id)
