@@ -8,7 +8,7 @@ import "./style.scss"
 
 function App() {
   return (
-    <AdminHome />
+    <Home />
   );
 }
 

@@ -543,6 +543,7 @@
         width: 100vw;
         height: 20vh;
         background-color: #FEF8F3;
+        padding: 10px;
         z-index: 1;
 
         .left {
@@ -554,21 +555,9 @@
         }
 
         .right {
-            a {
-                margin-right: 15%;
-                font-size: 20px;
-            }
-            .dropdown {
-                img {
-                    max-width: 10%;
-                    max-height: auto;
-                    border-radius: 50%;
-                    margin-left: 80%;
-                    cursor: pointer;
-                }
-            }
             button {
-                margin-right: 15%;
+                margin-left: -50%;
+                margin-right: -5%;
                 max-width: 100%;
                 max-height: auto;
                 background-color: #005670;
@@ -621,7 +610,7 @@ body {
 
         .right {
             a {
-                margin-right: 15%;
+                margin-right: 5%;
                 font-size: 20px;
             }
             .dropdown {
@@ -634,7 +623,8 @@ body {
                 }
             }
             button {
-                margin-right: 15%;
+                margin-left: -50%;
+                margin-right: -5%;
                 max-width: 100%;
                 max-height: auto;
                 background-color: #005670;
