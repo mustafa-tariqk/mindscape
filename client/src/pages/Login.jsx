@@ -1,9 +1,10 @@
 import Neuma from '../img/Logo_with_subtext_upscaled.png'
 import User from '../img/userprofile.png'
 import Wellness from '../img/wellness_background.png'
+
 import React from 'react'
-import YourComponent from '../components/YourComponent.jsx'
 import { useEffect, useState } from 'react'
+import { useNavigate } from "react-router-dom"
 
 const SERVER_URL = process.env.SERVER_URL;
 
@@ -11,7 +12,23 @@ const Login = () => {
 
     const [disclaimerText, setDisclaimerText] = useState('');
 
+    const navigate = useNavigate();
+
+    const login = () => {
+        window.location.href = SERVER_URL + '/login';
+    }
+
     useEffect(() => {
+        fetch(SERVER_URL + '/api/user', {
+            mode: 'cors',
+            credentials: 'include',
+        })
+        .then(response => {
+            if (response.ok) {
+                navigate('/home');
+            }
+        })
+        
         fetch('disclaimer.txt')
             .then((response) => response.text())
             .then((text) => {
@@ -40,8 +57,8 @@ const Login = () => {
                         <p>
                             {disclaimerText}
                         </p>
-                        <div className='yourcomponent'>
-                            <YourComponent/>
+                        <div className='login'>
+                            <button onClick={login}>Login</button>
                         </div>
                     </div>
                 </div>
