@@ -86,8 +86,9 @@ function Chat({chatId, userId, setChatId, setUserId}) {
             }
         })
         .then(data => {
-            console.log(data)
-            setUserId(data.user_id);
+            if (data){
+                setUserId(data.user_id);
+            }  
         })
     }, []);
 
