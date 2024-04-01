@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Message from "./Message.jsx";
 import Input from "./Input.jsx";
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 const SERVER_URL = process.env.SERVER_URL;
 
@@ -14,40 +14,10 @@ Functionality: Used to chat and converse with the bot
 Intake: chatId, setChatId
 Returns: --
 */
-function Chat({chatId, setChatId}) {
+function Chat({chatId, userId, setChatId, setUserId}) {
     //Initialize navigate and messages
     const [messages, setMessages] = useState([]);
     const navigate = useNavigate()
-
-    //Start a chat given the users id
-    useEffect(() => {
-        fetch(SERVER_URL+'/api/user', {
-            mode: 'cors',
-            credentials: 'include',
-        })
-        .then(response => response.json())
-        .then(data => {
-            const userId = data.user_id;
-            startChat(userId);
-        });
-    }, []);
-
-    /*
-    Name: startChat
-    Functionality: Used for creating the chat
-    Intake: userId
-    Returns: --
-    */
-    function startChat(userId) {
-        fetch(SERVER_URL+'/api/start_chat/' + userId, {
-            mode: 'cors',
-            credentials: 'include',
-        })
-        .then(response => response.json())
-        .then(data => {
-            setChatId(data.chat_id);
-        });
-    }
 
     /*
     Name: handleSendMessage
@@ -100,6 +70,41 @@ function Chat({chatId, setChatId}) {
         useEffect(() => elementRef.current.scrollIntoView());
         return <div ref={elementRef} />;
     };
+
+    // query user's id
+    useEffect(() => {
+        fetch(SERVER_URL + '/api/user', {
+            mode: 'cors',
+            credentials: 'include',
+        })
+        .then(response => {
+            if (response.ok) {
+                response.json()
+            } else {
+                throw new Error("Failed to get user id");
+            }
+        })
+        .then(data => {
+            setUserId(data.user_id);
+        })
+        .catch(err => {
+            console.error("Error getting user id: ", err, "...Redirecting to login page.");
+            // navigate("/");
+        });
+    }, []);
+
+    useEffect(() => {
+        if (userId){
+            fetch(SERVER_URL+'/api/start_chat/' + userId, {
+                mode: 'cors',
+                credentials: 'include',
+            })
+            .then(response => response.json())
+            .then(data => {
+                setChatId(data.chat_id);
+            });
+        }
+    }, [userId])
 
     //Final Return Statement
     return (
