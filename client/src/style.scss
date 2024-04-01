@@ -317,6 +317,7 @@
             }
         }
     }
+    
 
 
 }
@@ -573,6 +574,17 @@
         }
 
     }
+    .footer-text {
+        position: absolute;
+        font-size: small;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        padding: 1rem;
+        background-color: #FEF8F3;
+        border-top: 1px solid #ecf0f1;
+      }
+    
 
       
 }

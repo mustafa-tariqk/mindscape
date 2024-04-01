@@ -20,6 +20,9 @@ const AdminHome = () => {
             <div className='chataction'>
                 <ChatAction />
             </div>
+            <div className='footer-text'>
+                Want to become a researcher/administrator? Email <a href="mailto:neuma.mindscape@gmail.com">neuma.mindscape@gmail.com</a>
+            </div>
 
          
         </div>
