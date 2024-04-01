@@ -29,6 +29,7 @@ function Home() {
                         <Route path="/complete" element={<Complete chatId={chatId} />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/logout" element={<handleLogout />} />
+                        <Route path="/admin" element={<AdminButton />} />
                     </Routes>
                 </div>
             </div>

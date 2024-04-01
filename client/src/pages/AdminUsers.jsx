@@ -13,10 +13,10 @@ const AdminUsers = () => {
             <Sidebar />
         </div>     */}
             
-        {/* <h2>Change User Permissions</h2>
-         <ChangePermission /> */}
-        <h2>Chat Actions</h2>
-        <ChatAction />
+        <h2>Change User Permissions</h2>
+         <ChangePermission />
+        {/* <h2>Chat Actions</h2>
+        <ChatAction /> */}
         </div>
     );
 }

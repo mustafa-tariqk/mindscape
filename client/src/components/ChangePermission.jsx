@@ -15,25 +15,25 @@ const ChangePermission = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevents the default form submit action
-
+    e.preventDefault(); // Prevents the default form submission action
+  
+    // URL construction with encodeURIComponent to ensure special characters are properly encoded
+    const url = `/api/change_permission/${encodeURIComponent(email)}/${encodeURIComponent(role)}`;
+  
     try {
-      // Assuming you're using fetch for HTTP requests
-      const response = await fetch(SERVER_URL + `/api/change_permission/${email}/${role}`, {
-          method: 'GET', // or 'PUT', depending on your backend implementation
-          mode: 'cors',
-          credentials: 'include',
+      const response = await fetch(SERVER_URL + url, {
+        method: 'GET', // or 'POST' if your implementation changes
+        mode: 'cors',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          // Include other headers as required by your backend
         },
-        // If your API expects a request body, include it here
       });
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
+  
       // Handle success
       alert('Permission changed successfully!');
     } catch (error) {
@@ -42,7 +42,7 @@ const ChangePermission = () => {
       alert('Failed to change permission.');
     }
   };
-
+  
   return (
     <div>
       <form onSubmit={handleSubmit}>
