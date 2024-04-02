@@ -43,10 +43,14 @@ const Topbar = () => {
         navigate("/admin")
     }
 
+    const handleHome = () => {
+        navigate("/")
+    }
+
     return (
         <div className="topbar">
             <div className="left">
-                <img src={image1} alt="Neuma logo" />
+                <img src={image1} alt="Neuma logo" onClick={handleHome}/>
             </div>
             <button onClick={handleAdmin} className='admin-button'>Admin/Researcher Window</button>
             <div className="right">
