@@ -1,27 +1,33 @@
-import Neuma from '../img/Logo_with_subtext_upscaled.png'
-import KeyboardIcon from '../img/keyboard.png'
-import GearIcon from '../img/gear.png'
-import PeopleIcon from '../img/people.png'
-import RobotIcon from '../img/robot.png'
-import ShieldIcon from '../img/shield.png'
-import StatisticsIcon from '../img/statistics.png'
 import React, { useState } from 'react'
-import Sidebar from '../components/Sidebar.jsx'
-import GridList from '../components/GridList.jsx'
-import GridComponent from '../components/GridComponent.jsx'
-import './AdminHome.scss'
 import Topbar from '../components/Topbar.jsx'
+import TrollsList from '../components/TrollsList.jsx'
+import ChangePermission from '../components/ChangePermission.jsx'
+import ChatAction from '../components/ChatAction.jsx'
+import DownloadChatsButton from '../components/DownloadAllChats.jsx'
 
 
 const AdminHome = () => {
+    // const [results, setResults] = useState([]);
+
     return (
         <div className='adminhome'>
-            <div className='sidebar'>
-                <Sidebar />
+            <Topbar />
+            <div className='trollslist'>
+                <TrollsList />
+            </div>    
+            <div className='changepermission'>
+                <ChangePermission />
             </div>
-            <div className='gridcomponent'>
-                <GridComponent />
+            <div className='chataction'>
+                <ChatAction />
             </div>
+            <div>
+                <DownloadChatsButton />
+            </div>
+            <div className='footer-text'>
+                Want to become a researcher/administrator? Email <a href="mailto:neuma.mindscape@gmail.com">neuma.mindscape@gmail.com</a>
+            </div>
+
          
         </div>
     )
