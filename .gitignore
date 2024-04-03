@@ -299,3 +299,4 @@ dist
 
 #server
 /server/data/erowid/*
+/server/instance/*
