@@ -300,3 +300,6 @@ dist
 #server
 /server/data/erowid/*
 /server/instance/*
+
+#macos artifact
+.DS_Store
